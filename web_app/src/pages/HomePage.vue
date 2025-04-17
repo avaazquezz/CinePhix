@@ -1,55 +1,72 @@
 <template>
   <div class="home-container">
-    <header class="header">
-      <div class="logo">
-        <img src="@/assets/logo.png" alt="CinePhix Logo" class="logo-img" />
-      </div>
-      <nav class="navigation">
-        <ul class="nav-links">
-          <li><router-link to="/home" class="nav-link active">Inicio</router-link></li>
-          <li><router-link to="/movies" class="nav-link">Películas</router-link></li>
-          <li><router-link to="/series" class="nav-link">Series</router-link></li>
-          <li><router-link to="/search" class="nav-link">Buscar</router-link></li>
-        </ul>
-      </nav>
-    </header>
+    <AppBarNavigation />
 
     <main class="main-content">
-      <!-- Slider de películas destacadas -->
-      <section class="featured-slider">
-        <h2 class="section-title">Destacados General</h2>
-        <div class="slider-container">
-          <!-- Aquí irían los slides de películas destacadas -->
-          <div class="placeholder-text">Slider de películas destacadas</div>
-        </div>
-      </section>
-
-      <!-- Sección de películas populares -->
       <section class="movie-section">
-        <h2 class="section-title">Populares General</h2>
+        <h2 class="section-title">Peliculas y Series en Tendencia HOY</h2>
         <div class="movie-grid">
-          <!-- Aquí irían las tarjetas de películas -->
-          <div class="placeholder-text">Cuadrícula de películas populares</div>
-        </div>
-      </section>
-
-      <!-- Sección de películas mejor valoradas -->
-      <section class="movie-section">
-        <h2 class="section-title">Mejor Valoradas</h2>
-        <div class="movie-grid">
-          <!-- Aquí irían las tarjetas de películas -->
-          <div class="placeholder-text">Cuadrícula de películas mejor valoradas</div>
+          <div
+            v-for="item in trendingContent"
+            :key="item.id"
+            class="movie-card"
+          >
+            <img
+              :src="getImageUrl(item.poster_path)"
+              :alt="item.title || item.name"
+              class="movie-poster"
+            />
+            <h3 class="movie-title">{{ item.title || item.name }}</h3>
+            <p class="movie-type">{{ item.media_type === 'movie' ? 'Película' : 'Serie' }}</p>
+            <p class="movie-provider">{{ getProviderText(item.provider) }}</p>
+          </div>
         </div>
       </section>
     </main>
-
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue';
+import { getTrendingAllDay } from '@/ApiController/services/inicioService';
+import {getWatchProviders } from '@/ApiController/services/watchProvidersService';
+
 export default {
-  name: 'HomePage'
-}
+  name: 'HomePage',
+  setup() {
+    const trendingContent = ref([]);
+
+    const getImageUrl = (path) => `https://image.tmdb.org/t/p/w500${path}`;
+
+    const getProviderText = (provider) => {
+      if (!provider) return 'No disponible';
+      return provider.flatrate?.[0]?.provider_name || 'Cines';
+    };
+
+    const fetchTrendingContent = async () => {
+      try {
+        const trending = await getTrendingAllDay();
+        const trendingWithProviders = await Promise.all(
+          trending.map(async (item) => {
+            const provider = await getWatchProviders(item.media_type, item.id);
+            return { ...item, provider };
+          })
+        );
+        trendingContent.value = trendingWithProviders;
+      } catch (error) {
+        console.error('Error al cargar contenido en tendencia:', error);
+      }
+    };
+
+    onMounted(fetchTrendingContent);
+
+    return {
+      trendingContent,
+      getImageUrl,
+      getProviderText,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -58,6 +75,42 @@ export default {
   background-color: #141418;
   color: #fff;
   font-family: 'Arial', sans-serif;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1.5rem;
+}
+
+.movie-card {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.movie-poster {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.movie-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.movie-type {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.movie-provider {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.5rem;
 }
 
 /* Header styles */

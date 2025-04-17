@@ -2,7 +2,7 @@ import api from '@/ApiController/api'
 
 /////  enpopiont para el inicio: contenido mixto en tendencia (pelis + series)  /////
 
-export const getTrendingAllWeek = async () => {
+export const getTrendingAllDay = async () => {
   try {
     const response = await api.get('/trending/all/day');
     return response.data.results.filter(item =>

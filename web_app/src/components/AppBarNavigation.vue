@@ -5,10 +5,10 @@
     </div>
     <nav class="navigation">
       <ul class="nav-links">
-        <li><router-link to="/home" class="nav-link" :class="{ active: isActive('/home') }">Inicio</router-link></li>
-        <li><router-link to="/movies" class="nav-link" :class="{ active: isActive('/movies') }">Películas</router-link></li>
-        <li><router-link to="/series" class="nav-link" :class="{ active: isActive('/series') }">Series</router-link></li>
-        <li><router-link to="/search" class="nav-link" :class="{ active: isActive('/search') }">Buscar</router-link></li>
+        <li><router-link to="/home" class="nav-link active">Inicio</router-link></li>
+          <li><router-link to="/movies" class="nav-link">Películas</router-link></li>
+          <li><router-link to="/series" class="nav-link">Series</router-link></li>
+          <li><router-link to="/actores" class="nav-link">Actores</router-link></li>
       </ul>
     </nav>
   </header>
