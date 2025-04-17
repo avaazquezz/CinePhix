@@ -12,15 +12,12 @@
           <li><router-link to="/search" class="nav-link">Buscar</router-link></li>
         </ul>
       </nav>
-      <div class="user-menu">
-        <button class="user-btn">Mi Cuenta</button>
-      </div>
     </header>
 
     <main class="main-content">
       <!-- Slider de películas destacadas -->
       <section class="featured-slider">
-        <h2 class="section-title">Destacados</h2>
+        <h2 class="section-title">Destacados General</h2>
         <div class="slider-container">
           <!-- Aquí irían los slides de películas destacadas -->
           <div class="placeholder-text">Slider de películas destacadas</div>
@@ -29,7 +26,7 @@
 
       <!-- Sección de películas populares -->
       <section class="movie-section">
-        <h2 class="section-title">Películas Populares</h2>
+        <h2 class="section-title">Populares General</h2>
         <div class="movie-grid">
           <!-- Aquí irían las tarjetas de películas -->
           <div class="placeholder-text">Cuadrícula de películas populares</div>
