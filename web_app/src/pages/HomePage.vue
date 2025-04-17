@@ -46,11 +46,6 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <div class="footer-content">
-        <p>&copy; 2025 CinePhix - Todos los derechos reservados</p>
-      </div>
-    </footer>
   </div>
 </template>
 

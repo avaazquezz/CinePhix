@@ -5,10 +5,10 @@
         <router-view />
       </v-container>
     </v-main>
-    
   </v-app>
+  
 </template>
 
 <script setup>
-  //
+
 </script>

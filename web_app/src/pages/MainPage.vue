@@ -1,12 +1,6 @@
 <template>
   <div class="main-page">
-    <!-- Video de fondo -->
-    <div class="background-container">
-      <video autoplay loop muted playsinline class="background-video">
-        <source src="@/assets/cinema-background.mp4" type="video/mp4">
-      </video>
-      <div class="overlay"></div>
-    </div>
+ 
 
     <!-- Contenido principal -->
     <div class="content">
@@ -39,14 +33,20 @@
           <div class="feature-title">Tendencias</div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
 
 <script>
+
+
 export default {
-  name: "MainPage"
-}
+  name: "MainPage",
+  components: {
+   
+  },
+};
 </script>
 
 <style scoped>
@@ -54,7 +54,7 @@ export default {
 .main-page {
   position: relative;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,13 +80,20 @@ export default {
   object-fit: cover;
 }
 
+.background-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(49, 48, 48, 0.7);
 }
 
 /* Contenido */
@@ -181,14 +188,11 @@ export default {
   font-weight: bold;
 }
 
-/* Footer */
-.footer {
-  position: absolute;
-  bottom: 20px;
-  text-align: center;
-  font-size: 0.9rem;
-  opacity: 0.7;
+.content {
+  flex: 1; /* Empuja el footer hacia abajo */
+  padding: 20px;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
