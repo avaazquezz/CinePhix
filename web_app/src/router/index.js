@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import MainPage from '@/pages/MainPage.vue';
+import HomePage from '@/pages/HomePage.vue';
 
 const routes = [
   {
@@ -9,10 +10,9 @@ const routes = [
     component: MainPage,
   },
   {
-    path: '/movie/:id',
-    name: 'MovieDetail',
-    component: MovieDetailView,
-    props: true,
+    path: '/home',
+    name: 'Home',
+    component: HomePage, 
   },
 ];
 
