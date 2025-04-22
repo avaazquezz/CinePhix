@@ -73,7 +73,7 @@
       <div class="modal-content">
         <span class="close" @click="closeDialog">&times;</span>
         <div class="actor-info">
-          <h2>Donde ha trabajado {{ selectedActorName }}</h2>
+          <h2>Donde ha aparecido {{ selectedActorName }}</h2>
           <div class="credits-container">
             <ul v-if="credits.length > 0" class="credits-list">
               <li v-for="credit in credits" :key="credit.id" class="credit-item">
@@ -491,7 +491,7 @@ export default {
 }
 
 .credit-item:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(85, 51, 51, 0.87);
 }
 
 .credit-title {
