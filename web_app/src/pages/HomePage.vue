@@ -18,7 +18,6 @@
             />
             <h3 class="movie-title">{{ item.title || item.name }}</h3>
             <p class="movie-type">{{ item.media_type === 'movie' ? 'Película' : 'Serie' }}</p>
-            <p class="movie-provider">{{ getProviderText(item.provider) }}</p>
           </div>
         </div>
       </section>
@@ -29,7 +28,6 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { getTrendingAllDay } from '@/ApiController/services/inicioService';
-import {getWatchProviders } from '@/ApiController/services/watchProvidersService';
 
 export default {
   name: 'HomePage',
@@ -45,16 +43,10 @@ export default {
 
     const fetchTrendingContent = async () => {
       try {
-        const trending = await getTrendingAllDay();
-        const trendingWithProviders = await Promise.all(
-          trending.map(async (item) => {
-            const provider = await getWatchProviders(item.media_type, item.id);
-            return { ...item, provider };
-          })
-        );
-        trendingContent.value = trendingWithProviders;
+      const trending = await getTrendingAllDay();
+      trendingContent.value = trending;
       } catch (error) {
-        console.error('Error al cargar contenido en tendencia:', error);
+      console.error('Error al cargar contenido en tendencia:', error);
       }
     };
 
