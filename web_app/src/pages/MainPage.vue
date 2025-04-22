@@ -18,13 +18,9 @@
       <p class="subtitle">La plataforma definitiva para los verdaderos cinéfilos. <br class="hide-mobile">Descubre, explora y enamórate del cine en un solo lugar.</p>
 
       <div class="buttons">
-        <router-link to="/home" class="btn primary-btn">
+        <router-link to="/CinePhix/home" class="btn primary-btn">
           <span class="btn-text">Comenzar Aventura</span>
           <span class="btn-icon"><i class="fas fa-play"></i></span>
-        </router-link>
-        <router-link to="/about" class="btn secondary-btn">
-          <span class="btn-text">Saber Más</span>
-          <span class="btn-icon"><i class="fas fa-info-circle"></i></span>
         </router-link>
       </div>
 
