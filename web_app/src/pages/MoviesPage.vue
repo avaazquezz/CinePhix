@@ -3,7 +3,7 @@
     <AppBarNavigation />
 
     <main class="main-content">
-            <!-- Sección de Películas Populares -->
+      <!-- Sección de Películas Populares -->
       <section class="movie-section">
         <h2 class="section-title">Películas Populares</h2>
         <div class="movie-row-container">
@@ -13,6 +13,7 @@
               v-for="item in popularMovies"
               :key="item.id"
               class="movie-card"
+              @click="openMovieDialog(item.id)"
             >
               <img
                 :src="getImageUrl(item.poster_path)"
@@ -36,6 +37,7 @@
               v-for="item in topRatedMovies"
               :key="item.id"
               class="movie-card"
+              @click="openMovieDialog(item.id)"
             >
               <img
                 :src="getImageUrl(item.poster_path)"
@@ -59,6 +61,7 @@
               v-for="item in trendingMovies"
               :key="item.id"
               class="movie-card"
+              @click="openMovieDialog(item.id)"
             >
               <img
                 :src="getImageUrl(item.poster_path)"
@@ -71,13 +74,51 @@
           <button class="nav-button next" @click="scrollCategory('trending', 'next')">&gt;</button>
         </div>
       </section>
+
+      <!-- Diálogo de Detalles de Película -->
+      <div v-if="isDialogOpen" class="movie-dialog" @click.self="closeMovieDialog">
+        <div class="dialog-content">
+          <button class="close-button" @click="closeMovieDialog">X</button>
+
+          <div class="dialog-header">
+            <h2>{{ movieDetail.title }}</h2>
+            <div class="movie-rating-container">
+              <span class="movie-rating">{{ movieDetail.vote_average?.toFixed(1) || '?' }}/10</span>
+            </div>
+          </div>
+
+          <div class="dialog-body">
+            <div class="dialog-poster">
+              <img :src="getImageUrl(movieDetail.poster_path)" :alt="movieDetail.title" />
+            </div>
+            <div class="dialog-info">
+              <p><strong>Fecha de lanzamiento:</strong> {{ movieDetail.release_date }}</p>
+
+              <p><strong>Sinopsis:</strong> {{ movieDetail.overview }}</p>
+
+              <p><strong>Créditos:</strong></p>
+              <div class="credits-list">
+                <div v-for="actor in movieCredits" :key="actor.id" class="credit-item">
+                  {{ actor.name }} como {{ actor.character }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue';
-import { getPopularMovies, getTopRatedMovies, getTrendingMovies } from '@/ApiController/services/movieService';
+import {
+  getPopularMovies,
+  getTopRatedMovies,
+  getTrendingMovies,
+  getMovieDetail,
+  getMovieCredits,
+} from '@/ApiController/services/movieService';
 
 export default {
   name: 'MoviesPage',
@@ -85,6 +126,9 @@ export default {
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
     const trendingMovies = ref([]);
+    const isDialogOpen = ref(false);
+    const movieDetail = ref({});
+    const movieCredits = ref([]);
 
     const popularRow = ref(null);
     const topRatedRow = ref(null);
@@ -102,23 +146,40 @@ export default {
       }
     };
 
+    const openMovieDialog = async (id) => {
+      try {
+        movieDetail.value = await getMovieDetail(id);
+        movieCredits.value = await getMovieCredits(id);
+        isDialogOpen.value = true;
+      } catch (error) {
+        console.error('Error al cargar los detalles de la película:', error);
+      }
+    };
+
+    const closeMovieDialog = () => {
+      isDialogOpen.value = false;
+      movieDetail.value = {};
+      movieCredits.value = [];
+    };
+
     const scrollCategory = (category, direction) => {
       const rowRef = {
-        'popular': popularRow,
-        'topRated': topRatedRow,
-        'trending': trendingRow
+        popular: popularRow,
+        topRated: topRatedRow,
+        trending: trendingRow,
       }[category];
 
       if (!rowRef.value) return;
 
       const scrollAmount = rowRef.value.clientWidth * 0.8;
-      const scrollPosition = direction === 'next'
-        ? rowRef.value.scrollLeft + scrollAmount
-        : rowRef.value.scrollLeft - scrollAmount;
+      const scrollPosition =
+        direction === 'next'
+          ? rowRef.value.scrollLeft + scrollAmount
+          : rowRef.value.scrollLeft - scrollAmount;
 
       rowRef.value.scrollTo({
         left: scrollPosition,
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     };
 
@@ -128,11 +189,16 @@ export default {
       popularMovies,
       topRatedMovies,
       trendingMovies,
+      isDialogOpen,
+      movieDetail,
+      movieCredits,
       popularRow,
       topRatedRow,
       trendingRow,
       getImageUrl,
-      scrollCategory
+      scrollCategory,
+      openMovieDialog,
+      closeMovieDialog,
     };
   },
 };
@@ -157,7 +223,7 @@ export default {
 .section-title {
   font-size: 1.75rem;
   margin-bottom: 1rem;
-  border-left: 4px solid #fa000c;
+  border-left: 0.25rem solid #fa000c;
   padding-left: 0.75rem;
 }
 
@@ -183,20 +249,20 @@ export default {
 /* Estilos para las tarjetas de películas */
 .movie-card {
   flex: 0 0 auto;
-  width: 180px;
+  width: 11.25rem;
   margin-right: 1rem;
   transition: all 0.3s ease;
   cursor: pointer;
-  border-radius: 8px; /* Aumentamos el radio del borde para que coincida */
+  border-radius: 0.5rem;
   overflow: hidden;
   position: relative;
-  background-color: rgba(20, 20, 24, 0.8); /* Fondo inicial más oscuro */
+  background-color: rgba(20, 20, 24, 0.8);
   padding-bottom: 1rem;
 }
 
 .movie-card:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  transform: translateY(-0.625rem) scale(1.05);
+  box-shadow: 0 0.625rem 1.563rem rgba(0, 0, 0, 0.5);
   background-color: rgba(99, 63, 63, 0.7);
 }
 
@@ -213,8 +279,8 @@ export default {
   width: 100%;
   aspect-ratio: 2/3;
   object-fit: cover;
-  border-radius: 8px 8px 0 0;
-  box-shadow: 0 2px 10px rgba(233, 158, 158, 0.3);
+  border-radius: 0.5rem 0.5rem 0 0;
+  box-shadow: 0 0.125rem 0.625rem rgba(233, 158, 158, 0.3);
   transition: all 0.4s ease;
 }
 
@@ -250,8 +316,8 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 50%;
   background-color: rgba(151, 147, 147, 0.7);
   color: white;
@@ -277,5 +343,157 @@ export default {
 
 .next {
   right: 0.5rem;
+}
+
+/* Estilos para el diálogo */
+.movie-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow: auto;
+  padding: 1.25rem;
+}
+
+.dialog-content {
+  background: #1a1a1a;
+  color: #fff;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 50rem;
+  max-height: 85vh;
+  position: relative;
+  box-shadow: 0 0.313rem 1.563rem rgba(0, 0, 0, 0.5);
+  border: 0.063rem solid rgba(229, 9, 20, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.063rem solid rgba(255, 255, 255, 0.1);
+}
+
+.dialog-header h2 {
+  margin: 0;
+  color: #ff000d;
+  font-size: 1.75rem;
+  max-width: 75%;
+}
+
+.movie-rating-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-rating {
+  background-color: rgba(229, 9, 20, 0.8);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4rem;
+  text-align: center;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+  font-size: 1.1rem;
+}
+
+.dialog-body {
+  display: flex;
+  gap: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 0.313rem;
+}
+
+.dialog-poster {
+  flex: 0 0 12.5rem;
+}
+
+.dialog-poster img {
+  width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.188rem 0.625rem rgba(0, 0, 0, 0.3);
+}
+
+.dialog-info {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dialog-info p {
+  margin-bottom: 1.25rem;
+}
+
+.credits-list {
+  max-height: 9.375rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 0.313rem;
+  margin-top: 0.5rem;
+}
+
+.credit-item {
+  padding: 0.313rem 0;
+  border-bottom: 0.063rem solid rgba(255, 255, 255, 0.1);
+}
+
+.credit-item:last-child {
+  border-bottom: none;
+}
+
+.close-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: rgba(229, 9, 20, 0.9);
+  border: none;
+  color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.5);
+}
+
+.close-button:hover {
+  background: rgba(229, 9, 20, 1);
+  transform: scale(1.1);
+}
+
+@media (max-width: 40rem) {
+  .dialog-body {
+    flex-direction: column;
+  }
+
+  .dialog-poster {
+    flex: 0 0 auto;
+    margin: 0 auto;
+    max-width: 11.25rem;
+  }
 }
 </style>
