@@ -80,18 +80,39 @@ export default {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  background-color: rgba(121, 70, 70, 0.966);
+}
+
+.movie-card:hover .movie-title {
+  color: #ff0713;
+}
+
+.movie-card:hover .movie-poster {
+  transform: scale(1.1);
+  filter: brightness(110%);
 }
 
 .movie-poster {
   width: 100%;
   border-radius: 8px;
   margin-bottom: 0.5rem;
+  transition: all 0.4s ease;
 }
 
 .movie-title {
   font-size: 1rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
+  transition: color 0.3s ease;
 }
 
 .movie-type {
@@ -99,10 +120,22 @@ export default {
   color: rgba(255, 255, 255, 0.7);
 }
 
-.movie-provider {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 0.5rem;
+/* Añadido: overlay con información */
+.movie-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.movie-card:hover::after {
+  opacity: 1;
 }
 
 /* Header styles */
