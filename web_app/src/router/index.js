@@ -8,27 +8,27 @@ import ActorsPage from '@/pages/ActorsPage.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/CinePhix/',
     name: 'Main',
     component: MainPage,
   },
   {
-    path: '/home',
+    path: '/CinePhix/home',
     name: 'Home',
     component: HomePage,
   },
   {
-    path: '/movies',
+    path: '/CinePhix/movies',
     name: 'Movies',
     component: MoviesPage,
   },
   {
-    path: '/series',
+    path: '/CinePhix/series',
     name: 'Series',
     component: SeriesPage,
   },
   {
-    path: '/actores',
+    path: '/CinePhix/actores',
     name: 'Actors',
     component: ActorsPage,
   },

@@ -6,22 +6,22 @@
     <nav class="navigation">
       <ul class="nav-links">
         <li>
-          <router-link to="/home" class="nav-link" :class="{ active: isActive('/home') }">
+          <router-link to="/CinePhix/home" class="nav-link" :class="{ active: isActive('/CinePhix/home') }">
             Inicio
           </router-link>
         </li>
         <li>
-          <router-link to="/movies" class="nav-link" :class="{ active: isActive('/movies') }">
+          <router-link to="/CinePhix/movies" class="nav-link" :class="{ active: isActive('/CinePhix/movies') }">
             Películas
           </router-link>
         </li>
         <li>
-          <router-link to="/series" class="nav-link" :class="{ active: isActive('/series') }">
+          <router-link to="/CinePhix/series" class="nav-link" :class="{ active: isActive('/CinePhix/series') }">
             Series
           </router-link>
         </li>
         <li>
-          <router-link to="/actores" class="nav-link" :class="{ active: isActive('/actores') }">
+          <router-link to="/CinePhix/actores" class="nav-link" :class="{ active: isActive('/CinePhix/actores') }">
             Actores
           </router-link>
         </li>
