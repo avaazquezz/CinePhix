@@ -36,11 +36,6 @@ export default {
 
     const getImageUrl = (path) => `https://image.tmdb.org/t/p/w500${path}`;
 
-    const getProviderText = (provider) => {
-      if (!provider) return 'No disponible';
-      return provider.flatrate?.[0]?.provider_name || 'Cines';
-    };
-
     const fetchTrendingContent = async () => {
       try {
       const trending = await getTrendingAllDay();
@@ -55,7 +50,6 @@ export default {
     return {
       trendingContent,
       getImageUrl,
-      getProviderText,
     };
   },
 };

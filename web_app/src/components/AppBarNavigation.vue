@@ -5,10 +5,26 @@
     </div>
     <nav class="navigation">
       <ul class="nav-links">
-        <li><router-link to="/home" class="nav-link active">Inicio</router-link></li>
-          <li><router-link to="/movies" class="nav-link">Películas</router-link></li>
-          <li><router-link to="/series" class="nav-link">Series</router-link></li>
-          <li><router-link to="/actores" class="nav-link">Actores</router-link></li>
+        <li>
+          <router-link to="/home" class="nav-link" :class="{ active: isActive('/home') }">
+            Inicio
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/movies" class="nav-link" :class="{ active: isActive('/movies') }">
+            Películas
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/series" class="nav-link" :class="{ active: isActive('/series') }">
+            Series
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/actores" class="nav-link" :class="{ active: isActive('/actores') }">
+            Actores
+          </router-link>
+        </li>
       </ul>
     </nav>
   </header>
@@ -16,6 +32,7 @@
 
 <script>
 import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 
 export default {
   name: 'AppBarNavigation',
@@ -23,7 +40,7 @@ export default {
     const route = useRoute();
 
     const isActive = (path) => {
-      return route.path === path;
+      return route.path === path || route.path.startsWith(path + '/');
     };
 
     return {
@@ -64,10 +81,26 @@ export default {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
+  position: relative;
+  padding: 0.5rem 0;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+  color: rgba(229, 9, 20, 0.8);
+}
+
 .nav-link.active {
   color: #e50914;
+}
+
+/* Añadimos un subrayado para el enlace activo */
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #e50914;
 }
 </style>
