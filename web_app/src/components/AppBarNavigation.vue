@@ -32,7 +32,6 @@
 
 <script>
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
 
 export default {
   name: 'AppBarNavigation',
@@ -57,6 +56,8 @@ export default {
   justify-content: space-between;
   padding: 1rem 2rem;
   background-color: rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 1000;
 }
 
 .logo-img {
@@ -64,8 +65,8 @@ export default {
 }
 
 .navigation {
-  flex: 1;
-  margin: 0 2rem;
+  display: flex;
+  align-items: center;
 }
 
 .nav-links {
@@ -74,6 +75,8 @@ export default {
   gap: 1.5rem;
   justify-content: center;
   padding: 0;
+  margin: 0;
+  flex-wrap: wrap; /* Permite que los enlaces se ajusten en varias líneas si es necesario */
 }
 
 .nav-link {
@@ -93,7 +96,6 @@ export default {
   color: #e50914;
 }
 
-/* Añadimos un subrayado para el enlace activo */
 .nav-link.active::after {
   content: '';
   position: absolute;
@@ -102,5 +104,26 @@ export default {
   width: 100%;
   height: 2px;
   background-color: #e50914;
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    gap: 1rem; /* Reduce el espacio entre enlaces en pantallas pequeñas */
+  }
+
+  .nav-link {
+    font-size: 0.9rem; /* Reduce el tamaño del texto en pantallas pequeñas */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .nav-links {
+    gap: 0.5rem; /* Reduce aún más el espacio entre enlaces */
+  }
+
+  .nav-link {
+    font-size: 0.8rem; /* Ajusta el tamaño del texto para pantallas muy pequeñas */
+  }
 }
 </style>

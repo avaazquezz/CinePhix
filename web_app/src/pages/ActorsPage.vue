@@ -1,7 +1,5 @@
 <template>
   <div class="actors-page">
-    <AppBarNavigation />
-
     <div class="page-content">
       <div class="hero-section">
         <h1>Explora el mundo del cine a través de sus protagonistas</h1>

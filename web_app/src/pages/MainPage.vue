@@ -12,11 +12,11 @@
         <div class="logo">CINE<span>PHIX</span></div>
         <div class="logo-tagline">Donde el cine cobra vida</div>
       </div>
-      
+
       <h1 class="title">Explora el Séptimo Arte <br class="hide-mobile">Como Nunca Antes</h1>
-      
+
       <p class="subtitle">La plataforma definitiva para los verdaderos cinéfilos. <br class="hide-mobile">Descubre, explora y enamórate del cine en un solo lugar.</p>
-      
+
       <div class="buttons">
         <router-link to="/home" class="btn primary-btn">
           <span class="btn-text">Comenzar Aventura</span>
@@ -37,7 +37,7 @@
           <div class="feature-title">Últimos Estrenos</div>
           <div class="feature-description">Mantente al día con los más recientes lanzamientos del mundo cinematográfico</div>
         </div>
-        
+
         <div class="feature">
           <div class="feature-icon">
             <i class="fas fa-star"></i>
@@ -45,7 +45,7 @@
           <div class="feature-title">Crítica Experta</div>
           <div class="feature-description">Análisis detallados y reseñas de expertos en cine para guiar tus elecciones</div>
         </div>
-        
+
         <div class="feature">
           <div class="feature-icon">
             <i class="fas fa-fire"></i>

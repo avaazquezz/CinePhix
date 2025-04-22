@@ -1,7 +1,5 @@
 <template>
   <div class="home-container">
-    <AppBarNavigation />
-
     <main class="main-content">
       <!-- Sección de Series Populares -->
       <section class="serie-section">

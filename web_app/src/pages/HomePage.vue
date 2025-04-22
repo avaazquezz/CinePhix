@@ -1,10 +1,8 @@
 <template>
   <div class="home-container">
-    <AppBarNavigation />
-
     <main class="main-content">
       <section class="movie-section">
-        <h2 class="section-title">Peliculas y Series en Tendencia HOY</h2>
+        <h2 class="section-title">Películas y Series en Tendencia HOY</h2>
         <div class="movie-grid">
           <div
             v-for="item in trendingContent"
@@ -38,10 +36,10 @@ export default {
 
     const fetchTrendingContent = async () => {
       try {
-      const trending = await getTrendingAllDay();
-      trendingContent.value = trending;
+        const trending = await getTrendingAllDay();
+        trendingContent.value = trending;
       } catch (error) {
-      console.error('Error al cargar contenido en tendencia:', error);
+        console.error('Error al cargar contenido en tendencia:', error);
       }
     };
 
@@ -56,6 +54,7 @@ export default {
 </script>
 
 <style scoped>
+/* General styles */
 .home-container {
   min-height: 100vh;
   background-color: #141418;
@@ -63,6 +62,18 @@ export default {
   font-family: 'Arial', sans-serif;
 }
 
+.main-content {
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #e50914;
+  padding-left: 0.75rem;
+}
+
+/* Movie grid styles */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -114,102 +125,85 @@ export default {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Añadido: overlay con información */
-.movie-card::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+
+  .movie-card {
+    padding: 0.75rem;
+  }
+
+  .movie-title {
+    font-size: 0.9rem;
+  }
+
+  .movie-type {
+    font-size: 0.8rem;
+  }
 }
 
-.movie-card:hover::after {
-  opacity: 1;
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .movie-card {
+    padding: 0.5rem;
+  }
+
+  .movie-title {
+    font-size: 0.8rem;
+  }
+
+  .movie-type {
+    font-size: 0.75rem;
+  }
 }
 
-/* Header styles */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
-  background-color: rgba(0, 0, 0, 0.8);
-}
+@media (max-width: 480px) {
+  .main-content {
+    padding: 0.5rem;
+  }
 
-.logo-img {
-  height: 40px;
-}
+  .section-title {
+    font-size: 1rem;
+  }
 
-.navigation {
-  flex: 1;
-  margin: 0 2rem;
-}
+  .movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+  }
 
-.nav-links {
-  display: flex;
-  list-style-type: none;
-  gap: 1.5rem;
-  justify-content: center;
-  padding: 0;
-}
+  .movie-card {
+    padding: 0.5rem;
+  }
 
-.nav-link {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
+  .movie-title {
+    font-size: 0.7rem;
+  }
 
-.nav-link:hover, .nav-link.active {
-  color: #e50914;
-}
-
-.user-btn {
-  background-color: #e50914;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* Main content styles */
-.main-content {
-  padding: 2rem;
-}
-
-.section-title {
-  font-size: 1.75rem;
-  margin-bottom: 1.5rem;
-  border-left: 4px solid #e50914;
-  padding-left: 0.75rem;
-}
-
-.featured-slider, .movie-section {
-  margin-bottom: 3rem;
-}
-
-/* Placeholder for demonstration */
-.placeholder-text {
-  background-color: rgba(255,255,255,0.1);
-  border-radius: 8px;
-  padding: 2rem;
-  text-align: center;
-  color: rgba(255,255,255,0.7);
-}
-
-/* Footer styles */
-.footer {
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 1.5rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
+  .movie-type {
+    font-size: 0.65rem;
+  }
 }
 </style>

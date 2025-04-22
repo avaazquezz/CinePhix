@@ -1,7 +1,5 @@
 <template>
   <div class="home-container">
-    <AppBarNavigation />
-
     <main class="main-content">
       <!-- Sección de Películas Populares -->
       <section class="movie-section">
