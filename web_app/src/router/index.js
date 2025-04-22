@@ -4,6 +4,7 @@ import MainPage from '@/pages/MainPage.vue';
 import HomePage from '@/pages/HomePage.vue';
 import MoviesPage from '@/pages/MoviesPage.vue';
 import SeriesPage from '@/pages/SeriesPage.vue';
+import ActorsPage from '@/pages/ActorsPage.vue';
 
 const routes = [
   {
@@ -25,6 +26,11 @@ const routes = [
     path: '/series',
     name: 'Series',
     component: SeriesPage,
+  },
+  {
+    path: '/actores',
+    name: 'Actors',
+    component: ActorsPage,
   },
 ];
 
