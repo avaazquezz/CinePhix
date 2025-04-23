@@ -24,7 +24,7 @@
 
     <div v-if="dialogVisible" class="dialog-overlay" @click.self="closeDialog">
       <div class="dialog-content">
-        <button class="dialog-close" @click="closeDialog">×</button>
+        <button class="dialog-close" @click="closeDialog" aria-label="Cerrar">×</button>
         <img
           :src="getImageUrl(selectedItem.poster_path)"
           :alt="selectedItem.title || selectedItem.name"
@@ -32,11 +32,13 @@
         />
         <div class="dialog-details">
           <h2 class="dialog-title">{{ selectedItem.title || selectedItem.name }}</h2>
-          <p class="dialog-overview">{{ selectedItem.overview }}</p>
+          <p class="dialog-overview">{{ selectedItem.overview || 'No hay descripción disponible.' }}</p>
           <p class="dialog-type">
             Tipo: {{ selectedItem.media_type === 'movie' ? 'Película' : 'Serie' }}
           </p>
-          <p class="dialog-rating">Puntuación: {{ selectedItem.vote_average }}</p>
+          <p class="dialog-rating">
+            Puntuación: {{ selectedItem.vote_average ? (selectedItem.vote_average).toFixed(1) : 'N/A' }}/10
+          </p>
         </div>
       </div>
     </div>
@@ -54,7 +56,19 @@ export default {
     const dialogVisible = ref(false);
     const selectedItem = ref({});
 
-    const getImageUrl = (path) => `https://image.tmdb.org/t/p/w500${path}`;
+    // Versión mejorada para diferentes tamaños de pantalla
+    const getImageUrl = (path) => {
+      if (!path) return '';
+
+      // Usar tamaños de imagen apropiados según el dispositivo
+      const isMobile = window.innerWidth <= 480;
+      const isDialogView = window.innerWidth <= 768;
+
+      // Para la cuadrícula principal usa imágenes más pequeñas en móvil
+      const size = isMobile ? 'w342' : 'w500';
+
+      return `https://image.tmdb.org/t/p/${size}${path}`;
+    };
 
     const fetchTrendingContent = async () => {
       try {
@@ -242,11 +256,17 @@ export default {
   .dialog-content {
     flex-direction: column;
     align-items: center;
+    padding: 1.5rem;
+    gap: 1rem;
+    max-height: 85vh;
+    width: 95%;
   }
 
   .dialog-poster {
-    max-width: 100%;
-    margin-bottom: 1rem;
+    max-width: 70%;
+    margin-bottom: 0.5rem;
+    height: auto;
+    max-height: 40vh;
   }
 
   .dialog-details {
@@ -256,10 +276,96 @@ export default {
 
   .dialog-title {
     font-size: 1.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .dialog-overview {
     font-size: 0.9rem;
+    max-height: 30vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-content {
+    padding: 1.25rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .dialog-close {
+    top: 5px;
+    right: 5px;
+    font-size: 1.5rem;
+  }
+
+  .dialog-poster {
+    max-width: 60%;
+    max-height: 35vh;
+  }
+
+  .dialog-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dialog-overview {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    max-height: 25vh;
+  }
+
+  .dialog-type,
+  .dialog-rating {
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .dialog-content {
+    padding: 1rem 0.75rem;
+  }
+
+  .dialog-poster {
+    max-width: 70%;
+    max-height: 30vh;
+  }
+
+  .dialog-title {
+    font-size: 1.1rem;
+  }
+
+  .dialog-overview {
+    font-size: 0.8rem;
+    max-height: 22vh;
+  }
+
+  .movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .dialog-content {
+    flex-direction: row;
+    max-height: 90vh;
+    padding: 1rem;
+  }
+
+  .dialog-poster {
+    max-width: 30%;
+    max-height: 70vh;
+  }
+
+  .dialog-details {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .dialog-overview {
+    max-height: none;
   }
 }
 </style>
