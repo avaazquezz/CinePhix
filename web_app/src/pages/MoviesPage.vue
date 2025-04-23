@@ -688,7 +688,7 @@ export default {
   }
 
   .dialog-header {
-    padding-right: 1.5rem; /* Espacio para el botón de cierre */
+    padding-right: 1.5rem;
   }
 
   .dialog-poster {
@@ -722,6 +722,132 @@ export default {
   .movie-section {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
+  }
+}
+
+/* Mejoras específicas para tablets pequeñas y móviles grandes (402px-640px) */
+@media (min-width: 402px) and (max-width: 640px) {
+  .dialog-content {
+    width: 95%;
+    padding: 1.75rem 1.25rem 1.25rem;
+    max-height: 92vh;
+  }
+
+  .dialog-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    padding-right: 1rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    max-width: 70%;
+    margin-right: 0.5rem;
+  }
+
+  .movie-rating {
+    padding: 0.3rem 0.5rem;
+    min-width: 3rem;
+    font-size: 0.95rem;
+  }
+
+  .dialog-body {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr; /* Aumentado de 8.5rem a 9.5rem */
+    gap: 1.5rem; /* Aumentado de 1.25rem a 1.5rem */
+    align-items: start;
+  }
+
+  .dialog-poster {
+    grid-column: 1;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .dialog-poster img {
+    width: 100%;
+    max-height: none;
+    border-radius: 0.375rem;
+  }
+
+  .dialog-info {
+    grid-column: 2;
+    padding-right: 0.25rem;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+
+  .dialog-info p {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .movie-overview {
+    max-height: 22vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+
+  .credits-list {
+    max-height: 12vh;
+    padding: 0.5rem;
+  }
+
+  .credit-item {
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+  }
+
+  .close-button {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.1rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Ajuste específico para dispositivos alrededor de 400-480px */
+@media (min-width: 400px) and (max-width: 480px) {
+  .dialog-body {
+    grid-template-columns: 8.5rem 1fr; 
+    gap: 1.25rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .dialog-info p {
+    font-size: 0.9rem;
+  }
+
+  .movie-overview {
+    max-height: 20vh;
+  }
+}
+
+/* Mejoras específicas para tablets pequeñas y móviles grandes (402px-640px) */
+@media (min-width: 402px) and (max-width: 640px) and (orientation: landscape) {
+  .dialog-content {
+    max-height: 90vh;
+  }
+
+  .dialog-body {
+    grid-template-columns: 9rem 1fr;
+  }
+
+  .dialog-info {
+    max-height: 45vh;
+  }
+
+  .movie-overview {
+    max-height: 15vh;
   }
 }
 </style>

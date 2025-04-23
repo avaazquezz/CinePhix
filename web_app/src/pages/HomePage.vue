@@ -285,6 +285,13 @@ export default {
     overflow-y: auto;
     padding-right: 0.25rem;
   }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+    border-left: 3px solid #e50914;
+    padding-left: 0.6rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -320,6 +327,13 @@ export default {
     font-size: 0.9rem;
     margin-top: 0.3rem;
   }
+
+  .section-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid #e50914;
+    padding-left: 0.5rem;
+  }
 }
 
 @media (max-width: 360px) {
@@ -344,6 +358,19 @@ export default {
   .movie-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .section-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    border-left: 2px solid #e50914;
+    padding-left: 0.4rem;
+  }
+
+  .main-content {
+    padding: 1.5rem 1rem;
   }
 }
 
