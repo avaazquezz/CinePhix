@@ -1,7 +1,9 @@
 <template>
   <header class="header">
     <div class="logo">
+      <router-link to="/CinePhix/">
       <img src="@/assets/logo.png" alt="CinePhix Logo" class="logo-img" />
+      </router-link>
     </div>
     <nav class="navigation">
       <ul class="nav-links">
