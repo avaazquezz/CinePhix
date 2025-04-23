@@ -87,16 +87,16 @@
 
           <div class="dialog-body">
             <div class="dialog-poster">
-              <img :src="getImageUrl(movieDetail.poster_path)" :alt="movieDetail.title" />
+              <img :src="getImageUrl(movieDetail.poster_path, true)" :alt="movieDetail.title" />
             </div>
             <div class="dialog-info">
-              <p><strong>Fecha de lanzamiento:</strong> {{ movieDetail.release_date }}</p>
+              <p><strong>Fecha de lanzamiento:</strong> {{ movieDetail.release_date || 'No disponible' }}</p>
 
-              <p><strong>Sinopsis:</strong> {{ movieDetail.overview }}</p>
+              <p class="movie-overview"><strong>Sinopsis:</strong> {{ movieDetail.overview || 'No disponible' }}</p>
 
               <p><strong>Créditos:</strong></p>
               <div class="credits-list">
-                <div v-for="actor in movieCredits" :key="actor.id" class="credit-item">
+                <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="credit-item">
                   {{ actor.name }} como {{ actor.character }}
                 </div>
               </div>
@@ -132,7 +132,14 @@ export default {
     const topRatedRow = ref(null);
     const trendingRow = ref(null);
 
-    const getImageUrl = (path) => `https://image.tmdb.org/t/p/w500${path}`;
+    const getImageUrl = (path, isDetail = false) => {
+      if (!path) return '';
+
+      const isMobile = window.innerWidth <= 480;
+      const size = isDetail ? (isMobile ? 'w342' : 'w500') : (isMobile ? 'w185' : 'w342');
+
+      return `https://image.tmdb.org/t/p/${size}${path}`;
+    };
 
     const fetchMovies = async () => {
       try {
@@ -492,6 +499,355 @@ export default {
     flex: 0 0 auto;
     margin: 0 auto;
     max-width: 11.25rem;
+  }
+}
+
+/* Mejoras responsive */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .movie-row-container {
+    padding: 0 2rem;
+  }
+
+  .movie-card {
+    width: 9rem;
+    margin-right: 0.5rem;
+  }
+
+  .nav-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .movie-row-container {
+    padding: 0 1.5rem;
+  }
+
+  .movie-card {
+    width: 7.5rem;
+    margin-right: 0.4rem;
+  }
+
+  .movie-title {
+    font-size: 0.8rem;
+    margin: 0.3rem 0.3rem 0.5rem;
+  }
+
+  .nav-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+}
+
+/* Mejoras para el diálogo en pantallas pequeñas */
+@media (max-width: 600px) {
+  .dialog-content {
+    width: 95%;
+    padding: 2rem 1rem 1rem;
+    max-height: 90vh;
+  }
+
+  .dialog-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.4rem;
+    max-width: 100%;
+  }
+
+  .movie-rating {
+    padding: 0.3rem 0.5rem;
+    min-width: 3rem;
+    font-size: 0.95rem;
+  }
+
+  .dialog-body {
+    gap: 1rem;
+  }
+
+  .dialog-poster {
+    margin: 0 auto 1rem;
+    max-width: 9rem;
+  }
+
+  .credits-list {
+    max-height: 7rem;
+  }
+
+  .close-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Mejoras adicionales para el diálogo en pantallas pequeñas */
+@media (max-width: 400px) {
+  .dialog-content {
+    width: 98%;
+    padding: 1.5rem 1rem 1rem;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .dialog-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .movie-rating {
+    padding: 0.25rem 0.4rem;
+    min-width: 2.8rem;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .dialog-body {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-right: 0;
+  }
+
+  .dialog-poster {
+    margin: 0 auto 0.5rem;
+    max-width: 7.5rem;
+  }
+
+  .dialog-poster img {
+    width: 100%;
+    max-height: 11rem;
+    object-fit: cover;
+  }
+
+  .dialog-info {
+    padding-bottom: 1rem;
+  }
+
+  .dialog-info p {
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .dialog-info strong {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .credits-list {
+    max-height: 6rem;
+    padding: 0.3rem;
+  }
+
+  .credit-item {
+    font-size: 0.8rem;
+    padding: 0.25rem 0;
+  }
+
+  .close-button {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.9rem;
+    top: 0.4rem;
+    right: 0.4rem;
+  }
+}
+
+/* Ajustes específicos para dispositivos muy pequeños */
+@media (max-width: 360px) {
+  .dialog-content {
+    padding: 1.25rem 0.75rem 0.75rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .dialog-header {
+    padding-right: 1.5rem;
+  }
+
+  .dialog-poster {
+    max-width: 6.5rem;
+  }
+
+  .dialog-info p {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Mejora para que se vea bien la sinopsis */
+  .dialog-info p:nth-child(2) {
+    max-height: 9.5rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+}
+
+/* Mejoras para navegación en pantalla táctil */
+@media (hover: none) {
+  .nav-button {
+    opacity: 1;
+    background-color: rgba(151, 147, 147, 0.8);
+  }
+
+  .movie-card:hover {
+    transform: none;
+  }
+
+  .movie-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Mejoras específicas para tablets pequeñas y móviles grandes (402px-640px) */
+@media (min-width: 402px) and (max-width: 640px) {
+  .dialog-content {
+    width: 95%;
+    padding: 1.75rem 1.25rem 1.25rem;
+    max-height: 92vh;
+  }
+
+  .dialog-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    padding-right: 1rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    max-width: 70%;
+    margin-right: 0.5rem;
+  }
+
+  .movie-rating {
+    padding: 0.3rem 0.5rem;
+    min-width: 3rem;
+    font-size: 0.95rem;
+  }
+
+  .dialog-body {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr; /* Aumentado de 8.5rem a 9.5rem */
+    gap: 1.5rem; /* Aumentado de 1.25rem a 1.5rem */
+    align-items: start;
+  }
+
+  .dialog-poster {
+    grid-column: 1;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .dialog-poster img {
+    width: 100%;
+    max-height: none;
+    border-radius: 0.375rem;
+  }
+
+  .dialog-info {
+    grid-column: 2;
+    padding-right: 0.25rem;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+
+  .dialog-info p {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .movie-overview {
+    max-height: 22vh;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+
+  .credits-list {
+    max-height: 12vh;
+    padding: 0.5rem;
+  }
+
+  .credit-item {
+    font-size: 0.9rem;
+    padding: 0.3rem 0;
+  }
+
+  .close-button {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.1rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Ajuste específico para dispositivos alrededor de 400-480px */
+@media (min-width: 400px) and (max-width: 480px) {
+  .dialog-body {
+    grid-template-columns: 8.5rem 1fr; 
+    gap: 1.25rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .dialog-info p {
+    font-size: 0.9rem;
+  }
+
+  .movie-overview {
+    max-height: 20vh;
+  }
+}
+
+/* Mejoras específicas para tablets pequeñas y móviles grandes (402px-640px) */
+@media (min-width: 402px) and (max-width: 640px) and (orientation: landscape) {
+  .dialog-content {
+    max-height: 90vh;
+  }
+
+  .dialog-body {
+    grid-template-columns: 9rem 1fr;
+  }
+
+  .dialog-info {
+    max-height: 45vh;
+  }
+
+  .movie-overview {
+    max-height: 15vh;
   }
 }
 </style>
