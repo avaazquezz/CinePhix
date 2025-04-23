@@ -27,25 +27,17 @@
       <!-- Características -->
       <div class="features">
         <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-film"></i>
-          </div>
+
           <div class="feature-title">Últimos Estrenos</div>
           <div class="feature-description">Mantente al día con los más recientes lanzamientos del mundo cinematográfico</div>
         </div>
 
         <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-star"></i>
-          </div>
           <div class="feature-title">Crítica Experta</div>
           <div class="feature-description">Análisis detallados y reseñas de expertos en cine para guiar tus elecciones</div>
         </div>
 
         <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-fire"></i>
-          </div>
           <div class="feature-title">Tendencias</div>
           <div class="feature-description">Descubre qué está causando sensación en la comunidad cinéfila mundial</div>
         </div>
@@ -470,19 +462,19 @@ export default {
   .content {
     padding: 4vh 15px;
   }
-  
+
   .title {
     font-size: 2.8rem;
   }
-  
+
   .logo {
     font-size: 3.5rem;
   }
-  
+
   .features {
     flex-wrap: wrap;
   }
-  
+
   .feature {
     min-width: calc(50% - 30px);
   }
@@ -492,11 +484,11 @@ export default {
   .title {
     font-size: 2.5rem;
   }
-  
+
   .subtitle {
     font-size: 1.2rem;
   }
-  
+
   .buttons {
     flex-direction: column;
     width: 100%;
@@ -504,31 +496,31 @@ export default {
     margin-left: auto;
     margin-right: auto;
   }
-  
+
   .features {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .feature {
     width: 100%;
     max-width: 320px;
   }
-  
+
   .stats {
     flex-direction: column;
     gap: 30px;
   }
-  
+
   .corner-decoration {
     width: 100px;
     height: 100px;
   }
-  
+
   .hide-mobile {
     display: none;
   }
-  
+
   .logo {
     font-size: 3rem;
   }
