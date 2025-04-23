@@ -494,4 +494,253 @@ export default {
     max-width: 11.25rem;
   }
 }
+
+/* Mejoras responsive */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .serie-row-container {
+    padding: 0 2rem;
+  }
+
+  .serie-card {
+    width: 9rem;
+    margin-right: 0.5rem;
+  }
+
+  .nav-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .serie-row-container {
+    padding: 0 1.5rem;
+  }
+
+  .serie-card {
+    width: 7.5rem;
+    margin-right: 0.4rem;
+  }
+
+  .serie-title {
+    font-size: 0.8rem;
+    margin: 0.3rem 0.3rem 0.5rem;
+  }
+
+  .nav-button {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+}
+
+/* Mejoras para el diálogo en pantallas pequeñas */
+@media (max-width: 600px) {
+  .dialog-content {
+    width: 98%;
+    padding: 2rem 1rem 1rem;
+    max-height: 90vh;
+  }
+
+  .dialog-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.4rem;
+    max-width: 100%;
+  }
+
+  .serie-rating {
+    padding: 0.3rem 0.5rem;
+    min-width: 3rem;
+    font-size: 0.95rem;
+  }
+
+  .dialog-body {
+    gap: 1rem;
+  }
+
+  .dialog-poster {
+    margin: 0 auto 1rem;
+    max-width: 9rem;
+  }
+
+  .credits-list {
+    max-height: 7rem;
+  }
+
+  .close-button {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}
+
+/* Mejoras adicionales para el diálogo en pantallas pequeñas */
+@media (max-width: 400px) {
+  .dialog-content {
+    width: 98%;
+    padding: 1.5rem 1rem 1rem;
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .dialog-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .serie-rating {
+    padding: 0.25rem 0.4rem;
+    min-width: 2.8rem;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .dialog-body {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-right: 0;
+  }
+
+  .dialog-poster {
+    margin: 0 auto 0.5rem;
+    max-width: 7.5rem;
+  }
+
+  .dialog-poster img {
+    width: 100%;
+    max-height: 11rem;
+    object-fit: cover;
+  }
+
+  .dialog-info {
+    padding-bottom: 1rem;
+  }
+
+  .dialog-info p {
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .dialog-info strong {
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .credits-list {
+    max-height: 6rem;
+    padding: 0.3rem;
+  }
+
+  .credit-item {
+    font-size: 0.8rem;
+    padding: 0.25rem 0;
+  }
+
+  .close-button {
+    width: 1.8rem;
+    height: 1.8rem;
+    font-size: 0.9rem;
+    top: 0.4rem;
+    right: 0.4rem;
+  }
+}
+
+/* Ajustes específicos para dispositivos muy pequeños */
+@media (max-width: 360px) {
+  .dialog-content {
+    padding: 1.25rem 0.75rem 0.75rem;
+  }
+
+  .dialog-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .dialog-header {
+    padding-right: 1.5rem; /* Espacio para el botón de cierre */
+  }
+
+  .dialog-poster {
+    max-width: 6.5rem;
+  }
+
+  .dialog-info p {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Mejora para que se vea bien la sinopsis */
+  .dialog-info p:nth-child(2) {
+    max-height: 9.5rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+}
+
+/* Mejoras para orientación landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .serie-dialog {
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+
+  .dialog-content {
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+
+  .dialog-body {
+    max-height: 65vh;
+  }
+
+  .serie-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .dialog-poster img {
+    max-height: 50vh;
+    width: auto;
+  }
+}
+
+/* Mejoras para navegación en pantalla táctil */
+@media (hover: none) {
+  .nav-button {
+    opacity: 1;
+    background-color: rgba(151, 147, 147, 0.8);
+  }
+
+  .serie-card:hover {
+    transform: none;
+  }
+
+  .serie-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+  }
+}
 </style>
