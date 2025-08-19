@@ -10,7 +10,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/CinePhix',
+  // Important for GitHub Pages under https://<user>.github.io/CinePhix/
+  // Trailing slash avoids broken asset URLs
+  base: '/CinePhix/',
   plugins: [
     Vue({
       template: { transformAssetUrls },
@@ -57,5 +59,9 @@ export default defineConfig({
         api:'modern-compiler',
       },
     },
+  },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
   },
 })
