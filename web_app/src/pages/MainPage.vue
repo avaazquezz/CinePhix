@@ -10,16 +10,16 @@
     <div class="content">
       <div class="logo-container">
         <div class="logo">CINE<span>PHIX</span></div>
-        <div class="logo-tagline">Donde el cine cobra vida</div>
+        <div class="logo-tagline" v-html="$t('main.tagline')"></div>
       </div>
 
-      <h1 class="title">Explora el Séptimo Arte <br class="hide-mobile">Como Nunca Antes</h1>
+      <h1 class="title" v-html="$t('main.exploreTitle')"></h1>
 
-      <p class="subtitle">La plataforma definitiva para los verdaderos cinéfilos. <br class="hide-mobile">Descubre, explora y enamórate del cine en un solo lugar.</p>
+      <p class="subtitle" v-html="$t('main.subtitle')"></p>
 
       <div class="buttons">
         <router-link to="/CinePhix/home" class="btn primary-btn">
-          <span class="btn-text">Comenzar Aventura</span>
+          <span class="btn-text">{{$t('main.cta')}}</span>
           <span class="btn-icon"><i class="fas fa-play"></i></span>
         </router-link>
       </div>
@@ -28,18 +28,18 @@
       <div class="features">
         <div class="feature">
 
-          <div class="feature-title">Últimos Estrenos</div>
-          <div class="feature-description">Mantente al día con los más recientes lanzamientos del mundo cinematográfico</div>
+          <div class="feature-title">{{$t('main.features.releases.title')}}</div>
+          <div class="feature-description">{{$t('main.features.releases.desc')}}</div>
         </div>
 
         <div class="feature">
-          <div class="feature-title">Crítica Experta</div>
-          <div class="feature-description">Análisis detallados y reseñas de expertos en cine para guiar tus elecciones</div>
+          <div class="feature-title">{{$t('main.features.reviews.title')}}</div>
+          <div class="feature-description">{{$t('main.features.reviews.desc')}}</div>
         </div>
 
         <div class="feature">
-          <div class="feature-title">Tendencias</div>
-          <div class="feature-description">Descubre qué está causando sensación en la comunidad cinéfila mundial</div>
+          <div class="feature-title">{{$t('main.features.trending.title')}}</div>
+          <div class="feature-description">{{$t('main.features.trending.desc')}}</div>
         </div>
       </div>
 
@@ -47,19 +47,19 @@
       <div class="stats">
         <div class="stat-item">
           <div class="stat-number">10K+</div>
-          <div class="stat-label">Películas</div>
+          <div class="stat-label">{{$t('main.stats.movies')}}</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">5K+</div>
-          <div class="stat-label">Series</div>
+          <div class="stat-label">{{$t('main.stats.series')}}</div>
         </div>
       </div>
 
       <!-- Llamado a la acción final -->
       <div class="cta-final">
-        <h2>¿Listo para empezar?</h2>
+        <h2>{{$t('main.finalCta.title')}}</h2>
         <router-link to="/home" class="btn glow-btn">
-          <span>Explorar Ahora</span>
+          <span>{{ $t('main.finalCta.action') }}</span>
         </router-link>
       </div>
     </div>

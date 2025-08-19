@@ -1,0 +1,5 @@
+/node_modules
+/web_app/.env
+/web_app/.vite
+
+

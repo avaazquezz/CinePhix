@@ -17,16 +17,12 @@
     <v-divider class="divider"></v-divider>
 
     <!-- Descripción del proyecto -->
-    <div class="project-description">
-      Este proyecto fue desarrollado por un <strong>Desarrollador Fullstack</strong> para demostrar habilidades en <strong>Desarrollo Web</strong> y el manejo de <strong>APIs</strong> con <strong>JavaScript</strong>. Los datos utilizados provienen de la API de <a href="https://www.themoviedb.org/" target="_blank" class="tmdb-link"><strong>TMDB</strong></a>.
-    </div>
+  <div class="project-description" v-html="$t('footer.projectDesc')"></div>
 
     <v-divider class="divider"></v-divider>
 
     <!-- Información del desarrollador -->
-    <div class="developer-info">
-      Desarrollado por <strong>Adrián Vázquez</strong>
-    </div>
+  <div class="developer-info" v-html="$t('footer.by')"></div>
   </v-footer>
 </template>
 

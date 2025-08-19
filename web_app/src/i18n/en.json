@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "home": "Home",
+    "movies": "Movies",
+    "series": "Series",
+    "actors": "Actors"
+  },
+  "main": {
+    "tagline": "Where cinema comes to life",
+    "exploreTitle": "Explore the Seventh Art <br class=\"hide-mobile\">Like Never Before",
+    "subtitle": "The ultimate platform for true cinephiles. <br class=\"hide-mobile\">Discover, explore and fall in love with cinema in one place.",
+    "cta": "Start Adventure",
+    "features": {
+      "releases": {
+        "title": "Latest Releases",
+        "desc": "Stay up to date with the latest film industry releases"
+      },
+      "reviews": {
+        "title": "Expert Reviews",
+        "desc": "Detailed analysis and reviews by film experts to guide your choices"
+      },
+      "trending": {
+        "title": "Trending",
+        "desc": "Discover what's making waves in the global film community"
+      }
+    },
+    "stats": {
+      "movies": "Movies",
+      "series": "Series"
+    },
+    "finalCta": {
+      "title": "Ready to start?",
+      "action": "Explore Now"
+    }
+  },
+  "home": {
+    "todayTrending": "Movies and Series Trending TODAY",
+    "type": {
+      "movie": "Movie",
+      "tv": "TV Show"
+    },
+    "dialog": {
+      "close": "Close",
+      "type": "Type",
+      "rating": "Rating",
+      "noOverview": "No overview available.",
+      "na": "N/A"
+    }
+  },
+  "movies": {
+    "popular": "Popular Movies",
+    "topRated": "Top Rated Movies",
+    "weeklyTrending": "Weekly Trending Movies",
+    "detail": {
+      "releaseDate": "Release date",
+      "overview": "Overview",
+      "credits": "Credits"
+    }
+  },
+  "series": {
+    "popular": "Popular Series",
+    "topRated": "Top Rated Series",
+    "weeklyTrending": "Weekly Trending Series",
+    "detail": {
+      "releaseDate": "First air date",
+      "overview": "Overview",
+      "credits": "Credits"
+    }
+  },
+  "actors": {
+    "title": "Explore the talent <span class=\"accent-text\">behind the screen</span>",
+    "subtitle": "Discover the story and filmography of your favorite actors",
+    "searchPlaceholder": "Search actors...",
+    "search": "Search",
+    "trySearching": "Try searching:",
+    "results": "Results for \"{query}\"",
+    "found": "{count} actors found",
+    "noResultsTitle": "We couldn't find results for \"{query}\"",
+    "noResultsHint": "Try another name or check the spelling",
+    "newSearch": "New search",
+    "discoverTitle": "Discover the talent behind cinema",
+    "discoverSubtitle": "Use the search to explore information about your favorite actors",
+    "filmography": "Filmography",
+    "titles": "{count} titles",
+    "loading": "Loading filmography...",
+    "movie": "Movie",
+    "tv": "TV Show",
+    "unknown": "Unknown",
+    "viewDetails": "View details"
+  },
+  "footer": {
+    "projectDesc": "This project was developed by a <strong>Fullstack Developer</strong> to showcase skills in <strong>Web Development</strong> and <strong>APIs</strong> with <strong>JavaScript</strong>. Data is powered by <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",
+    "by": "Developed by <strong>Adrián Vázquez</strong>"
+  },
+  "lang": {
+    "label": "Language",
+    "es": "Spanish",
+    "en": "English"
+  }
+}

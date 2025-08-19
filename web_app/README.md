@@ -61,6 +61,14 @@ yarn build
 
 Once the build process is completed, your application will be ready for deployment in a production environment.
 
+## 🌐 Internationalization (i18n)
+
+- Library: vue-i18n v9
+- Language files: `src/i18n/es.json` and `src/i18n/en.json`
+- The app detects the browser language on first load and falls back to Spanish.
+- The selected language is stored in localStorage and can be changed from the top navigation selector.
+- TMDB requests automatically include the current `language` parameter (es-ES/en-US).
+
 ## 💪 Support Vuetify Development
 
 This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:

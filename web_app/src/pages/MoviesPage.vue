@@ -3,7 +3,7 @@
     <main class="main-content">
       <!-- Sección de Películas Populares -->
       <section class="movie-section">
-        <h2 class="section-title">Películas Populares</h2>
+  <h2 class="section-title">{{$t('movies.popular')}}</h2>
         <div class="movie-row-container">
           <button class="nav-button prev" @click="scrollCategory('popular', 'prev')">&lt;</button>
           <div class="movie-row" ref="popularRow">
@@ -27,7 +27,7 @@
 
       <!-- Sección de Películas Mejor Valoradas -->
       <section class="movie-section">
-        <h2 class="section-title">Películas Mejor Valoradas</h2>
+  <h2 class="section-title">{{$t('movies.topRated')}}</h2>
         <div class="movie-row-container">
           <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')">&lt;</button>
           <div class="movie-row" ref="topRatedRow">
@@ -51,7 +51,7 @@
 
       <!-- Sección de Películas en Tendencia -->
       <section class="movie-section">
-        <h2 class="section-title">Películas en Tendencia Semanal</h2>
+  <h2 class="section-title">{{$t('movies.weeklyTrending')}}</h2>
         <div class="movie-row-container">
           <button class="nav-button prev" @click="scrollCategory('trending', 'prev')">&lt;</button>
           <div class="movie-row" ref="trendingRow">
@@ -76,7 +76,10 @@
       <!-- Diálogo de Detalles de Película -->
       <div v-if="isDialogOpen" class="movie-dialog" @click.self="closeMovieDialog">
         <div class="dialog-content">
-          <button class="close-button" @click="closeMovieDialog">X</button>
+          <button class="close-button" @click="closeMovieDialog" aria-label="Cerrar">
+            <span class="close-icon">✖</span>
+            <span class="sr-only">{{ $t('common.close') }}</span>
+          </button>
 
           <div class="dialog-header">
             <h2>{{ movieDetail.title }}</h2>
@@ -90,11 +93,11 @@
               <img :src="getImageUrl(movieDetail.poster_path, true)" :alt="movieDetail.title" />
             </div>
             <div class="dialog-info">
-              <p><strong>Fecha de lanzamiento:</strong> {{ movieDetail.release_date || 'No disponible' }}</p>
+              <p><strong>{{ $t('movies.detail.releaseDate') }}:</strong> {{ movieDetail.release_date || '—' }}</p>
 
-              <p class="movie-overview"><strong>Sinopsis:</strong> {{ movieDetail.overview || 'No disponible' }}</p>
+              <p class="movie-overview"><strong>{{ $t('movies.detail.overview') }}:</strong> {{ movieDetail.overview || '—' }}</p>
 
-              <p><strong>Créditos:</strong></p>
+              <p><strong>{{ $t('movies.detail.credits') }}:</strong></p>
               <div class="credits-list">
                 <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="credit-item">
                   {{ actor.name }} como {{ actor.character }}
@@ -466,28 +469,53 @@ export default {
 
 .close-button {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  background: rgba(229, 9, 20, 0.9);
-  border: none;
-  color: white;
-  width: 2.5rem;
-  height: 2.5rem;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  font-size: 1.25rem;
+  border: 2px solid #ff0000;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
   transition: all 0.3s ease;
+  z-index: 100;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+
+.close-icon {
+  font-size: 20px;
+  color: white;
   font-weight: bold;
-  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 .close-button:hover {
-  background: rgba(229, 9, 20, 1);
-  transform: scale(1.1);
+  background: #ff0000;
+  transform: rotate(90deg);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+  border: 2px solid white;
+}
+
+.close-button:hover .close-icon {
+  transform: scale(1.2);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 40rem) {
@@ -590,13 +618,28 @@ export default {
   .credits-list {
     max-height: 7rem;
   }
+  
+  .close-button {
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .close-icon {
+    font-size: 18px;
+  }
 
   .close-button {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1rem;
+    width: 50px;
+    height: 50px;
+    background: #ff0000;
     top: 0.5rem;
     right: 0.5rem;
+  }
+  
+  .close-icon {
+    font-size: 28px;
   }
 }
 
@@ -667,13 +710,27 @@ export default {
     font-size: 0.8rem;
     padding: 0.25rem 0;
   }
+  
+  .close-button {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .close-icon {
+    font-size: 16px;
+  }
 
   .close-button {
-    width: 1.8rem;
-    height: 1.8rem;
-    font-size: 0.9rem;
+    width: 55px;
+    height: 55px;
+    background: #ff0000;
+    border: 3px solid white;
     top: 0.4rem;
     right: 0.4rem;
+  }
+  
+  .close-icon {
+    font-size: 32px;
   }
 }
 
@@ -804,11 +861,16 @@ export default {
   }
 
   .close-button {
-    width: 2.2rem;
-    height: 2.2rem;
-    font-size: 1.1rem;
+    width: 50px;
+    height: 50px;
+    background: #ff0000;
+    border: 3px solid white;
     top: 0.5rem;
     right: 0.5rem;
+  }
+  
+  .close-icon {
+    font-size: 28px;
   }
 }
 
