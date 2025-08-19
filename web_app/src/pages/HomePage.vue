@@ -2,7 +2,7 @@
   <div class="home-container">
     <main class="main-content">
       <section class="movie-section">
-        <h2 class="section-title">Películas y Series en Tendencia HOY</h2>
+  <h2 class="section-title">{{$t('home.todayTrending')}}</h2>
         <div class="movie-grid">
           <div
             v-for="item in trendingContent"
@@ -16,7 +16,7 @@
               class="movie-poster"
             />
             <h3 class="movie-title">{{ item.title || item.name }}</h3>
-            <p class="movie-type">{{ item.media_type === 'movie' ? 'Película' : 'Serie' }}</p>
+            <p class="movie-type">{{ item.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}</p>
           </div>
         </div>
       </section>
@@ -24,7 +24,7 @@
 
     <div v-if="dialogVisible" class="dialog-overlay" @click.self="closeDialog">
       <div class="dialog-content">
-        <button class="dialog-close" @click="closeDialog" aria-label="Cerrar">×</button>
+  <button class="dialog-close" @click="closeDialog" :aria-label="$t('home.dialog.close')">×</button>
         <img
           :src="getImageUrl(selectedItem.poster_path)"
           :alt="selectedItem.title || selectedItem.name"
@@ -32,12 +32,12 @@
         />
         <div class="dialog-details">
           <h2 class="dialog-title">{{ selectedItem.title || selectedItem.name }}</h2>
-          <p class="dialog-overview">{{ selectedItem.overview || 'No hay descripción disponible.' }}</p>
+          <p class="dialog-overview">{{ selectedItem.overview || $t('home.dialog.noOverview') }}</p>
           <p class="dialog-type">
-            Tipo: {{ selectedItem.media_type === 'movie' ? 'Película' : 'Serie' }}
+            {{ $t('home.dialog.type') }}: {{ selectedItem.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}
           </p>
           <p class="dialog-rating">
-            Puntuación: {{ selectedItem.vote_average ? (selectedItem.vote_average).toFixed(1) : 'N/A' }}/10
+            {{ $t('home.dialog.rating') }}: {{ selectedItem.vote_average ? (selectedItem.vote_average).toFixed(1) : $t('home.dialog.na') }}/10
           </p>
         </div>
       </div>

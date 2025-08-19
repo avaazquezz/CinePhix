@@ -3,8 +3,8 @@
     <!-- Header con efecto parallax -->
     <div class="hero-parallax">
       <div class="hero-content">
-        <h1 class="hero-title">Explora el talento <span class="accent-text">detrás de la pantalla</span></h1>
-        <p class="hero-subtitle">Descubre la historia y filmografía de tus actores favoritos</p>
+  <h1 class="hero-title"><span v-html="$t('actors.title')"></span></h1>
+  <p class="hero-subtitle">{{ $t('actors.subtitle') }}</p>
 
         <!-- Buscador mejorado con animación -->
         <div class="search-container">
@@ -14,18 +14,18 @@
               <input
                 type="text"
                 v-model="searchQuery"
-                placeholder="Buscar actores..."
+                :placeholder="$t('actors.searchPlaceholder')"
                 @keyup.enter="searchForActors"
               />
               <button class="search-button pulse-animation" @click="searchForActors">
-                <span>Buscar</span>
+                <span>{{ $t('actors.search') }}</span>
               </button>
             </div>
           </div>
 
           <!-- Sugerencias de búsqueda mejoradas y más visibles -->
           <div class="search-suggestion" v-if="!actors.length && !searchQuery">
-            <span class="suggestion-label">Prueba buscando:</span>
+            <span class="suggestion-label">{{ $t('actors.trySearching') }}</span>
             <div class="suggestion-tags">
               <span class="tag" @click="quickSearch('Tom Hanks')">Tom Hanks</span>
               <span class="tag" @click="quickSearch('Scarlett Johansson')">Scarlett Johansson</span>
@@ -39,8 +39,8 @@
     <!-- Resultados de búsqueda con mejor presentación -->
     <div v-if="actors.length > 0" class="content-container search-results-section">
       <div class="section-header">
-        <h2>Resultados para "<span class="accent-text">{{ searchQuery }}</span>"</h2>
-        <div class="results-count">{{ actors.length }} actores encontrados</div>
+  <h2 v-html="$t('actors.results', { query: searchQuery })"></h2>
+  <div class="results-count">{{ $t('actors.found', { count: actors.length }) }}</div>
       </div>
 
       <!-- Grid de actores con animación -->
@@ -57,7 +57,7 @@
               <img :src="getActorImage(actor.profile_path)" :alt="actor.name" />
             </div>
             <div class="actor-overlay">
-              <span class="view-details">Ver detalles</span>
+              <span class="view-details">{{ $t('actors.viewDetails') }}</span>
             </div>
           </div>
           <div class="actor-info">
@@ -76,10 +76,10 @@
         <div class="no-results-icon">
           <i class="fas fa-search-minus"></i>
         </div>
-        <h3>No encontramos resultados para "<span class="accent-text">{{ searchQuery }}</span>"</h3>
-        <p>Intenta con otro nombre o verifica la ortografía</p>
+        <h3 v-html="$t('actors.noResultsTitle', { query: searchQuery })"></h3>
+        <p>{{ $t('actors.noResultsHint') }}</p>
         <button class="retry-button" @click="searchQuery = ''">
-          <i class="fas fa-redo-alt"></i> Nueva búsqueda
+          <i class="fas fa-redo-alt"></i> {{ $t('actors.newSearch') }}
         </button>
       </div>
     </div>
@@ -87,8 +87,8 @@
     <!-- Página inicial mejorada con cards de características -->
     <div class="content-container" v-if="!actors.length && !searchQuery">
       <div class="trending-section">
-        <h2 class="section-title">Descubre el talento detrás del cine</h2>
-        <p class="section-subtitle">Utiliza el buscador para explorar información sobre tus actores favoritos</p>
+  <h2 class="section-title">{{ $t('actors.discoverTitle') }}</h2>
+  <p class="section-subtitle">{{ $t('actors.discoverSubtitle') }}</p>
 
         <div class="features">
           <div class="feature-card">
@@ -120,7 +120,8 @@
       <div v-if="showDialog" class="modal" @click.self="closeDialog">
         <div class="modal-content">
           <button class="close-button" @click="closeDialog" aria-label="Cerrar">
-            <i class="fas fa-times"></i>
+            <span class="close-icon">✖</span>
+            <span class="sr-only">{{ $t('common.close') }}</span>
           </button>
 
           <div class="actor-profile">
@@ -128,8 +129,8 @@
 
             <div class="credits-wrapper">
               <div class="credits-header">
-                <h3>Filmografía</h3>
-                <div class="credits-count">{{ credits.length }} títulos</div>
+                <h3>{{ $t('actors.filmography') }}</h3>
+                <div class="credits-count">{{ $t('actors.titles', { count: credits.length }) }}</div>
               </div>
 
               <div v-if="credits.length > 0" class="credits-container">
@@ -144,7 +145,7 @@
                     <div class="credit-meta">
                       <span class="credit-type" :class="credit.media_type === 'movie' ? 'movie-badge' : 'tv-badge'">
                         <i :class="credit.media_type === 'movie' ? 'fas fa-film' : 'fas fa-tv'"></i>
-                        {{ credit.media_type === 'movie' ? 'Película' : 'Serie' }}
+                        {{ credit.media_type === 'movie' ? $t('actors.movie') : $t('actors.tv') }}
                       </span>
 
                       <span class="credit-character" v-if="credit.character">
@@ -157,7 +158,7 @@
 
               <div v-else class="credits-loading">
                 <div class="loading-spinner"></div>
-                <p>Cargando filmografía...</p>
+                <p>{{ $t('actors.loading') }}</p>
               </div>
             </div>
           </div>
@@ -300,22 +301,26 @@ export default {
   z-index: 2;
 }
 
-.hero-title {
-  font-size: 3.2rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  animation: fadeInUp 1s ease-out;
-}
-
-.accent-text {
+  .hero-title {
+    font-size: 1.4rem;
+  }.accent-text {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   display: inline-block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .hero-subtitle {
@@ -781,6 +786,8 @@ export default {
   max-height: 85vh;
   overflow: hidden;
   position: relative;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  position: relative;
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
@@ -800,24 +807,39 @@ export default {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 36px;
-  height: 36px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #ff0000;
+  background: rgba(255, 255, 255, 0.3);
   color: white;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition-fast);
   z-index: 10;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+}
+
+.close-icon {
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
 .close-button:hover {
-  background: var(--primary-color);
+  background: #ff0000;
   transform: rotate(90deg);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
+  border: 2px solid white;
+}
+
+.close-button:hover .close-icon {
+  transform: scale(1.2);
 }
 
 .actor-profile {
@@ -1170,6 +1192,48 @@ export default {
 
   .search-container {
     margin-top: 0.5rem;
+  }
+  
+  /* Mejorar visibilidad del botón de cierre en dispositivos muy pequeños */
+  .close-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(229, 9, 20, 1);
+    border: 2px solid white;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+  
+  .close-icon {
+    font-size: 24px;
+  }
+}
+
+/* Media queries específicas para el botón de cierre */
+@media (max-width: 768px) {
+  .close-button {
+    width: 50px;
+    height: 50px;
+    background: #ff0000;
+  }
+  
+  .close-icon {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .close-button {
+    width: 55px;
+    height: 55px;
+    background: #ff0000;
+    border: 3px solid white;
+  }
+  
+  .close-icon {
+    font-size: 32px;
   }
 }
 </style>
