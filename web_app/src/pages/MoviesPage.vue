@@ -1,6 +1,24 @@
 <template>
   <div class="home-container">
     <main class="main-content">
+      <!-- Búsqueda de Películas (para E2E) -->
+      <section class="movie-section">
+        <SearchBar
+          v-model="query"
+          :placeholder="$t('actors.searchPlaceholder')"
+          :button-label="$t('actors.search')"
+          @search="onSearch"
+        />
+        <div class="search-results" v-if="searchResults.length" data-cy="search-results">
+          <MovieCard
+            v-for="m in searchResults"
+            :key="m.id"
+            :title="m.title"
+            :image="getImageUrl(m.poster_path)"
+            @select="openMovieDialog(m.id)"
+          />
+        </div>
+      </section>
       <!-- Sección de Películas Populares -->
       <section class="movie-section">
   <h2 class="section-title">{{$t('movies.popular')}}</h2>
@@ -113,6 +131,8 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import SearchBar from '@/components/SearchBar.vue'
+import MovieCard from '@/components/MovieCard.vue'
 import {
   getPopularMovies,
   getTopRatedMovies,
@@ -123,11 +143,14 @@ import {
 
 export default {
   name: 'MoviesPage',
+  components: { SearchBar, MovieCard },
   setup() {
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
     const trendingMovies = ref([]);
-    const isDialogOpen = ref(false);
+  const isDialogOpen = ref(false);
+  const query = ref('');
+  const searchResults = ref([]);
     const movieDetail = ref({});
     const movieCredits = ref([]);
 
@@ -153,6 +176,16 @@ export default {
         console.error('Error al cargar las películas:', error);
       }
     };
+
+    const onSearch = async () => {
+      if (!query.value.trim()) { searchResults.value = []; return }
+      try {
+        const { searchMovies } = await import('@/ApiController/services/movieService')
+        searchResults.value = await searchMovies(query.value)
+      } catch (e) {
+        console.error('Error en búsqueda de películas', e)
+      }
+    }
 
     const openMovieDialog = async (id) => {
       try {
@@ -200,6 +233,8 @@ export default {
       isDialogOpen,
       movieDetail,
       movieCredits,
+  query,
+  searchResults,
       popularRow,
       topRatedRow,
       trendingRow,
@@ -207,6 +242,7 @@ export default {
       scrollCategory,
       openMovieDialog,
       closeMovieDialog,
+  onSearch,
     };
   },
 };
@@ -227,6 +263,7 @@ export default {
 .movie-section {
   margin-bottom: 3rem;
 }
+.search-results{ display:flex; gap:1rem; flex-wrap:wrap; padding-top:1rem }
 
 .section-title {
   font-size: 1.75rem;

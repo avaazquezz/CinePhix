@@ -1,5 +1,37 @@
 # Vuetify (Default)
 
+## Tests
+
+This web app includes two types of tests:
+
+- Unit tests with Vitest + @vue/test-utils (jsdom environment)
+- End-to-End tests with Cypress (runs against the local preview server)
+
+Folder layout:
+- Unit tests: `tests/unit/**/*.spec.js`
+- E2E tests: `cypress/e2e/**/*.cy.js`
+
+Environment: The app calls TMDB. Provide `VITE_TMDB_API_KEY` for local runs (create `.env` in this `web_app/` folder):
+
+```
+VITE_TMDB_API_KEY=your_tmdb_api_key
+```
+
+Run locally:
+- Unit tests
+	- `npm run test` (or `npm run test:unit`)
+- E2E tests (interactive)
+	- `npm run dev` (serve) and in another terminal `npm run cy:open`
+- E2E tests (headless)
+	- `npm run dev` (serve) then `npm run test:e2e`
+
+How it works:
+- Vitest mounts Vue components in a simulated DOM (jsdom) and asserts emitted events, text, etc.
+- Cypress visits `http://localhost:3000/CinePhix` (config in `cypress.config.js`), simulates user actions (typing, clicking), and asserts UI results.
+
+CI pipeline (GitHub Actions):
+- Installs deps, runs unit tests, builds the app, starts Vite preview on port 3000, waits for it to be up, then runs Cypress headless. Set the repo secret `VITE_TMDB_API_KEY`.
+
 This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
 
 ## ❗️ Important Links

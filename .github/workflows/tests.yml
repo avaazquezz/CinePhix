@@ -1,0 +1,35 @@
+name: CI - Unit and E2E
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: web_app/package.json
+      - name: Install deps
+        run: npm ci
+      - name: Unit tests
+        run: npm run test:unit
+      - name: Build app
+        run: npm run build
+      - name: Start preview server
+        run: npx vite preview --port 3000 --strictPort &
+      - name: Wait for server
+        run: npx wait-on http://localhost:3000/CinePhix/
+      - name: E2E tests
+        run: npm run test:e2e
+        env:
+          VITE_TMDB_API_KEY: ${{ secrets.VITE_TMDB_API_KEY }}

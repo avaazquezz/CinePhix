@@ -64,6 +64,75 @@ To get a local copy up and running, follow these simple steps.
 5. **Access CinePhix locally:**
    - Open your browser and go to `http://localhost:3000`
 
+## 🧪 Tests (Unit + E2E)
+
+This repository ships with a basic testing setup for the frontend located in `web_app/`:
+
+- Unit tests: Vitest + @vue/test-utils (Vue 3, jsdom)
+- E2E tests: Cypress (runs against the built preview server)
+
+### Where tests live
+
+- Unit tests: `web_app/tests/unit/**/*.spec.js`
+- E2E tests: `web_app/cypress/e2e/**/*.cy.js`
+
+### Run tests locally
+
+1) Install dependencies in the web app
+
+```bash
+cd web_app
+npm install
+```
+
+2) Unit tests
+
+```bash
+npm run test
+```
+
+3) E2E tests (interactive)
+
+```bash
+npm run dev
+# in a separate terminal
+npm run cy:open
+```
+
+4) E2E tests (headless)
+
+By default Cypress uses `baseUrl: http://localhost:3000/CinePhix`.
+
+```bash
+# Terminal 1: serve the app
+npm run dev
+
+# Terminal 2: run Cypress
+npm run test:e2e
+```
+
+Environment variables: The app calls TMDB. Provide `VITE_TMDB_API_KEY` for local runs (create `web_app/.env`):
+
+```
+VITE_TMDB_API_KEY=your_tmdb_api_key
+```
+
+Tip: You can also stub TMDB calls in Cypress for faster and deterministic tests.
+
+### Continuous Integration
+
+GitHub Actions workflow: `.github/workflows/tests.yml`
+
+What it does on push/PR to `main`:
+
+1. `npm ci` in `web_app/`
+2. Run unit tests (`npm run test:unit`)
+3. Build the app (`npm run build`)
+4. Start Vite preview on port 3000
+5. Run Cypress E2E (`npm run test:e2e`)
+
+Required secret: add `VITE_TMDB_API_KEY` at Repository Settings → Secrets and variables → Actions.
+
 ## Contributing
 
 Contributions are welcome! If you have suggestions, ideas, or bug reports, please open an issue or submit a pull request.
