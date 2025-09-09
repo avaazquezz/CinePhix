@@ -86,7 +86,27 @@
     "movie": "Movie",
     "tv": "TV Show",
     "unknown": "Unknown",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "features": {
+      "filmography": {
+        "title": "Complete Filmography",
+        "description": "Discover all the movies and series that each actor has participated in throughout their career."
+      },
+      "career": {
+        "title": "Professional Career",
+        "description": "Explore the evolution of your favorite actors' careers, from their beginnings to their latest projects."
+      },
+      "roles": {
+        "title": "Featured Roles",
+        "description": "Learn about the most acclaimed and award-winning works that have marked each artist's career."
+      }
+    },
+    "modal": {
+      "close": "Close"
+    }
+  },
+  "common": {
+    "close": "Close"
   },
   "footer": {
     "projectDesc": "This project was developed by a <strong>Fullstack Developer</strong> to showcase skills in <strong>Web Development</strong> and <strong>APIs</strong> with <strong>JavaScript</strong>. Data is powered by <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",
