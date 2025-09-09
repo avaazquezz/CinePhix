@@ -1,24 +1,6 @@
 <template>
   <div class="home-container">
-    <main class="main-content">
-      <!-- Búsqueda de Películas (para E2E) -->
-      <section class="movie-section">
-        <SearchBar
-          v-model="query"
-          :placeholder="$t('actors.searchPlaceholder')"
-          :button-label="$t('actors.search')"
-          @search="onSearch"
-        />
-        <div class="search-results" v-if="searchResults.length" data-cy="search-results">
-          <MovieCard
-            v-for="m in searchResults"
-            :key="m.id"
-            :title="m.title"
-            :image="getImageUrl(m.poster_path)"
-            @select="openMovieDialog(m.id)"
-          />
-        </div>
-      </section>
+    <main class="main-content">     
       <!-- Sección de Películas Populares -->
       <section class="movie-section">
   <h2 class="section-title">{{$t('movies.popular')}}</h2>

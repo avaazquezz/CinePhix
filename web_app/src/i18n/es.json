@@ -86,7 +86,27 @@
     "movie": "Película",
     "tv": "Serie",
     "unknown": "Desconocido",
-    "viewDetails": "Ver detalles"
+    "viewDetails": "Ver detalles",
+    "features": {
+      "filmography": {
+        "title": "Filmografía Completa",
+        "description": "Descubre todas las películas y series en las que ha participado cada actor a lo largo de su carrera."
+      },
+      "career": {
+        "title": "Trayectoria Profesional",
+        "description": "Explora la evolución de la carrera de tus actores favoritos, desde sus inicios hasta sus últimos proyectos."
+      },
+      "roles": {
+        "title": "Papeles Destacados",
+        "description": "Conoce los trabajos más aclamados y premiados que han marcado la carrera de cada artista."
+      }
+    },
+    "modal": {
+      "close": "Cerrar"
+    }
+  },
+  "common": {
+    "close": "Cerrar"
   },
   "footer": {
     "projectDesc": "Este proyecto fue desarrollado por un <strong>Desarrollador Fullstack</strong> para demostrar habilidades en <strong>Desarrollo Web</strong> y el manejo de <strong>APIs</strong> con <strong>JavaScript</strong>. Los datos utilizados provienen de la API de <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",

@@ -93,22 +93,22 @@
         <div class="features">
           <div class="feature-card">
             <div class="feature-content">
-              <h3>Filmografía Completa</h3>
-              <p>Descubre todas las películas y series en las que ha participado cada actor a lo largo de su carrera.</p>
+              <h3>{{ $t('actors.features.filmography.title') }}</h3>
+              <p>{{ $t('actors.features.filmography.description') }}</p>
             </div>
           </div>
 
           <div class="feature-card">
             <div class="feature-content">
-              <h3>Trayectoria Profesional</h3>
-              <p>Explora la evolución de la carrera de tus actores favoritos, desde sus inicios hasta sus últimos proyectos.</p>
+              <h3>{{ $t('actors.features.career.title') }}</h3>
+              <p>{{ $t('actors.features.career.description') }}</p>
             </div>
           </div>
 
           <div class="feature-card">
             <div class="feature-content">
-              <h3>Papeles Destacados</h3>
-              <p>Conoce los trabajos más aclamados y premiados que han marcado la carrera de cada artista.</p>
+              <h3>{{ $t('actors.features.roles.title') }}</h3>
+              <p>{{ $t('actors.features.roles.description') }}</p>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
     <transition name="modal-fade">
       <div v-if="showDialog" class="modal" @click.self="closeDialog">
         <div class="modal-content">
-          <button class="close-button" @click="closeDialog" aria-label="Cerrar">
+          <button class="close-button" @click="closeDialog" :aria-label="$t('common.close')">
             <span class="close-icon">✖</span>
             <span class="sr-only">{{ $t('common.close') }}</span>
           </button>
