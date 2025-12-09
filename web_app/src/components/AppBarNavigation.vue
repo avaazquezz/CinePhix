@@ -201,10 +201,15 @@ export default {
     padding: 0.8rem 0.5rem;
   }
   
+  .logo {
+    order: 2;
+    margin-top: 0.5rem;
+  }
+  
   .navigation {
     flex-direction: column;
     width: 100%;
-    margin-top: 0.5rem;
+    order: 1;
   }
   
   .nav-links {
@@ -212,6 +217,7 @@ export default {
     gap: 0.5rem;
     margin-bottom: 0.8rem;
     justify-content: space-around;
+    order: 2;
   }
 
   .nav-link {
@@ -221,7 +227,8 @@ export default {
   
   .lang-switcher {
     margin: 0;
-    margin-top: 0.5rem;
+    order: 1;
+    margin-bottom: 0.8rem;
   }
   
   .lang-toggle {
