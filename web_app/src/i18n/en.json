@@ -109,6 +109,10 @@
     "close": "Close"
   },
   "footer": {
+    "tagline": "Your cinematic discovery platform",
+    "quickLinks": "Quick Links",
+    "connect": "Connect",
+    "rights": "All rights reserved",
     "projectDesc": "This project was developed by a <strong>Fullstack Developer</strong> to showcase skills in <strong>Web Development</strong> and <strong>APIs</strong> with <strong>JavaScript</strong>. Data is powered by <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",
     "by": "Developed by <strong>Adrián Vázquez</strong>"
   },

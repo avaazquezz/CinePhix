@@ -1,11 +1,21 @@
 <template>
   <div class="home-container">
+    <div class="noise-overlay"></div>
+    
     <main class="main-content">
       <!-- Sección de Series Populares -->
       <section class="serie-section">
-  <h2 class="section-title">{{$t('series.popular')}}</h2>
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{$t('series.popular')}}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
         <div class="serie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('popular', 'prev')">&lt;</button>
+          <button class="nav-button prev" @click="scrollCategory('popular', 'prev')">
+            <i class="fas fa-chevron-left"></i>
+          </button>
           <div class="serie-row" ref="popularRow">
             <div
               v-for="item in popularSeries"
@@ -13,23 +23,50 @@
               class="serie-card"
               @click="openSeriesDialog(item.id)"
             >
-              <img
-                :src="getImageUrl(item.poster_path)"
-                :alt="item.name"
-                class="serie-poster"
-              />
-              <h3 class="serie-title">{{ item.name }}</h3>
+              <div class="card-inner">
+                <div class="poster-container">
+                  <img
+                    :src="getImageUrl(item.poster_path)"
+                    :alt="item.name"
+                    class="serie-poster"
+                  />
+                  <div class="poster-overlay">
+                    <div class="play-icon">
+                      <i class="fas fa-play"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-info">
+                  <h3 class="serie-title">{{ item.name }}</h3>
+                  <div class="serie-meta">
+                    <span class="serie-rating">
+                      <i class="fas fa-star"></i>
+                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('popular', 'next')">&gt;</button>
+          <button class="nav-button next" @click="scrollCategory('popular', 'next')">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </section>
 
       <!-- Sección de Series Mejor Valoradas -->
       <section class="serie-section">
-  <h2 class="section-title">{{$t('series.topRated')}}</h2>
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{$t('series.topRated')}}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
         <div class="serie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')">&lt;</button>
+          <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')">
+            <i class="fas fa-chevron-left"></i>
+          </button>
           <div class="serie-row" ref="topRatedRow">
             <div
               v-for="item in topRatedSeries"
@@ -37,23 +74,50 @@
               class="serie-card"
               @click="openSeriesDialog(item.id)"
             >
-              <img
-                :src="getImageUrl(item.poster_path)"
-                :alt="item.name"
-                class="serie-poster"
-              />
-              <h3 class="serie-title">{{ item.name }}</h3>
+              <div class="card-inner">
+                <div class="poster-container">
+                  <img
+                    :src="getImageUrl(item.poster_path)"
+                    :alt="item.name"
+                    class="serie-poster"
+                  />
+                  <div class="poster-overlay">
+                    <div class="play-icon">
+                      <i class="fas fa-play"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-info">
+                  <h3 class="serie-title">{{ item.name }}</h3>
+                  <div class="serie-meta">
+                    <span class="serie-rating">
+                      <i class="fas fa-star"></i>
+                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('topRated', 'next')">&gt;</button>
+          <button class="nav-button next" @click="scrollCategory('topRated', 'next')">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </section>
 
       <!-- Sección de Series en Tendencia -->
       <section class="serie-section">
-  <h2 class="section-title">{{$t('series.weeklyTrending')}}</h2>
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{$t('series.weeklyTrending')}}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
         <div class="serie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('trending', 'prev')">&lt;</button>
+          <button class="nav-button prev" @click="scrollCategory('trending', 'prev')">
+            <i class="fas fa-chevron-left"></i>
+          </button>
           <div class="serie-row" ref="trendingRow">
             <div
               v-for="item in trendingSeries"
@@ -61,52 +125,83 @@
               class="serie-card"
               @click="openSeriesDialog(item.id)"
             >
-              <img
-                :src="getImageUrl(item.poster_path)"
-                :alt="item.name"
-                class="serie-poster"
-              />
-              <h3 class="serie-title">{{ item.name }}</h3>
+              <div class="card-inner">
+                <div class="poster-container">
+                  <img
+                    :src="getImageUrl(item.poster_path)"
+                    :alt="item.name"
+                    class="serie-poster"
+                  />
+                  <div class="poster-overlay">
+                    <div class="play-icon">
+                      <i class="fas fa-play"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-info">
+                  <h3 class="serie-title">{{ item.name }}</h3>
+                  <div class="serie-meta">
+                    <span class="serie-rating">
+                      <i class="fas fa-star"></i>
+                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('trending', 'next')">&gt;</button>
+          <button class="nav-button next" @click="scrollCategory('trending', 'next')">
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
       </section>
 
       <!-- Diálogo de Detalles de Serie -->
-      <div v-if="isDialogOpen" class="serie-dialog" @click.self="closeSeriesDialog">
-        <div class="dialog-content">
-          <button class="close-button" @click="closeSeriesDialog" aria-label="Cerrar">
-            <span class="close-icon">✖</span>
-            <span class="sr-only">{{ $t('common.close') }}</span>
-          </button>
+      <transition name="dialog-fade">
+        <div v-if="isDialogOpen" class="serie-dialog" @click.self="closeSeriesDialog">
+          <div class="dialog-content">
+            <button class="close-button" @click="closeSeriesDialog" aria-label="Cerrar">
+              <i class="fas fa-times"></i>
+            </button>
 
-          <div class="dialog-header">
-            <h2>{{ seriesDetail.name }}</h2>
-            <div class="serie-rating-container">
-              <span class="serie-rating">{{ seriesDetail.vote_average?.toFixed(1) || '?' }}/10</span>
-            </div>
-          </div>
-
-          <div class="dialog-body">
-            <div class="dialog-poster">
-              <img :src="getImageUrl(seriesDetail.poster_path)" :alt="seriesDetail.name" />
-            </div>
-            <div class="dialog-info">
-              <p><strong>{{ $t('series.detail.releaseDate') }}:</strong> {{ seriesDetail.first_air_date }}</p>
-
-              <p><strong>{{ $t('series.detail.overview') }}:</strong> {{ seriesDetail.overview }}</p>
-
-              <p><strong>{{ $t('series.detail.credits') }}:</strong></p>
-              <div class="credits-list">
-                <div v-for="actor in seriesCredits" :key="actor.id" class="credit-item">
-                  {{ actor.name }} como {{ actor.character }}
+            <div class="dialog-layout">
+              <div class="dialog-poster-section">
+                <img :src="getImageUrl(seriesDetail.poster_path)" :alt="seriesDetail.name" class="dialog-poster" />
+              </div>
+              
+              <div class="dialog-details">
+                <h2 class="dialog-title">{{ seriesDetail.name }}</h2>
+                
+                <div class="dialog-meta">
+                  <span class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    {{ seriesDetail.first_air_date || '—' }}
+                  </span>
+                  <span class="meta-item rating-badge">
+                    <i class="fas fa-star"></i>
+                    {{ seriesDetail.vote_average?.toFixed(1) || '?' }}/10
+                  </span>
+                </div>
+                
+                <div class="dialog-overview-container">
+                  <h3 class="overview-title">{{ $t('series.detail.overview') || 'Sinopsis' }}</h3>
+                  <p class="dialog-overview">{{ seriesDetail.overview || '—' }}</p>
+                </div>
+                
+                <div class="dialog-credits-container">
+                  <h3 class="credits-title">{{ $t('series.detail.credits') || 'Reparto' }}</h3>
+                  <div class="credits-list">
+                    <div v-for="actor in seriesCredits.slice(0, 8)" :key="actor.id" class="credit-item">
+                      <span class="actor-name">{{ actor.name }}</span>
+                      <span class="actor-character">{{ actor.character }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
     </main>
   </div>
 </template>
@@ -135,7 +230,12 @@ export default {
     const topRatedRow = ref(null);
     const trendingRow = ref(null);
 
-    const getImageUrl = (path) => `https://image.tmdb.org/t/p/w500${path}`;
+    const getImageUrl = (path) => {
+      if (!path) return '';
+      const isMobile = window.innerWidth <= 480;
+      const size = isMobile ? 'w185' : 'w342';
+      return `https://image.tmdb.org/t/p/${size}${path}`;
+    };
 
     const fetchSeries = async () => {
       try {
@@ -152,6 +252,8 @@ export default {
         seriesDetail.value = await getSeriesDetail(id);
         seriesCredits.value = await getSeriesCredits(id);
         isDialogOpen.value = true;
+        document.body.style.overflow = 'hidden';
+        window.dispatchEvent(new CustomEvent('dialog-opened'));
       } catch (error) {
         console.error('Error al cargar los detalles de la serie:', error);
       }
@@ -161,6 +263,8 @@ export default {
       isDialogOpen.value = false;
       seriesDetail.value = {};
       seriesCredits.value = [];
+      document.body.style.overflow = '';
+      window.dispatchEvent(new CustomEvent('dialog-closed'));
     };
 
     const scrollCategory = (category, direction) => {
@@ -208,31 +312,175 @@ export default {
 <style scoped>
 .home-container {
   min-height: 100vh;
-  background-color: #141418;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
+  color: #e0e0e0;
+  font-family: 'Montserrat', 'Poppins', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 .main-content {
-  padding: 1rem;
+  padding: 1.5rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 600px) {
+  .main-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (min-width: 900px) {
+  .main-content {
+    padding: 2.5rem 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .main-content {
+    padding: 3rem 4rem;
+  }
 }
 
 .serie-section {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 600px) {
+  .serie-section {
+    margin-bottom: 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-section {
+    margin-bottom: 4rem;
+  }
+}
+
+.section-header {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+@media (min-width: 600px) {
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .section-header {
+    margin-bottom: 2rem;
+  }
 }
 
 .section-title {
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
-  border-left: 0.25rem solid #fa000c;
-  padding-left: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
-/* Estilo de fila de series al estilo Netflix */
+@media (min-width: 600px) {
+  .section-title {
+    font-size: 1.6rem;
+    letter-spacing: 1.5px;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 900px) {
+  .section-title {
+    font-size: 1.8rem;
+    gap: 13px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .section-title {
+    font-size: 2rem;
+    letter-spacing: 2px;
+    gap: 15px;
+    margin-bottom: 10px;
+  }
+}
+
+.title-accent {
+  width: 4px;
+  height: 25px;
+  background: linear-gradient(to bottom, #e50914, #ff4c4c);
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+}
+
+@media (min-width: 600px) {
+  .title-accent {
+    width: 4px;
+    height: 30px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .title-accent {
+    width: 5px;
+    height: 35px;
+  }
+}
+
+.title-underline {
+  height: 2px;
+  width: 60px;
+  background: linear-gradient(to right, #e50914, transparent);
+  margin-top: 5px;
+}
+
+@media (min-width: 600px) {
+  .title-underline {
+    width: 80px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .title-underline {
+    width: 100px;
+  }
+}
+
+/* Estilo de fila de series */
 .serie-row-container {
   position: relative;
   width: 100%;
-  padding: 0 2.5rem;
+  padding: 0 2rem;
+}
+
+@media (min-width: 600px) {
+  .serie-row-container {
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-row-container {
+    padding: 0 3rem;
+  }
 }
 
 .serie-row {
@@ -240,76 +488,225 @@ export default {
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 1rem 0;
-  scrollbar-width: none; /* Firefox */
+  gap: 1rem;
+  scrollbar-width: none;
+}
+
+@media (min-width: 600px) {
+  .serie-row {
+    padding: 1.25rem 0;
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-row {
+    padding: 1.5rem 0;
+    gap: 1.5rem;
+  }
 }
 
 .serie-row::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
 }
 
 /* Estilos para las tarjetas de series */
 .serie-card {
   flex: 0 0 auto;
-  width: 11.25rem;
-  margin-right: 1rem;
-  transition: all 0.3s ease;
+  width: 130px;
   cursor: pointer;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  position: relative;
-  background-color: rgba(20, 20, 24, 0.8);
-  padding-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 600px) {
+  .serie-card {
+    width: 160px;
+  }
+}
+
+@media (min-width: 900px) {
+  .serie-card {
+    width: 180px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-card {
+    width: 200px;
+  }
 }
 
 .serie-card:hover {
-  transform: translateY(-0.625rem) scale(1.05);
-  box-shadow: 0 0.625rem 1.563rem rgba(0, 0, 0, 0.5);
-  background-color: rgba(99, 63, 63, 0.7);
+  transform: translateY(-10px);
 }
 
-.serie-card:hover .serie-title {
-  color: #ff000d;
+.card-inner {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  transition: all 0.4s ease;
 }
 
-.serie-card:hover .serie-poster {
-  transform: scale(1.1);
-  filter: brightness(110%);
+.card-inner:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(229, 9, 20, 0.3);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+
+.poster-container {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2/3;
 }
 
 .serie-poster {
   width: 100%;
-  aspect-ratio: 2/3;
+  height: 100%;
   object-fit: cover;
-  border-radius: 0.5rem 0.5rem 0 0;
-  box-shadow: 0 0.125rem 0.625rem rgba(233, 158, 158, 0.3);
-  transition: all 0.4s ease;
+  transition: transform 0.5s ease, filter 0.4s ease;
+}
+
+.card-inner:hover .serie-poster {
+  transform: scale(1.1);
+  filter: brightness(0.6);
+}
+
+.poster-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.card-inner:hover .poster-overlay {
+  opacity: 1;
+}
+
+.play-icon {
+  width: 40px;
+  height: 40px;
+  background: #e50914;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: white;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.6);
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 600px) {
+  .play-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .play-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
+  }
+}
+
+.card-inner:hover .play-icon {
+  transform: scale(1);
+}
+
+.card-info {
+  padding: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .card-info {
+    padding: 0.85rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .card-info {
+    padding: 1rem;
+  }
 }
 
 .serie-title {
-  font-size: 0.9rem;
-  margin: 0.5rem 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  transition: color 0.3s ease;
-  padding: 0 0.25rem;
+  min-height: 2.2rem;
 }
 
-.serie-card::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: linear-gradient(to top, rgba(248, 16, 16, 0.144) 0%, rgba(70, 3, 3, 0) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+@media (min-width: 600px) {
+  .serie-title {
+    font-size: 0.9rem;
+    min-height: 2.3rem;
+  }
 }
 
-.serie-card:hover::after {
-  opacity: 1;
+@media (min-width: 1200px) {
+  .serie-title {
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    min-height: 2.4rem;
+  }
+}
+
+.serie-meta {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.serie-rating {
+  color: #e50914;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .serie-rating {
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-rating {
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+}
+
+.serie-rating i {
+  font-size: 0.65rem;
+}
+
+@media (min-width: 1200px) {
+  .serie-rating i {
+    font-size: 0.7rem;
+  }
 }
 
 /* Botones de navegación */
@@ -317,476 +714,621 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  background-color: rgba(151, 147, 147, 0.7);
+  width: 35px;
+  height: 35px;
+  background: rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(229, 9, 20, 0.4);
   color: white;
-  font-size: 1.5rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
   cursor: pointer;
   z-index: 20;
-  opacity: 0.7;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+@media (min-width: 600px) {
+  .nav-button {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .nav-button {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
 }
 
 .nav-button:hover {
-  opacity: 1;
-  background-color: rgba(229, 9, 20, 0.8);
+  background: rgba(229, 9, 20, 0.8);
+  border-color: #e50914;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .prev {
-  left: 0.5rem;
+  left: 0;
 }
 
 .next {
-  right: 0.5rem;
+  right: 0;
 }
 
 /* Estilos para el diálogo */
+.dialog-fade-enter-active,
+.dialog-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.dialog-fade-enter-from,
+.dialog-fade-leave-to {
+  opacity: 0;
+}
+
 .serie-dialog {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  overflow: auto;
-  padding: 1.25rem;
+  z-index: 10000;
+  padding: 0.75rem;
+  overflow-y: auto;
+  backdrop-filter: blur(10px);
+}
+
+@media (min-width: 600px) {
+  .serie-dialog {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .serie-dialog {
+    padding: 2rem;
+  }
 }
 
 .dialog-content {
-  background: #1a1a1a;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
   color: #fff;
-  padding: 2.5rem 1.5rem 1.5rem;
-  border-radius: 0.75rem;
-  width: 90%;
-  max-width: 50rem;
-  max-height: 85vh;
+  width: 100%;
+  max-width: 1100px;
   position: relative;
-  box-shadow: 0 0.313rem 1.563rem rgba(0, 0, 0, 0.5);
-  border: 0.063rem solid rgba(229, 9, 20, 0.3);
-  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.dialog-layout {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  padding: 2.5rem 1rem 1rem;
 }
 
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 0.063rem solid rgba(255, 255, 255, 0.1);
+@media (min-width: 480px) {
+  .dialog-layout {
+    gap: 1.25rem;
+    padding: 2.5rem 1.25rem 1.25rem;
+  }
 }
 
-.dialog-header h2 {
-  margin: 0;
-  color: #ff000d;
-  font-size: 1.75rem;
-  max-width: 75%;
+@media (min-width: 600px) {
+  .dialog-layout {
+    gap: 2rem;
+    padding: 2rem;
+  }
 }
 
-.serie-rating-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (min-width: 900px) {
+  .dialog-layout {
+    flex-direction: row;
+    gap: 2.5rem;
+    padding: 2.5rem;
+  }
 }
 
-.serie-rating {
-  background-color: rgba(229, 9, 20, 0.8);
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 4rem;
-  text-align: center;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
-  font-size: 1.1rem;
+@media (min-width: 1200px) {
+  .dialog-layout {
+    gap: 3rem;
+    padding: 3rem;
+  }
 }
 
-.dialog-body {
-  display: flex;
-  gap: 1.5rem;
-  overflow-y: auto;
-  flex: 1;
-  padding-right: 0.313rem;
+.dialog-poster-section {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 180px;
+  margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .dialog-poster-section {
+    max-width: 220px;
+  }
+}
+
+@media (min-width: 600px) {
+  .dialog-poster-section {
+    max-width: 280px;
+  }
+}
+
+@media (min-width: 900px) {
+  .dialog-poster-section {
+    flex: 0 0 300px;
+    max-width: 300px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-poster-section {
+    flex: 0 0 350px;
+    max-width: 350px;
+  }
 }
 
 .dialog-poster {
-  flex: 0 0 12.5rem;
-}
-
-.dialog-poster img {
   width: 100%;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.188rem 0.625rem rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.dialog-info {
+@media (min-width: 1200px) {
+  .dialog-poster {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+  }
+}
+
+.dialog-details {
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
 }
 
-.dialog-info p {
-  margin-bottom: 1.25rem;
+@media (min-width: 480px) {
+  .dialog-details {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .dialog-details {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-details {
+    gap: 1.5rem;
+  }
+}
+
+.dialog-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+  margin: 0;
+}
+
+@media (min-width: 480px) {
+  .dialog-title {
+    font-size: 1.9rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .dialog-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.75px;
+  }
+}
+
+@media (min-width: 900px) {
+  .dialog-title {
+    font-size: 2.4rem;
+    letter-spacing: 1px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-title {
+    font-size: 2.7rem;
+  }
+}
+
+.dialog-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 600px) {
+  .dialog-meta {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-meta {
+    gap: 2rem;
+  }
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (min-width: 600px) {
+  .meta-item {
+    gap: 8px;
+    font-size: 1rem;
+    letter-spacing: 0.75px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .meta-item {
+    gap: 9px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+}
+
+.meta-item i {
+  color: #e50914;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .meta-item i {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .meta-item i {
+    font-size: 0.9rem;
+  }
+}
+
+.rating-badge {
+  background: rgba(229, 9, 20, 0.15);
+  padding: 6px 12px;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  color: #e50914;
+  font-weight: 700;
+}
+
+@media (min-width: 600px) {
+  .rating-badge {
+    padding: 7px 13px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .rating-badge {
+    padding: 8px 15px;
+  }
+}
+
+.dialog-overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .dialog-overview-container {
+    gap: 0.85rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-overview-container {
+    gap: 1rem;
+  }
+}
+
+.overview-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .overview-title {
+    font-size: 1.25rem;
+    letter-spacing: 0.75px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .overview-title {
+    font-size: 1.35rem;
+    letter-spacing: 1px;
+  }
+}
+
+.dialog-overview {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  text-align: left;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+@media (min-width: 480px) {
+  .dialog-overview {
+    font-size: 1.05rem;
+    max-height: 190px;
+  }
+}
+
+@media (min-width: 600px) {
+  .dialog-overview {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-height: 190px;
+    text-align: justify;
+  }
+}
+
+@media (min-width: 900px) {
+  .dialog-overview {
+    max-height: 195px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-overview {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    max-height: 200px;
+    padding-right: 10px;
+  }
+}
+
+.dialog-overview::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dialog-overview::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dialog-overview::-webkit-scrollbar-thumb {
+  background: #e50914;
+}
+
+.dialog-credits-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .dialog-credits-container {
+    gap: 0.85rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .dialog-credits-container {
+    gap: 1rem;
+  }
+}
+
+.credits-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .credits-title {
+    font-size: 1.25rem;
+    letter-spacing: 0.75px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .credits-title {
+    font-size: 1.35rem;
+    letter-spacing: 1px;
+  }
 }
 
 .credits-list {
-  max-height: 9.375rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  max-height: 150px;
   overflow-y: auto;
-  padding: 0.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 0.313rem;
-  margin-top: 0.5rem;
+  padding-right: 8px;
+}
+
+@media (min-width: 480px) {
+  .credits-list {
+    max-height: 170px;
+  }
+}
+
+@media (min-width: 600px) {
+  .credits-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    max-height: 190px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .credits-list {
+    gap: 0.75rem;
+    max-height: 200px;
+    padding-right: 10px;
+  }
+}
+
+.credits-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.credits-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.credits-list::-webkit-scrollbar-thumb {
+  background: #e50914;
 }
 
 .credit-item {
-  padding: 0.313rem 0;
-  border-bottom: 0.063rem solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.credit-item:last-child {
-  border-bottom: none;
+@media (min-width: 600px) {
+  .credit-item {
+    padding: 0.65rem;
+    gap: 0.22rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .credit-item {
+    padding: 0.75rem;
+    gap: 0.25rem;
+  }
+}
+
+.actor-name {
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+  .actor-name {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .actor-name {
+    font-size: 1rem;
+  }
+}
+
+.actor-character {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+@media (min-width: 600px) {
+  .actor-character {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .actor-character {
+    font-size: 0.95rem;
+  }
 }
 
 .close-button {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
+  top: 8px;
+  right: 8px;
+  background: rgba(229, 9, 20, 0.3);
+  border: 1px solid #e50914;
+  color: #e50914;
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  border: 2px solid #ff0000;
-  background: rgba(255, 0, 0, 0.7);
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 100;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+  z-index: 10;
+  border-radius: 2px;
 }
 
-.close-icon {
-  font-size: 20px;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+@media (min-width: 480px) {
+  .close-button {
+    top: 10px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (min-width: 600px) {
+  .close-button {
+    top: 15px;
+    right: 15px;
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .close-button {
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
 }
 
 .close-button:hover {
-  background: #ff0000;
+  background: #e50914;
+  color: white;
   transform: rotate(90deg);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-  border: 2px solid white;
-}
-
-.close-button:hover .close-icon {
-  transform: scale(1.2);
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-@media (max-width: 40rem) {
-  .dialog-body {
-    flex-direction: column;
-  }
-
-  .dialog-poster {
-    flex: 0 0 auto;
-    margin: 0 auto;
-    max-width: 11.25rem;
-  }
-}
-
-/* Mejoras responsive */
-@media (max-width: 768px) {
-  .section-title {
-    font-size: 1.4rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .serie-row-container {
-    padding: 0 2rem;
-  }
-
-  .serie-card {
-    width: 9rem;
-    margin-right: 0.5rem;
-  }
-
-  .nav-button {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .section-title {
-    font-size: 1.25rem;
-  }
-
-  .serie-row-container {
-    padding: 0 1.5rem;
-  }
-
-  .serie-card {
-    width: 7.5rem;
-    margin-right: 0.4rem;
-  }
-
-  .serie-title {
-    font-size: 0.8rem;
-    margin: 0.3rem 0.3rem 0.5rem;
-  }
-
-  .nav-button {
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 1rem;
-    opacity: 0.9;
-  }
-}
-
-/* Mejoras para el diálogo en pantallas pequeñas */
-@media (max-width: 600px) {
-  .dialog-content {
-    width: 98%;
-    padding: 2rem 1rem 1rem;
-    max-height: 90vh;
-  }
-
-  .dialog-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-  }
-
-  .dialog-header h2 {
-    font-size: 1.4rem;
-    max-width: 100%;
-  }
-
-  .serie-rating {
-    padding: 0.3rem 0.5rem;
-    min-width: 3rem;
-    font-size: 0.95rem;
-  }
-
-  .dialog-body {
-    gap: 1rem;
-  }
-
-  .dialog-poster {
-    margin: 0 auto 1rem;
-    max-width: 9rem;
-  }
-
-  .credits-list {
-    max-height: 7rem;
-  }
-
-  .close-button {
-    width: 32px;
-    height: 32px;
-    background: rgba(255, 0, 0, 0.8);
-    top: 0.4rem;
-    right: 0.4rem;
-  }
-  
-  .close-icon {
-    font-size: 18px;
-  }
-}
-
-/* Mejoras adicionales para el diálogo en pantallas pequeñas */
-@media (max-width: 400px) {
-  .dialog-content {
-    width: 98%;
-    padding: 1.5rem 1rem 1rem;
-    max-height: 95vh;
-    overflow-y: auto;
-  }
-
-  .dialog-header {
-    margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-  }
-
-  .dialog-header h2 {
-    font-size: 1.2rem;
-    line-height: 1.3;
-  }
-
-  .serie-rating {
-    padding: 0.25rem 0.4rem;
-    min-width: 2.8rem;
-    font-size: 0.85rem;
-    margin-top: 0.25rem;
-  }
-
-  .dialog-body {
-    flex-direction: column;
-    gap: 0.75rem;
-    padding-right: 0;
-  }
-
-  .dialog-poster {
-    margin: 0 auto 0.5rem;
-    max-width: 7.5rem;
-  }
-
-  .dialog-poster img {
-    width: 100%;
-    max-height: 11rem;
-    object-fit: cover;
-  }
-
-  .dialog-info {
-    padding-bottom: 1rem;
-  }
-
-  .dialog-info p {
-    margin-bottom: 0.75rem;
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-
-  .dialog-info strong {
-    display: block;
-    margin-bottom: 0.25rem;
-  }
-
-  .credits-list {
-    max-height: 6rem;
-    padding: 0.3rem;
-  }
-
-  .credit-item {
-    font-size: 0.8rem;
-    padding: 0.25rem 0;
-  }
-  
-  .close-button {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .close-icon {
-    font-size: 16px;
-  }
-
-  .close-button {
-    width: 55px;
-    height: 55px;
-    background: #ff0000;
-    border: 3px solid white;
-    top: 0.4rem;
-    right: 0.4rem;
-  }
-  
-  .close-icon {
-    font-size: 32px;
-  }
-}
-
-/* Ajustes específicos para dispositivos muy pequeños */
-@media (max-width: 360px) {
-  .dialog-content {
-    padding: 1.25rem 0.75rem 0.75rem;
-  }
-
-  .dialog-header h2 {
-    font-size: 1.1rem;
-  }
-
-  .dialog-header {
-    padding-right: 1.5rem; /* Espacio para el botón de cierre */
-  }
-
-  .dialog-poster {
-    max-width: 6.5rem;
-  }
-
-  .dialog-info p {
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  /* Mejora para que se vea bien la sinopsis */
-  .dialog-info p:nth-child(2) {
-    max-height: 9.5rem;
-    overflow-y: auto;
-    padding-right: 0.25rem;
-  }
-}
-
-/* Mejoras para orientación landscape en móviles */
-@media (max-height: 500px) and (orientation: landscape) {
-  .serie-dialog {
-    align-items: flex-start;
-    padding: 0.5rem;
-  }
-
-  .dialog-content {
-    max-height: 95vh;
-    overflow-y: auto;
-  }
-
-  .dialog-body {
-    max-height: 65vh;
-  }
-
-  .serie-section {
-    margin-bottom: 1.5rem;
-  }
-
-  .dialog-poster img {
-    max-height: 50vh;
-    width: auto;
-  }
-}
-
-/* Mejoras para navegación en pantalla táctil */
-@media (hover: none) {
-  .nav-button {
-    opacity: 1;
-    background-color: rgba(151, 147, 147, 0.8);
-  }
-
-  .serie-card:hover {
-    transform: none;
-  }
-
-  .serie-section {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-  }
 }
 </style>
