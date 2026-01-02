@@ -266,22 +266,27 @@ export default {
   min-height: 100vh;
   background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
   color: #e0e0e0;
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Hero con diseño cinematográfico */
+/* Hero con diseño cinematográfico premium */
 .hero-parallax {
   min-height: 20rem;
-  background: linear-gradient(135deg, rgba(5, 5, 5, 0.95) 0%, rgba(10, 10, 10, 0.9) 100%);
+  background: 
+    radial-gradient(ellipse at top, rgba(229, 9, 20, 0.15), transparent 50%),
+    radial-gradient(ellipse at bottom, rgba(255, 76, 76, 0.1), transparent 50%),
+    linear-gradient(135deg, rgba(5, 5, 5, 0.98) 0%, rgba(10, 10, 10, 0.95) 100%);
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   position: relative;
   padding: 3rem 1rem;
-  border-bottom: 1px solid rgba(229, 9, 20, 0.2);
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, transparent, #e50914 30%, #ff4c4c 50%, #e50914 70%, transparent) 1;
+  overflow: hidden;
 }
 
 @media (min-width: 600px) {
@@ -293,7 +298,8 @@ export default {
 
 @media (min-width: 1200px) {
   .hero-parallax {
-    min-height: 26rem;
+    min-height: 28rem;
+    padding: 5rem 3rem;
   }
 }
 
@@ -304,9 +310,20 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.05;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(229, 9, 20, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 76, 76, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(229, 9, 20, 0.06) 0%, transparent 50%);
+  opacity: 0.6;
   pointer-events: none;
+  animation: particlesFloat 20s ease-in-out infinite;
+}
+
+@keyframes particlesFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(10px, -10px) scale(1.05); }
+  50% { transform: translate(-10px, 10px) scale(0.95); }
+  75% { transform: translate(10px, 10px) scale(1.02); }
 }
 
 .hero-parallax::after {
@@ -327,13 +344,25 @@ export default {
 
 .hero-title {
   font-size: 1.8rem;
-  font-weight: 800;
+  font-weight: 900;
   color: white;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   margin-bottom: 1rem;
   position: relative;
   z-index: 2;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 50%, #ffffff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 
 @media (min-width: 600px) {
@@ -418,21 +447,53 @@ export default {
   display: flex;
   width: 90%;
   max-width: 600px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(229, 9, 20, 0.1) inset,
+    0 0 20px rgba(229, 9, 20, 0.2);
   border-radius: 50px;
   overflow: hidden;
-  transition: all 0.3s ease;
-  background: rgba(20, 20, 20, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(229, 9, 20, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   z-index: 2;
 }
 
+.search-bar::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50px;
+  padding: 2px;
+  background: linear-gradient(135deg, #e50914 0%, #ff4c4c 50%, #e50914 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.search-bar:focus-within::before {
+  opacity: 1;
+  animation: borderGlow 2s linear infinite;
+}
+
+@keyframes borderGlow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
 .search-bar:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
-  border: 1px solid rgba(229, 9, 20, 0.5);
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 
+    0 15px 50px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(229, 9, 20, 0.3) inset,
+    0 0 30px rgba(229, 9, 20, 0.4),
+    0 5px 15px rgba(229, 9, 20, 0.3);
+  background: rgba(25, 25, 25, 0.85);
 }
 
 .search-icon {
@@ -459,7 +520,7 @@ export default {
   background-color: transparent;
   color: white;
   outline: none;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .search-bar input::placeholder {
@@ -483,7 +544,7 @@ export default {
   justify-content: center;
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .search-button:hover {
@@ -594,29 +655,51 @@ export default {
 }
 
 .actor-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
   animation: cardFadeIn 0.5s ease-out both;
   animation-delay: calc(var(--animation-order) * 0.05s);
   height: 100%;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
-@keyframes cardFadeIn {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+.actor-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.3) 0%, transparent 50%, rgba(255, 76, 76, 0.2) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.actor-card:hover::before {
+  opacity: 1;
 }
 
 .actor-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-12px) scale(1.02) rotateX(2deg);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(229, 9, 20, 0.2) inset,
+    0 0 30px rgba(229, 9, 20, 0.15);
+  background: rgba(255, 255, 255, 0.06);
   border-color: rgba(229, 9, 20, 0.3);
 }
 
@@ -638,11 +721,13 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s ease;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), filter 0.5s ease;
+  filter: brightness(0.9) contrast(1.05);
 }
 
 .actor-card:hover .actor-image img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  filter: brightness(0.7) contrast(1.1) saturate(1.2);
 }
 
 .actor-overlay {
@@ -651,13 +736,19 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(229, 9, 20, 0.3) 30%,
+    transparent 70%
+  );
   opacity: 0;
-  transition: var(--transition-normal);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 1.5rem;
+  padding-bottom: 2rem;
+  backdrop-filter: blur(5px);
 }
 
 .actor-card:hover .actor-overlay {
@@ -665,21 +756,46 @@ export default {
 }
 
 .view-details {
-  background: #e50914;
+  background: linear-gradient(135deg, #e50914 0%, #c50914 100%);
   color: white;
-  padding: 0.6rem 1.2rem;
-  border-radius: 25px;
+  padding: 0.7rem 1.5rem;
+  border-radius: 30px;
   font-size: 0.85rem;
   font-weight: 700;
-  transform: translateY(10px);
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(229, 9, 20, 0.5);
+  transform: translateY(15px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 5px 20px rgba(229, 9, 20, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-details::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
 }
 
 .actor-card:hover .view-details {
-  transform: translateY(0);
+  transform: translateY(0) scale(1.05);
+  box-shadow: 
+    0 10px 30px rgba(229, 9, 20, 0.8),
+    0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+}
+
+.view-details:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .actor-info {
@@ -887,28 +1003,49 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
   padding: 1rem;
+  animation: modalBackdropFade 0.3s ease-out;
+}
+
+@keyframes modalBackdropFade {
+  from { opacity: 0; backdrop-filter: blur(0px); }
+  to { opacity: 1; backdrop-filter: blur(15px); }
 }
 
 .modal-content {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%);
   color: white;
-  border-radius: 12px;
+  border-radius: 20px;
   width: 95%;
-  max-width: 850px;
+  max-width: 900px;
   max-height: 85vh;
   overflow: hidden;
   position: relative;
-  border: 1px solid rgba(229, 9, 20, 0.3);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+  border: 2px solid transparent;
+  background-image: 
+    linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%),
+    linear-gradient(135deg, #e50914 0%, #ff4c4c 50%, #e50914 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(229, 9, 20, 0.3) inset,
+    0 0 50px rgba(229, 9, 20, 0.2);
   display: flex;
   flex-direction: column;
+  transform: scale(0.9);
+  animation: modalScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes modalScale {
+  to { transform: scale(1); }
 }
 
 .modal-fade-enter-active, .modal-fade-leave-active {
@@ -1025,40 +1162,81 @@ export default {
 }
 
 .credit-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: creditFadeIn 0.4s ease-out both;
   animation-delay: calc(var(--animation-order) * 0.03s);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  backdrop-filter: blur(5px);
 }
 
-@keyframes creditFadeIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+.credit-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #e50914 0%, #ff4c4c 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.credit-card:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.6);
 }
 
 .credit-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-  border-color: rgba(229, 9, 20, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateX(8px);
+  box-shadow: 
+    -3px 0 20px rgba(229, 9, 20, 0.3),
+    0 8px 25px rgba(0, 0, 0, 0.5);
+  border-color: rgba(229, 9, 20, 0.3);
 }
 
 .credit-year-badge {
-  background: linear-gradient(135deg, #e50914, #c50914);
+  background: linear-gradient(135deg, #e50914 0%, #c50914 50%, #e50914 100%);
   color: white;
-  padding: 0.7rem;
+  padding: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  min-width: 4rem;
-  font-size: 1.1rem;
-  border-radius: 6px 0 0 6px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+  font-weight: 900;
+  min-width: 4.5rem;
+  font-size: 1.15rem;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 
+    inset 0 0 15px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(229, 9, 20, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.credit-year-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmerSlow 3s linear infinite;
+}
+
+@keyframes shimmerSlow {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
 }
 
 .credit-details {

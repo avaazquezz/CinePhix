@@ -13,11 +13,19 @@
           <div class="title-underline"></div>
         </div>
         <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('popular', 'prev')">
+          <button class="nav-button prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="popularRow">
+            <!-- Skeleton Loading -->
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`skeleton-popular-${n}`" class="movie-card-skeleton">
+                <SkeletonCard />
+              </div>
+            </template>
+            <!-- Contenido Real -->
             <div
+              v-else
               v-for="item in popularMovies"
               :key="item.id"
               class="movie-card"
@@ -48,7 +56,7 @@
               </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('popular', 'next')">
+          <button class="nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -64,11 +72,19 @@
           <div class="title-underline"></div>
         </div>
         <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')">
+          <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="topRatedRow">
+            <!-- Skeleton Loading -->
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`skeleton-toprated-${n}`" class="movie-card-skeleton">
+                <SkeletonCard />
+              </div>
+            </template>
+            <!-- Contenido Real -->
             <div
+              v-else
               v-for="item in topRatedMovies"
               :key="item.id"
               class="movie-card"
@@ -99,7 +115,7 @@
               </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('topRated', 'next')">
+          <button class="nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -115,11 +131,19 @@
           <div class="title-underline"></div>
         </div>
         <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('trending', 'prev')">
+          <button class="nav-button prev" @click="scrollCategory('trending', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="trendingRow">
+            <!-- Skeleton Loading -->
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`skeleton-trending-${n}`" class="movie-card-skeleton">
+                <SkeletonCard />
+              </div>
+            </template>
+            <!-- Contenido Real -->
             <div
+              v-else
               v-for="item in trendingMovies"
               :key="item.id"
               class="movie-card"
@@ -150,7 +174,7 @@
               </div>
             </div>
           </div>
-          <button class="nav-button next" @click="scrollCategory('trending', 'next')">
+          <button class="nav-button next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -218,13 +242,16 @@ import {
   getMovieCredits,
 } from '@/ApiController/services/movieService';
 
+import SkeletonCard from '@/components/SkeletonCard.vue';
+
 export default {
   name: 'MoviesPage',
-  components: { SearchBar, MovieCard },
+  components: { SearchBar, MovieCard, SkeletonCard },
   setup() {
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
     const trendingMovies = ref([]);
+    const isLoading = ref(true);
   const isDialogOpen = ref(false);
   const query = ref('');
   const searchResults = ref([]);
@@ -246,11 +273,14 @@ export default {
 
     const fetchMovies = async () => {
       try {
+        isLoading.value = true;
         popularMovies.value = await getPopularMovies();
         topRatedMovies.value = await getTopRatedMovies();
         trendingMovies.value = await getTrendingMovies();
       } catch (error) {
         console.error('Error al cargar las películas:', error);
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -312,6 +342,7 @@ export default {
       topRatedMovies,
       trendingMovies,
       isDialogOpen,
+      isLoading,
       movieDetail,
       movieCredits,
   query,
@@ -334,7 +365,8 @@ export default {
   min-height: 100vh;
   background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
   color: #e0e0e0;
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+  /* TIPOGRAFÍA INTER: Consistencia con HomePage */
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
   overflow-x: hidden;
 }
@@ -538,8 +570,18 @@ export default {
   transition: transform 0.3s ease;
 }
 
+/* Skeleton cards en carrusel */
+.movie-card-skeleton {
+  flex: 0 0 auto;
+  width: 130px;
+}
+
 @media (min-width: 600px) {
   .movie-card {
+    width: 160px;
+  }
+  
+  .movie-card-skeleton {
     width: 160px;
   }
 }
@@ -548,29 +590,41 @@ export default {
   .movie-card {
     width: 180px;
   }
+  
+  .movie-card-skeleton {
+    width: 180px;
+  }
 }
 
 @media (min-width: 1200px) {
   .movie-card {
     width: 200px;
   }
+  
+  .movie-card-skeleton {
+    width: 200px;
+  }
 }
 
 .movie-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.05);
 }
 
 .card-inner {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 .card-inner:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(229, 9, 20, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(229, 9, 20, 0.8);
+  box-shadow: 
+    0 0 25px rgba(229, 9, 20, 0.7),
+    0 0 50px rgba(229, 9, 20, 0.4),
+    0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .poster-container {

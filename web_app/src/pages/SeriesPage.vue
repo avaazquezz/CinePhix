@@ -314,7 +314,7 @@ export default {
   min-height: 100vh;
   background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
   color: #e0e0e0;
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
   overflow-x: hidden;
 }
@@ -537,20 +537,24 @@ export default {
 }
 
 .serie-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.05);
 }
 
 .card-inner {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 .card-inner:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(229, 9, 20, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(229, 9, 20, 0.8);
+  box-shadow: 
+    0 0 25px rgba(229, 9, 20, 0.7),
+    0 0 50px rgba(229, 9, 20, 0.4),
+    0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .poster-container {

@@ -12,7 +12,13 @@
           <div class="title-underline"></div>
         </div>
         
-        <div class="movie-grid">
+        <!-- Skeletons Loading State -->
+        <div v-if="isLoading" class="movie-grid">
+          <SkeletonCard v-for="n in 12" :key="`skeleton-${n}`" />
+        </div>
+        
+        <!-- Contenido Real -->
+        <div v-else class="movie-grid">
           <div
             v-for="item in trendingContent"
             :key="item.id"
@@ -93,13 +99,18 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { getTrendingAllDay } from '@/ApiController/services/inicioService';
+import SkeletonCard from '@/components/SkeletonCard.vue';
 
 export default {
   name: 'HomePage',
+  components: {
+    SkeletonCard,
+  },
   setup() {
     const trendingContent = ref([]);
     const dialogVisible = ref(false);
     const selectedItem = ref({});
+    const isLoading = ref(true);
 
     // Versión mejorada para diferentes tamaños de pantalla
     const getImageUrl = (path) => {
@@ -117,10 +128,13 @@ export default {
 
     const fetchTrendingContent = async () => {
       try {
+        isLoading.value = true;
         const trending = await getTrendingAllDay();
         trendingContent.value = trending;
       } catch (error) {
         console.error('Error al cargar contenido en tendencia:', error);
+      } finally {
+        isLoading.value = false;
       }
     };
 
@@ -140,6 +154,7 @@ export default {
       trendingContent,
       dialogVisible,
       selectedItem,
+      isLoading,
       getImageUrl,
       openDialog,
       closeDialog,
@@ -153,7 +168,8 @@ export default {
   min-height: 100vh;
   background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
   color: #e0e0e0;
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+  /* TIPOGRAFÍA MODERNA: Inter como fuente principal */
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
   overflow-x: hidden;
 }
@@ -171,47 +187,54 @@ export default {
 }
 
 .main-content {
-  padding: 1.5rem 1rem;
+  padding: 2rem 1.25rem;
   position: relative;
   z-index: 2;
 }
 
+/* OPTIMIZACIÓN MÓVIL: Agregar padding superior para evitar contenido pegado al borde */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
 @media (min-width: 600px) {
   .main-content {
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 2rem;
   }
 }
 
 @media (min-width: 900px) {
   .main-content {
-    padding: 2.5rem 3rem;
+    padding: 3rem 3.5rem;
   }
 }
 
 @media (min-width: 1200px) {
   .main-content {
-    padding: 3rem 4rem;
+    padding: 4rem 5rem;
   }
 }
 
 .movie-section {
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
 }
 
 .section-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   position: relative;
 }
 
 @media (min-width: 600px) {
   .section-header {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 }
 
 @media (min-width: 1200px) {
   .section-header {
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
   }
 }
 
@@ -220,11 +243,13 @@ export default {
   font-weight: 700;
   color: white;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 10px;
+  /* TIPOGRAFÍA INTER: Mejor legibilidad */
+  font-family: 'Inter', sans-serif;
 }
 
 @media (min-width: 600px) {
@@ -291,27 +316,40 @@ export default {
 
 .movie-grid {
   display: grid;
+  /* Mobile First: 2 columnas en móvil (REGLA ESTRICTA) */
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  width: 100%;
 }
 
+/* Tablet: 3 columnas */
 @media (min-width: 600px) {
   .movie-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+/* Tablet grande: 4 columnas */
+@media (min-width: 900px) {
+  .movie-grid {
+    grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
   }
 }
 
-@media (min-width: 900px) {
+/* Desktop: 5 columnas */
+@media (min-width: 1200px) {
   .movie-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.75rem;
   }
 }
 
-@media (min-width: 1200px) {
+/* Desktop XL: 6 columnas */
+@media (min-width: 1600px) {
   .movie-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
     gap: 2rem;
   }
 }
@@ -322,20 +360,24 @@ export default {
 }
 
 .movie-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.05);
 }
 
 .card-inner {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 .card-inner:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(229, 9, 20, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(229, 9, 20, 0.8);
+  box-shadow: 
+    0 0 25px rgba(229, 9, 20, 0.7),
+    0 0 50px rgba(229, 9, 20, 0.4),
+    0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .poster-container {
@@ -411,18 +453,18 @@ export default {
 }
 
 .card-info {
-  padding: 0.75rem;
+  padding: 1rem;
 }
 
 @media (min-width: 600px) {
   .card-info {
-    padding: 0.85rem;
+    padding: 1.1rem;
   }
 }
 
 @media (min-width: 1200px) {
   .card-info {
-    padding: 1rem;
+    padding: 1.25rem;
   }
 }
 
@@ -430,14 +472,17 @@ export default {
   font-size: 0.9rem;
   font-weight: 600;
   color: white;
-  margin-bottom: 0.4rem;
-  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   min-height: 2.2rem;
+  /* TIPOGRAFÍA INTER: Mejor legibilidad en títulos */
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.2px;
 }
 
 @media (min-width: 600px) {
