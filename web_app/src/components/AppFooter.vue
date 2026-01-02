@@ -50,7 +50,7 @@
     <div class="footer-bottom">
       <div class="footer-bottom-content">
         <div class="copyright">
-          © {{ new Date().getFullYear() }} CinePhix. {{ $t('footer.rights') }}.
+          © {{ new Date().getFullYear() }} CinePhix.
         </div>
         <div class="developer-info" v-html="$t('footer.by')"></div>
       </div>
@@ -70,7 +70,8 @@ const socialLinks = [
 .app-footer {
   background: linear-gradient(180deg, #1a0000 0%, #2a0000 50%, #3b0101 100%);
   color: white;
-  font-family: 'Montserrat', sans-serif;
+  /* TIPOGRAFÍA INTER: Modernidad y legibilidad */
+  font-family: 'Inter', 'Roboto', sans-serif;
   position: relative;
 }
 
@@ -93,10 +94,28 @@ const socialLinks = [
 .footer-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.5rem;
+  gap: 2rem;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Footer más compacto y profesional */
+@media (max-width: 768px) {
+  .footer-main {
+    padding: 1.5rem 0 1rem;
+  }
+  
+  .footer-container {
+    padding: 0 1rem;
+    gap: 1.25rem;
+  }
+  
+  /* En móvil: solo mostrar brand y copyright, ocultar secciones largas */
+  .footer-navigation,
+  .footer-about {
+    display: none;
+  }
 }
 
 @media (min-width: 768px) {
@@ -131,19 +150,47 @@ const socialLinks = [
 
 /* Brand Section */
 .footer-brand {
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  font-size: 2rem;
+  gap: 0.75rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: white;
   text-transform: uppercase;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   margin-bottom: 0.5rem;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Logo más pequeño */
+@media (max-width: 768px) {
+  .footer-brand {
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .brand-logo {
+    font-size: 1.3rem;
+    gap: 0.6rem;
+    letter-spacing: 1.5px;
+    justify-content: center;
+  }
+  
+  .brand-logo i {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .brand-logo {
+    font-size: 2rem;
+    gap: 0.85rem;
+    letter-spacing: 2.5px;
+  }
 }
 
 .brand-logo i {
@@ -167,11 +214,21 @@ const socialLinks = [
 }
 
 .brand-tagline {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.75);
-  line-height: 1.7;
-  margin: 0 0 1.5rem 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
   font-weight: 400;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Tagline más compacto */
+@media (max-width: 768px) {
+  .brand-tagline {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin: 0 0 0.75rem 0;
+    display: none; /* Ocultar en móvil para ahorrar espacio */
+  }
 }
 
 @media (min-width: 1024px) {
@@ -274,13 +331,21 @@ const socialLinks = [
 /* Social Links */
 .social-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   align-items: center;
 }
 
+/* OPTIMIZACIÓN MÓVIL: Social buttons más pequeños y centrados */
+@media (max-width: 768px) {
+  .social-links {
+    justify-content: center;
+    gap: 0.65rem;
+  }
+}
+
 .social-btn {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   background: rgba(255, 255, 255, 0.03);
   border: 2px solid rgba(229, 9, 20, 0.4);
   border-radius: 50%;
@@ -289,10 +354,28 @@ const socialLinks = [
   justify-content: center;
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Botones sociales más pequeños */
+@media (max-width: 768px) {
+  .social-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+    border-width: 1.5px;
+  }
+}
+
+@media (min-width: 769px) {
+  .social-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
 }
 
 .social-btn::before {
@@ -323,9 +406,18 @@ const socialLinks = [
 /* Bottom Bar */
 .footer-bottom {
   background: rgba(0, 0, 0, 0.4);
-  padding: 1.75rem 1.5rem;
+  padding: 1.25rem 1rem;
   border-top: 1px solid rgba(229, 9, 20, 0.3);
   backdrop-filter: blur(10px);
+}
+
+/* OPTIMIZACIÓN MÓVIL: Bottom bar mucho más compacto */
+@media (max-width: 768px) {
+  .footer-bottom {
+    padding: 1rem 1rem;
+    /* Agregar padding inferior para compensar el bottom navigation bar */
+    padding-bottom: calc(1rem + 65px); /* 65px = altura del bottom nav */
+  }
 }
 
 @media (min-width: 768px) {
@@ -346,8 +438,15 @@ const socialLinks = [
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   text-align: center;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Contenido más compacto */
+@media (max-width: 768px) {
+  .footer-bottom-content {
+    gap: 0.4rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -359,17 +458,31 @@ const socialLinks = [
 }
 
 .copyright {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
   font-weight: 400;
   letter-spacing: 0.3px;
 }
 
+/* OPTIMIZACIÓN MÓVIL: Texto más pequeño */
+@media (max-width: 768px) {
+  .copyright {
+    font-size: 0.7rem;
+  }
+}
+
 .developer-info {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
   letter-spacing: 0.3px;
+}
+
+/* OPTIMIZACIÓN MÓVIL: Texto más pequeño */
+@media (max-width: 768px) {
+  .developer-info {
+    font-size: 0.7rem;
+  }
 }
 
 /* Link Styles in HTML content */

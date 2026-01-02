@@ -85,9 +85,13 @@ export default {
   justify-content: space-between;
   padding: 1rem 2rem;
   background-color: rgba(0, 0, 0, 0.85);
-  position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
   z-index: 1000;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
 }
 
 .logo-img {
@@ -156,6 +160,9 @@ export default {
   transition: color 0.3s ease;
   position: relative;
   padding: 0.5rem 0;
+  /* TIPOGRAFÍA INTER: Enlaces más legibles */
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.3px;
 }
 
 .nav-link:hover {
@@ -178,66 +185,80 @@ export default {
 
 /* Responsividad */
 @media screen and (max-width: 768px) {
-  .nav-links {
-    gap: 1rem; /* Reduce el espacio entre enlaces en pantallas pequeñas */
-  }
-
-  .nav-link {
-    font-size: 0.9rem; /* Reduce el tamaño del texto en pantallas pequeñas */
+  /* DISEÑO MÓVIL PROFESIONAL: Logo + Idioma */
+  .header {
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(229, 9, 20, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   }
   
-  .header {
-    padding: 1rem;
+  .logo {
+    flex: 1;
+  }
+  
+  .logo-img {
+    height: 35px;
+    filter: drop-shadow(0 0 10px rgba(229, 9, 20, 0.3));
+    transition: transform 0.3s ease;
+  }
+  
+  .logo-img:active {
+    transform: scale(0.95);
+  }
+  
+  /* Ocultar los enlaces de navegación en móvil (están en bottom bar) */
+  .nav-links {
+    display: none;
+  }
+  
+  .navigation {
+    display: flex;
+    align-items: center;
   }
   
   .lang-switcher {
-    margin-left: 1rem;
+    margin-left: 0;
+  }
+  
+  .lang-toggle {
+    background-color: rgba(40, 40, 40, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .lang-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    min-width: 36px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .nav-links {
+    gap: 1.5rem;
   }
 }
 
 @media screen and (max-width: 480px) {
+  /* Mobile muy pequeño: optimización adicional */
   .header {
-    flex-direction: column;
-    padding: 0.8rem 0.5rem;
+    padding: 0.6rem 0.75rem;
   }
   
-  .logo {
-    order: 2;
-    margin-top: 0.5rem;
-  }
-  
-  .navigation {
-    flex-direction: column;
-    width: 100%;
-    order: 1;
-  }
-  
-  .nav-links {
-    width: 100%;
-    gap: 0.5rem;
-    margin-bottom: 0.8rem;
-    justify-content: space-around;
-    order: 2;
-  }
-
-  .nav-link {
-    font-size: 0.8rem;
-    padding: 0.3rem 0;
-  }
-  
-  .lang-switcher {
-    margin: 0;
-    order: 1;
-    margin-bottom: 0.8rem;
-  }
-  
-  .lang-toggle {
-    margin: 0 auto;
+  .logo-img {
+    height: 30px;
   }
   
   .lang-btn {
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
+    min-width: 32px;
   }
 }
 </style>

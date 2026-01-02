@@ -106,7 +106,7 @@ export default {
   width: 100%;
   min-height: 100vh;
   color: #e0e0e0;
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow: hidden;
   padding: 0;
   margin: 0;
