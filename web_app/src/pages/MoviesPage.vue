@@ -24,37 +24,18 @@
               </div>
             </template>
             <!-- Contenido Real -->
-            <div
-              v-else
-              v-for="item in popularMovies"
-              :key="item.id"
-              class="movie-card"
-              @click="openMovieDialog(item.id)"
-            >
-              <div class="card-inner">
-                <div class="poster-container">
-                  <img
-                    :src="getImageUrl(item.poster_path)"
-                    :alt="item.title"
-                    class="movie-poster"
-                  />
-                  <div class="poster-overlay">
-                    <div class="play-icon">
-                      <i class="fas fa-play"></i>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-info">
-                  <h3 class="movie-title">{{ item.title }}</h3>
-                  <div class="movie-meta">
-                    <span class="movie-rating">
-                      <i class="fas fa-star"></i>
-                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <template v-if="!isLoading">
+              <MovieCard
+                v-for="item in popularMovies"
+                :key="item.id"
+                :id="item.id"
+                :title="item.title"
+                :image="getImageUrl(item.poster_path)"
+                media-type="movie"
+                :rating="item.vote_average ? item.vote_average / 2 : null"
+                @select="openMovieDialog(item.id)"
+              />
+            </template>
           </div>
           <button class="nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
@@ -83,37 +64,18 @@
               </div>
             </template>
             <!-- Contenido Real -->
-            <div
-              v-else
-              v-for="item in topRatedMovies"
-              :key="item.id"
-              class="movie-card"
-              @click="openMovieDialog(item.id)"
-            >
-              <div class="card-inner">
-                <div class="poster-container">
-                  <img
-                    :src="getImageUrl(item.poster_path)"
-                    :alt="item.title"
-                    class="movie-poster"
-                  />
-                  <div class="poster-overlay">
-                    <div class="play-icon">
-                      <i class="fas fa-play"></i>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-info">
-                  <h3 class="movie-title">{{ item.title }}</h3>
-                  <div class="movie-meta">
-                    <span class="movie-rating">
-                      <i class="fas fa-star"></i>
-                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <template v-if="!isLoading">
+              <MovieCard
+                v-for="item in topRatedMovies"
+                :key="item.id"
+                :id="item.id"
+                :title="item.title"
+                :image="getImageUrl(item.poster_path)"
+                media-type="movie"
+                :rating="item.vote_average ? item.vote_average / 2 : null"
+                @select="openMovieDialog(item.id)"
+              />
+            </template>
           </div>
           <button class="nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
@@ -142,37 +104,18 @@
               </div>
             </template>
             <!-- Contenido Real -->
-            <div
-              v-else
-              v-for="item in trendingMovies"
-              :key="item.id"
-              class="movie-card"
-              @click="openMovieDialog(item.id)"
-            >
-              <div class="card-inner">
-                <div class="poster-container">
-                  <img
-                    :src="getImageUrl(item.poster_path)"
-                    :alt="item.title"
-                    class="movie-poster"
-                  />
-                  <div class="poster-overlay">
-                    <div class="play-icon">
-                      <i class="fas fa-play"></i>
-                    </div>
-                  </div>
-                </div>
-                <div class="card-info">
-                  <h3 class="movie-title">{{ item.title }}</h3>
-                  <div class="movie-meta">
-                    <span class="movie-rating">
-                      <i class="fas fa-star"></i>
-                      {{ item.vote_average ? item.vote_average.toFixed(1) : 'N/A' }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <template v-if="!isLoading">
+              <MovieCard
+                v-for="item in trendingMovies"
+                :key="item.id"
+                :id="item.id"
+                :title="item.title"
+                :image="getImageUrl(item.poster_path)"
+                media-type="movie"
+                :rating="item.vote_average ? item.vote_average / 2 : null"
+                @select="openMovieDialog(item.id)"
+              />
+            </template>
           </div>
           <button class="nav-button next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
@@ -231,7 +174,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import SearchBar from '@/components/SearchBar.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import {
@@ -241,6 +184,9 @@ import {
   getMovieDetail,
   getMovieCredits,
 } from '@/ApiController/services/movieService';
+import { useWatchlistStore } from '@/stores/watchlist';
+import { useFavoritesStore } from '@/stores/favorites';
+import { useAuthStore } from '@/stores/auth';
 
 import SkeletonCard from '@/components/SkeletonCard.vue';
 
@@ -257,6 +203,37 @@ export default {
   const searchResults = ref([]);
     const movieDetail = ref({});
     const movieCredits = ref([]);
+    const watchlistStore = useWatchlistStore();
+    const favoritesStore = useFavoritesStore();
+    const authStore = useAuthStore();
+
+    const isInWatchlist = computed(() => {
+      return watchlistStore.hasItem(movieDetail.value.id, 'movie')
+    })
+
+    const isFavorite = computed(() => {
+      return favoritesStore.hasItem(movieDetail.value.id, 'movie')
+    })
+
+    const toggleWatchlist = async () => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      if (isInWatchlist.value) {
+        await watchlistStore.removeByTmdbId(movieDetail.value.id, 'movie')
+      } else {
+        await watchlistStore.addItem(movieDetail.value.id, 'movie')
+      }
+    }
+
+    const toggleFavorite = async () => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      await favoritesStore.toggleFavorite(movieDetail.value.id, 'movie')
+    }
 
     const popularRow = ref(null);
     const topRatedRow = ref(null);
@@ -345,6 +322,10 @@ export default {
       isLoading,
       movieDetail,
       movieCredits,
+      isInWatchlist,
+      isFavorite,
+      toggleWatchlist,
+      toggleFavorite,
   query,
   searchResults,
       popularRow,
@@ -1373,4 +1354,50 @@ export default {
   transform: rotate(90deg);
 }
 
+/* Dialog Action Buttons */
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.dialog-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dialog-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.dialog-action-btn.active {
+  background: rgba(229, 9, 20, 0.2);
+  border-color: #e50914;
+  color: #e50914;
+}
+
+.dialog-action-btn i {
+  font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .dialog-actions {
+    flex-direction: column;
+  }
+  .dialog-action-btn {
+    justify-content: center;
+  }
+}
 </style>
