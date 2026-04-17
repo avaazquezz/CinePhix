@@ -164,6 +164,39 @@
                     </div>
                   </div>
                 </div>
+
+                <!-- Reviews Section -->
+                <div class="dialog-reviews-container">
+                  <div class="reviews-header">
+                    <h3 class="reviews-title">Reviews</h3>
+                    <v-btn
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                      @click="showReviewForm = !showReviewForm"
+                    >
+                      {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
+                    </v-btn>
+                  </div>
+
+                  <ReviewForm
+                    v-if="showReviewForm"
+                    :is-submitting="isSubmittingReview"
+                    :error="reviewError"
+                    @submit="handleCreateReview"
+                    @cancel="handleCancelReview"
+                  />
+
+                  <ReviewList
+                    :reviews="movieReviews"
+                    :is-loading="isLoadingReviews"
+                    :current-sort="reviewsSort"
+                    :current-user-id="authStore.user?.id"
+                    @update:sort="handleSortChange"
+                    @vote="handleVoteReview"
+                    @edit="handleEditReview"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -187,12 +220,15 @@ import {
 import { useWatchlistStore } from '@/stores/watchlist';
 import { useFavoritesStore } from '@/stores/favorites';
 import { useAuthStore } from '@/stores/auth';
+import { getReviewsForMedia, createReview, voteReview } from '@/api/services/reviewService';
+import ReviewForm from '@/components/ReviewForm.vue';
+import ReviewList from '@/components/ReviewList.vue';
 
 import SkeletonCard from '@/components/SkeletonCard.vue';
 
 export default {
   name: 'MoviesPage',
-  components: { SearchBar, MovieCard, SkeletonCard },
+  components: { SearchBar, MovieCard, SkeletonCard, ReviewForm, ReviewList },
   setup() {
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
@@ -203,6 +239,13 @@ export default {
   const searchResults = ref([]);
     const movieDetail = ref({});
     const movieCredits = ref([]);
+    const movieReviews = ref([]);
+    const reviewsSort = ref('recent');
+    const isLoadingReviews = ref(false);
+    const isSubmittingReview = ref(false);
+    const reviewError = ref(null);
+    const showReviewForm = ref(false);
+    const editingReview = ref(null);
     const watchlistStore = useWatchlistStore();
     const favoritesStore = useFavoritesStore();
     const authStore = useAuthStore();
@@ -275,6 +318,11 @@ export default {
       try {
         movieDetail.value = await getMovieDetail(id);
         movieCredits.value = await getMovieCredits(id);
+        movieReviews.value = [];
+        reviewsSort.value = 'recent';
+        showReviewForm.value = false;
+        editingReview.value = null;
+        await fetchMovieReviews();
         isDialogOpen.value = true;
         document.body.style.overflow = 'hidden';
         window.dispatchEvent(new CustomEvent('dialog-opened'));
@@ -287,6 +335,9 @@ export default {
       isDialogOpen.value = false;
       movieDetail.value = {};
       movieCredits.value = [];
+      movieReviews.value = [];
+      showReviewForm.value = false;
+      editingReview.value = null;
       document.body.style.overflow = '';
       window.dispatchEvent(new CustomEvent('dialog-closed'));
     };
@@ -314,6 +365,77 @@ export default {
 
     onMounted(fetchMovies);
 
+    // --- Reviews ---
+    const fetchMovieReviews = async (sort = reviewsSort.value) => {
+      if (!movieDetail.value.id) return
+      isLoadingReviews.value = true
+      try {
+        const data = await getReviewsForMedia({
+          tmdbId: movieDetail.value.id,
+          mediaType: 'movie',
+          sortBy: sort,
+        })
+        movieReviews.value = data.items
+      } catch (e) {
+        console.error('Error fetching reviews', e)
+      } finally {
+        isLoadingReviews.value = false
+      }
+    }
+
+    const handleSortChange = async (sort) => {
+      reviewsSort.value = sort
+      await fetchMovieReviews(sort)
+    }
+
+    const handleCreateReview = async ({ rating, content, isSpoiler }) => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      reviewError.value = null
+      isSubmittingReview.value = true
+      try {
+        await createReview({
+          tmdbId: movieDetail.value.id,
+          mediaType: 'movie',
+          rating,
+          content,
+          isSpoiler,
+        })
+        showReviewForm.value = false
+        await fetchMovieReviews()
+      } catch (e) {
+        reviewError.value = e.response?.data?.detail || 'Failed to post review'
+      } finally {
+        isSubmittingReview.value = false
+      }
+    }
+
+    const handleVoteReview = async (reviewId, voteType) => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      try {
+        await voteReview(reviewId, voteType)
+        await fetchMovieReviews()
+      } catch (e) {
+        console.error('Error voting on review', e)
+      }
+    }
+
+    const handleEditReview = (review) => {
+      editingReview.value = review
+      showReviewForm.value = true
+    }
+
+    const handleCancelReview = () => {
+      showReviewForm.value = false
+      editingReview.value = null
+      reviewError.value = null
+    }
+
     return {
       popularMovies,
       topRatedMovies,
@@ -322,12 +444,19 @@ export default {
       isLoading,
       movieDetail,
       movieCredits,
+      movieReviews,
+      reviewsSort,
+      isLoadingReviews,
+      isSubmittingReview,
+      reviewError,
+      showReviewForm,
+      editingReview,
       isInWatchlist,
       isFavorite,
       toggleWatchlist,
       toggleFavorite,
-  query,
-  searchResults,
+      query,
+      searchResults,
       popularRow,
       topRatedRow,
       trendingRow,
@@ -335,7 +464,13 @@ export default {
       scrollCategory,
       openMovieDialog,
       closeMovieDialog,
-  onSearch,
+      fetchMovieReviews,
+      handleSortChange,
+      handleCreateReview,
+      handleVoteReview,
+      handleEditReview,
+      handleCancelReview,
+      onSearch,
     };
   },
 };
@@ -1399,5 +1534,28 @@ export default {
   .dialog-action-btn {
     justify-content: center;
   }
+}
+
+/* Reviews Section */
+.dialog-reviews-container {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.reviews-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
 }
 </style>
