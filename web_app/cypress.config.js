@@ -10,6 +10,7 @@ export default defineConfig({
     defaultCommandTimeout: 10000,
     env: {
       VITE_TMDB_API_KEY: process.env.VITE_TMDB_API_KEY || 'e546f0210838c597382ddcad9f8e0647',
+      VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:8000',
     },
   },
 })

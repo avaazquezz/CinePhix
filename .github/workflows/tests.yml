@@ -25,6 +25,9 @@ jobs:
         run: npm run test:unit
       - name: Build app
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:8000' }}
+          VITE_TMDB_API_KEY: ${{ secrets.VITE_TMDB_API_KEY }}
       - name: Start preview server
         run: npx vite preview --port 3000 --strictPort &
       - name: Wait for server
@@ -33,3 +36,4 @@ jobs:
         run: npm run test:e2e
         env:
           VITE_TMDB_API_KEY: ${{ secrets.VITE_TMDB_API_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
