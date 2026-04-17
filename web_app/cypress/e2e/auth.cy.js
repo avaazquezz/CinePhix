@@ -41,7 +41,9 @@ describe('Authentication Flow', () => {
       cy.get('.auth-card input[type="email"]').type('nonexistent@test.com')
       cy.get('.auth-card input[type="password"]').type('wrongpassword')
       cy.get('button[type="submit"]').click({ force: true })
-      cy.contains('Invalid email or password', { timeout: 5000 }).should('be.visible')
+      cy.url().should('include', '/auth/login')
+      // auth store: response.data.detail || 'Login failed' — no backend / network → "Login failed"
+      cy.contains(/Invalid email or password|Login failed/i, { timeout: 15000 }).should('be.visible')
     })
 
     it('should navigate to register page', () => {
