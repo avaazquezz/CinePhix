@@ -1,0 +1,21 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cinephix-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://backend:8001
+    volumes:
+      - ./web_app:/app
+    command: npm run dev -- --host 0.0.0.0
+    networks:
+      - cinephix-network
+
+networks:
+  cinephix-network:
+    name: cinephix-network
+    external: true

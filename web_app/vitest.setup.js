@@ -1,6 +1,10 @@
 import { beforeAll } from 'vitest'
 
-// JSDOM lacks some layout properties; basic stub to avoid errors
+// JSDOM doesn't support CSS imports - mock all CSS files
+const cssMock = () => ({})
+import.meta.glob('../../node_modules/**/*.css', { eager: true })
+
+// Mock window.matchMedia for Vuetify
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,

@@ -32,7 +32,18 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: './vitest.setup.js'
+    setupFiles: './vitest.setup.js',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.spec.js',
+        '**/*.cy.js',
+        'vitest.setup.js',
+      ],
+    },
   },
   optimizeDeps: {
     exclude: ['vuetify'],

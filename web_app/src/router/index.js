@@ -1,42 +1,114 @@
-import { createRouter, createWebHistory } from 'vue-router';
+/**
+ * Router Configuration with Navigation Guards
+ * Protects routes that require authentication
+ */
 
-import MainPage from '@/pages/MainPage.vue';
-import HomePage from '@/pages/HomePage.vue';
-import MoviesPage from '@/pages/MoviesPage.vue';
-import SeriesPage from '@/pages/SeriesPage.vue';
-import ActorsPage from '@/pages/ActorsPage.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+// Pages - lazy loaded for code splitting
+const MainPage = () => import('@/pages/MainPage.vue')
+const HomePage = () => import('@/pages/HomePage.vue')
+const MoviesPage = () => import('@/pages/MoviesPage.vue')
+const SeriesPage = () => import('@/pages/SeriesPage.vue')
+const ActorsPage = () => import('@/pages/ActorsPage.vue')
+
+// Auth pages
+const LoginPage = () => import('@/pages/auth/LoginPage.vue')
+const RegisterPage = () => import('@/pages/auth/RegisterPage.vue')
+
+// Profile page
+const ProfilePage = () => import('@/pages/ProfilePage.vue')
 
 const routes = [
+  // Public routes
   {
     path: '/CinePhix/',
     name: 'Main',
     component: MainPage,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/home',
     name: 'Home',
     component: HomePage,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/movies',
     name: 'Movies',
     component: MoviesPage,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/series',
     name: 'Series',
     component: SeriesPage,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/actores',
     name: 'Actors',
     component: ActorsPage,
+    meta: { public: true },
   },
-];
+
+  // Auth routes (public only when not logged in)
+  {
+    path: '/CinePhix/auth/login',
+    name: 'Login',
+    component: LoginPage,
+    meta: { public: true, guestOnly: true },
+  },
+  {
+    path: '/CinePhix/auth/register',
+    name: 'Register',
+    component: RegisterPage,
+    meta: { public: true, guestOnly: true },
+  },
+
+  // Protected routes
+  {
+    path: '/CinePhix/profile',
+    name: 'Profile',
+    component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    return { top: 0 }
+  },
+})
 
-export default router;
+// Navigation guards
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+
+  // Check if auth is initialized
+  if (!authStore.isAuthenticated && localStorage.getItem('access_token')) {
+    await authStore.initialize()
+  }
+
+  const isAuthenticated = authStore.isAuthenticated
+  const requiresAuth = to.meta.requiresAuth
+  const guestOnly = to.meta.guestOnly
+
+  if (requiresAuth && !isAuthenticated) {
+    // Redirect to login if not authenticated
+    next({ name: 'Login', query: { redirect: to.fullPath } })
+  } else if (guestOnly && isAuthenticated) {
+    // Redirect to home if already authenticated
+    next({ name: 'Home' })
+  } else {
+    next()
+  }
+})
+
+export default router

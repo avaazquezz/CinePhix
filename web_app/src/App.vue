@@ -13,17 +13,40 @@
 </template>
 
 <script>
-import AppFooter from "@/components/AppFooter.vue";
-import AppBarNavigation from "@/components/AppBarNavigation.vue";
-import BottomNavigation from "@/components/BottomNavigation.vue";
+import { onMounted } from 'vue'
+import AppFooter from '@/components/AppFooter.vue'
+import AppBarNavigation from '@/components/AppBarNavigation.vue'
+import BottomNavigation from '@/components/BottomNavigation.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useWatchlistStore } from '@/stores/watchlist'
+import { useFavoritesStore } from '@/stores/favorites'
 
 export default {
+  name: 'App',
   components: {
     AppFooter,
     AppBarNavigation,
     BottomNavigation,
   },
-};
+  setup() {
+    const authStore = useAuthStore()
+    const watchlistStore = useWatchlistStore()
+    const favoritesStore = useFavoritesStore()
+
+    // Initialize auth and load user data on app start
+    onMounted(async () => {
+      await authStore.initialize()
+
+      // If authenticated, load watchlist and favorites
+      if (authStore.isAuthenticated) {
+        watchlistStore.fetchWatchlist()
+        favoritesStore.fetchFavorites()
+      }
+    })
+
+    return {}
+  },
+}
 </script>
 
 <style>
@@ -41,7 +64,7 @@ body {
   background-color: #000000;
   min-height: 100vh;
   /* TIPOGRAFÍA MODERNA: Inter como fuente principal */
-  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI',
                'Helvetica Neue', Arial, sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
