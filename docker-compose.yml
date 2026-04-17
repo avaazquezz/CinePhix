@@ -12,11 +12,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # El navegador hace las peticiones: debe ser localhost + puerto publicado del API en el HOST
-      # (no uses el nombre del servicio Docker "backend" — da ERR_NAME_NOT_RESOLVED).
-      - VITE_API_URL=http://127.0.0.1:8000
+      - VITE_API_URL=http://127.0.0.1:${API_HOST_PORT:-8001}
     volumes:
-      # Código desde el host; node_modules en volumen (el bind mount tapa el de la imagen)
       - ./web_app:/app
       - frontend_node_modules:/app/node_modules
     # Instala deps en el volumen la primera vez (o si falta pinia). Luego solo arranca Vite.

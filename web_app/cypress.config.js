@@ -10,13 +10,13 @@ export default defineConfig({
     defaultCommandTimeout: 10000,
     env: {
       VITE_TMDB_API_KEY: process.env.VITE_TMDB_API_KEY || 'e546f0210838c597382ddcad9f8e0647',
-      VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:8000',
+      VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:8001',
       CI: process.env.CI === 'true',
     },
     setupNodeEvents(on, config) {
       on('task', {
         isBackendReachable(url) {
-          const raw = String(url || config.env.VITE_API_URL || 'http://localhost:8000').replace(
+          const raw = String(url || config.env.VITE_API_URL || 'http://localhost:8001').replace(
             /\/$/,
             '',
           )
