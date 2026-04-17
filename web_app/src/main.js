@@ -1,18 +1,32 @@
-import { registerPlugins } from '@/plugins';
+/**
+ * Main app entry point - initializes Vue with plugins
+ */
 
-// Components
-import App from './App.vue';
+import { registerPlugins } from '@/plugins'
 
-// Composables
-import { createApp } from 'vue';
+// App
+import App from './App.vue'
+
+// Vue
+import { createApp } from 'vue'
 
 // Router
-import router from '@/router';
+import router from '@/router'
 
-const app = createApp(App);
+// Pinia
+import { createPinia } from 'pinia'
 
-registerPlugins(app);
+const app = createApp(App)
 
-app.use(router); // Usa el router en la aplicación
+// Register Pinia
+const pinia = createPinia()
+app.use(pinia)
 
-app.mount('#app');
+// Register plugins (Vuetify, i18n, etc.)
+registerPlugins(app)
+
+// Use router
+app.use(router)
+
+// Mount
+app.mount('#app')
