@@ -19,37 +19,16 @@
         
         <!-- Contenido Real -->
         <div v-else class="movie-grid">
-          <div
+          <MovieCard
             v-for="item in trendingContent"
             :key="item.id"
-            class="movie-card"
-            @click="openDialog(item)"
-          >
-            <div class="card-inner">
-              <div class="poster-container">
-                <img
-                  :src="getImageUrl(item.poster_path)"
-                  :alt="item.title || item.name"
-                  class="movie-poster"
-                />
-                <div class="poster-overlay">
-                  <div class="play-icon">
-                    <i class="fas fa-play"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="card-info">
-                <h3 class="movie-title">{{ item.title || item.name }}</h3>
-                <div class="movie-meta">
-                  <span class="movie-type">{{ item.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}</span>
-                  <span class="movie-rating">
-                    <i class="fas fa-star"></i>
-                    {{ item.vote_average ? (item.vote_average).toFixed(1) : 'N/A' }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+            :id="item.id"
+            :title="item.title || item.name"
+            :image="getImageUrl(item.poster_path)"
+            :media-type="item.media_type || 'movie'"
+            :rating="item.vote_average ? item.vote_average / 2 : null"
+            @select="openDialog(item)"
+          />
         </div>
       </section>
     </main>
@@ -88,6 +67,28 @@
                 <h3 class="overview-title">{{ $t('home.dialog.overview') || 'Overview' }}</h3>
                 <p class="dialog-overview">{{ selectedItem.overview || $t('home.dialog.noOverview') }}</p>
               </div>
+
+              <!-- Action Buttons -->
+              <div class="dialog-actions">
+                <button
+                  class="dialog-action-btn"
+                  :class="{ active: isInWatchlist }"
+                  @click="toggleWatchlist"
+                  :title="isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'"
+                >
+                  <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                  {{ isInWatchlist ? 'In Watchlist' : 'Watchlist' }}
+                </button>
+                <button
+                  class="dialog-action-btn"
+                  :class="{ active: isFavorite }"
+                  @click="toggleFavorite"
+                  :title="isFavorite ? 'Remove from Favorites' : 'Add to Favorites'"
+                >
+                  <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+                  {{ isFavorite ? 'Favorited' : 'Favorite' }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -97,20 +98,57 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { getTrendingAllDay } from '@/ApiController/services/inicioService';
 import SkeletonCard from '@/components/SkeletonCard.vue';
+import MovieCard from '@/components/MovieCard.vue';
+import { useWatchlistStore } from '@/stores/watchlist';
+import { useFavoritesStore } from '@/stores/favorites';
+import { useAuthStore } from '@/stores/auth';
 
 export default {
   name: 'HomePage',
   components: {
     SkeletonCard,
+    MovieCard,
   },
   setup() {
     const trendingContent = ref([]);
     const dialogVisible = ref(false);
     const selectedItem = ref({});
     const isLoading = ref(true);
+    const watchlistStore = useWatchlistStore();
+    const favoritesStore = useFavoritesStore();
+    const authStore = useAuthStore();
+
+    const isInWatchlist = computed(() => {
+      return watchlistStore.hasItem(selectedItem.value.id, selectedItem.value.media_type || 'movie')
+    })
+
+    const isFavorite = computed(() => {
+      return favoritesStore.hasItem(selectedItem.value.id, selectedItem.value.media_type || 'movie')
+    })
+
+    const toggleWatchlist = async () => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      const mediaType = selectedItem.value.media_type || 'movie'
+      if (isInWatchlist.value) {
+        await watchlistStore.removeByTmdbId(selectedItem.value.id, mediaType)
+      } else {
+        await watchlistStore.addItem(selectedItem.value.id, mediaType)
+      }
+    }
+
+    const toggleFavorite = async () => {
+      if (!authStore.isAuthenticated) {
+        window.location.href = '/CinePhix/auth/login'
+        return
+      }
+      await favoritesStore.toggleFavorite(selectedItem.value.id, selectedItem.value.media_type || 'movie')
+    }
 
     // Versión mejorada para diferentes tamaños de pantalla
     const getImageUrl = (path) => {
@@ -158,6 +196,10 @@ export default {
       getImageUrl,
       openDialog,
       closeDialog,
+      isInWatchlist,
+      isFavorite,
+      toggleWatchlist,
+      toggleFavorite,
     };
   },
 };
@@ -1038,6 +1080,54 @@ export default {
   
   .dialog-overview {
     font-size: 0.95rem;
+  }
+}
+
+/* Dialog Action Buttons */
+.dialog-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dialog-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dialog-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.dialog-action-btn.active {
+  background: rgba(229, 9, 20, 0.2);
+  border-color: #e50914;
+  color: #e50914;
+}
+
+.dialog-action-btn i {
+  font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .dialog-actions {
+    flex-direction: column;
+  }
+
+  .dialog-action-btn {
+    justify-content: center;
   }
 }
 </style>

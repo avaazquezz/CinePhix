@@ -124,6 +124,86 @@
         </div>
       </div>
 
+      <!-- My Watchlist -->
+      <div class="profile-card">
+        <h2 class="section-title">My Watchlist</h2>
+
+        <div v-if="isLoadingWatchlist" class="content-loading">
+          <v-progress-circular indeterminate color="primary" />
+        </div>
+
+        <div v-else-if="watchlistItems.length === 0" class="empty-state">
+          <p>Your watchlist is empty.</p>
+          <v-btn color="primary" variant="tonal" to="/CinePhix/home">
+            Browse Movies
+          </v-btn>
+        </div>
+
+        <div v-else class="items-grid">
+          <div
+            v-for="item in watchlistItems"
+            :key="`wl-${item.tmdbId}-${item.mediaType}`"
+            class="item-card"
+          >
+            <MovieCard
+              :id="item.tmdbId"
+              :title="item.title"
+              :image="item.image"
+              :media-type="item.mediaType"
+              :rating="item.rating"
+              @select="() => {}"
+            />
+            <button
+              class="remove-btn"
+              @click="removeFromWatchlist(item.tmdbId, item.mediaType)"
+              title="Remove from Watchlist"
+            >
+              <v-icon size="16">mdi-close</v-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Favorites -->
+      <div class="profile-card">
+        <h2 class="section-title">My Favorites</h2>
+
+        <div v-if="isLoadingFavorites" class="content-loading">
+          <v-progress-circular indeterminate color="primary" />
+        </div>
+
+        <div v-else-if="favoriteItems.length === 0" class="empty-state">
+          <p>You haven't added any favorites yet.</p>
+          <v-btn color="primary" variant="tonal" to="/CinePhix/home">
+            Browse Movies
+          </v-btn>
+        </div>
+
+        <div v-else class="items-grid">
+          <div
+            v-for="item in favoriteItems"
+            :key="`fav-${item.tmdbId}-${item.mediaType}`"
+            class="item-card"
+          >
+            <MovieCard
+              :id="item.tmdbId"
+              :title="item.title"
+              :image="item.image"
+              :media-type="item.mediaType"
+              :rating="item.rating"
+              @select="() => {}"
+            />
+            <button
+              class="remove-btn"
+              @click="removeFromFavorites(item.tmdbId, item.mediaType)"
+              title="Remove from Favorites"
+            >
+              <v-icon size="16">mdi-close</v-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Danger Zone -->
       <div class="profile-card danger-card">
         <h2 class="section-title">Account</h2>
@@ -141,10 +221,17 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useUserStore } from '@/stores/user'
+import { useWatchlistStore } from '@/stores/watchlist'
+import { useFavoritesStore } from '@/stores/favorites'
+import MovieCard from '@/components/MovieCard.vue'
+import { getMovieDetail } from '@/ApiController/services/movieService'
+import { getSeriesDetail } from '@/ApiController/services/seriesService'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const userStore = useUserStore()
+const watchlistStore = useWatchlistStore()
+const favoritesStore = useFavoritesStore()
 
 // User state
 const user = computed(() => authStore.user)
@@ -161,6 +248,12 @@ const preferredDecade = ref(null)
 const isUpdatingProfile = ref(false)
 const profileError = ref(null)
 const prefsError = ref(null)
+const isLoadingWatchlist = ref(false)
+const isLoadingFavorites = ref(false)
+
+// Watchlist & Favorites with full TMDB details
+const watchlistItems = ref([])
+const favoriteItems = ref([])
 
 // Options
 const availableGenres = [
@@ -214,6 +307,116 @@ const initial = computed(() => {
   const name = user.value?.username || user.value?.email || 'U'
   return name.charAt(0).toUpperCase()
 })
+
+// Watchlist helpers
+const hasWatchlistItems = computed(() => watchlistStore.items.length > 0)
+const hasFavoriteItems = computed(() => favoritesStore.items.length > 0)
+
+// Fetch full TMDB details for watchlist items
+async function fetchWatchlistDetails() {
+  if (watchlistStore.items.length === 0) {
+    watchlistItems.value = []
+    return
+  }
+  isLoadingWatchlist.value = true
+  try {
+    const details = await Promise.all(
+      watchlistStore.items.map(async (item) => {
+        try {
+          if (item.media_type === 'movie') {
+            const data = await getMovieDetail(item.tmdb_id)
+            return {
+              tmdbId: item.tmdb_id,
+              mediaType: 'movie',
+              title: data.title,
+              image: data.poster_path
+                ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+                : '',
+              rating: data.vote_average ? data.vote_average / 2 : null,
+            }
+          } else {
+            const data = await getSeriesDetail(item.tmdb_id)
+            return {
+              tmdbId: item.tmdb_id,
+              mediaType: 'tv',
+              title: data.name,
+              image: data.poster_path
+                ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+                : '',
+              rating: data.vote_average ? data.vote_average / 2 : null,
+            }
+          }
+        } catch {
+          return null
+        }
+      })
+    )
+    watchlistItems.value = details.filter(Boolean)
+  } finally {
+    isLoadingWatchlist.value = false
+  }
+}
+
+// Fetch full TMDB details for favorite items
+async function fetchFavoriteDetails() {
+  if (favoritesStore.items.length === 0) {
+    favoriteItems.value = []
+    return
+  }
+  isLoadingFavorites.value = true
+  try {
+    const details = await Promise.all(
+      favoritesStore.items.map(async (item) => {
+        try {
+          if (item.media_type === 'movie') {
+            const data = await getMovieDetail(item.tmdb_id)
+            return {
+              tmdbId: item.tmdb_id,
+              mediaType: 'movie',
+              title: data.title,
+              image: data.poster_path
+                ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+                : '',
+              rating: data.vote_average ? data.vote_average / 2 : null,
+            }
+          } else {
+            const data = await getSeriesDetail(item.tmdb_id)
+            return {
+              tmdbId: item.tmdb_id,
+              mediaType: 'tv',
+              title: data.name,
+              image: data.poster_path
+                ? `https://image.tmdb.org/t/p/w342${data.poster_path}`
+                : '',
+              rating: data.vote_average ? data.vote_average / 2 : null,
+            }
+          }
+        } catch {
+          return null
+        }
+      })
+    )
+    favoriteItems.value = details.filter(Boolean)
+  } finally {
+    isLoadingFavorites.value = false
+  }
+}
+
+// Remove from watchlist
+async function removeFromWatchlist(tmdbId, mediaType) {
+  await watchlistStore.removeByTmdbId(tmdbId, mediaType)
+  watchlistItems.value = watchlistItems.value.filter(
+    (i) => !(i.tmdbId === tmdbId && i.mediaType === mediaType)
+  )
+}
+
+// Remove from favorites
+async function removeFromFavorites(tmdbId, mediaType) {
+  await favoritesStore.removeByTmdbId(tmdbId, mediaType)
+  favoriteItems.value = favoriteItems.value.filter(
+    (i) => !(i.tmdbId === tmdbId && i.mediaType === mediaType)
+  )
+}
 
 // Methods
 function toggleGenre(genre) {
@@ -287,6 +490,16 @@ onMounted(async () => {
     minRating.value = userStore.minRating || 0
     preferredDecade.value = userStore.preferredDecade
   }
+
+  // Fetch watchlist and favorites
+  await Promise.all([
+    watchlistStore.fetchWatchlist(),
+    favoritesStore.fetchFavorites(),
+  ])
+  await Promise.all([
+    fetchWatchlistDetails(),
+    fetchFavoriteDetails(),
+  ])
 })
 </script>
 
@@ -380,6 +593,60 @@ onMounted(async () => {
 
 .danger-card {
   border-color: rgba(255, 59, 48, 0.3);
+}
+
+/* Watchlist & Favorites */
+.content-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.empty-state p {
+  margin-bottom: 16px;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
+}
+
+.item-card {
+  position: relative;
+}
+
+.item-card .movie-card {
+  pointer-events: none;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background: rgba(229, 9, 20, 0.8);
+  border-color: #e50914;
 }
 
 @media (max-width: 600px) {
