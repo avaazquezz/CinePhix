@@ -1,21 +1,32 @@
 services:
   frontend:
+    # Etiqueta distinta de una imagen "nginx" construida solo con `docker build -t cinephix-frontend`
+    image: cinephix-frontend:dev
     build:
       context: .
       dockerfile: Dockerfile
+      # Sin target, el build usa el último stage (nginx) y `npm run dev` no existe ahí
+      target: development
     container_name: cinephix-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_URL=http://backend:8001
+      # El navegador hace las peticiones: debe ser localhost + puerto publicado del API en el HOST
+      # (no uses el nombre del servicio Docker "backend" — da ERR_NAME_NOT_RESOLVED).
+      - VITE_API_URL=http://127.0.0.1:8000
     volumes:
+      # Código desde el host; node_modules en volumen (el bind mount tapa el de la imagen)
       - ./web_app:/app
-    command: npm run dev -- --host 0.0.0.0
+      - frontend_node_modules:/app/node_modules
+    # Instala deps en el volumen la primera vez (o si falta pinia). Luego solo arranca Vite.
+    command: sh -c "test -d node_modules/pinia || npm ci; exec npm run dev -- --host 0.0.0.0"
     networks:
       - cinephix-network
+
+volumes:
+  frontend_node_modules:
 
 networks:
   cinephix-network:
     name: cinephix-network
-    external: true
