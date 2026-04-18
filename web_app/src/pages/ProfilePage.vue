@@ -47,6 +47,31 @@
         </div>
       </div>
 
+      <!-- Follow Requests Section -->
+      <div v-if="pendingRequests.length > 0" class="profile-card follow-requests-card">
+        <h2 class="section-title">
+          <v-icon icon="mdi-account-clock" class="mr-2" />
+          Follow Requests
+          <v-chip size="x-small" color="primary" class="ml-2">{{ pendingRequests.length }}</v-chip>
+        </h2>
+        <div v-for="req in pendingRequests" :key="req.id" class="follow-request-item">
+          <div class="d-flex align-center flex-grow-1">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="req.from_avatar" :src="req.from_avatar" />
+              <span v-else>{{ req.from_username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div>
+              <div class="request-username">{{ req.from_display_name || req.from_username }}</div>
+              <div class="request-handle text-caption text-grey">@{{ req.from_username }}</div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <v-btn size="small" color="#04ff24" class="text-black" @click="acceptRequest(req)">Accept</v-btn>
+            <v-btn size="small" variant="outlined" @click="rejectRequest(req)">Decline</v-btn>
+          </div>
+        </div>
+      </div>
+
       <!-- Profile Form -->
       <div class="profile-card">
         <h2 class="section-title">Profile Settings</h2>
@@ -254,6 +279,7 @@ import { useUserStore } from '@/stores/user'
 import { useWatchlistStore } from '@/stores/watchlist'
 import { useFavoritesStore } from '@/stores/favorites'
 import MovieCard from '@/components/MovieCard.vue'
+import { useFollowService } from '@/api/services/followService'
 import { getMovieDetail } from '@/ApiController/services/movieService'
 import { getSeriesDetail } from '@/ApiController/services/seriesService'
 
@@ -281,6 +307,11 @@ const prefsError = ref(null)
 const proStatus = ref({ pro: false, plan: null, expires_at: null })
 const isLoadingWatchlist = ref(false)
 const isLoadingFavorites = ref(false)
+
+// Follow Requests
+const pendingRequests = ref([])
+const followRequestsLoading = ref(false)
+const { getFollowRequests, acceptFollowRequest: apiAcceptRequest, rejectFollowRequest: apiRejectRequest } = useFollowService()
 
 // Watchlist & Favorites with full TMDB details
 const watchlistItems = ref([])
@@ -540,7 +571,41 @@ onMounted(async () => {
     fetchWatchlistDetails(),
     fetchFavoriteDetails(),
   ])
+
+  // Fetch pending follow requests
+  await fetchPendingRequests()
 })
+
+async function fetchPendingRequests() {
+  followRequestsLoading.value = true
+  try {
+    const data = await getFollowRequests({ page: 1, per_page: 50 })
+    pendingRequests.value = data.items || []
+  } catch {
+    pendingRequests.value = []
+  } finally {
+    followRequestsLoading.value = false
+  }
+}
+
+async function acceptRequest(req) {
+  try {
+    await apiAcceptRequest(req.from_user_id, req.id)
+    pendingRequests.value = pendingRequests.value.filter(r => r.id !== req.id)
+    user.value.followers_count = (user.value.followers_count || 0) + 1
+  } catch (e) {
+    console.error('Failed to accept request:', e)
+  }
+}
+
+async function rejectRequest(req) {
+  try {
+    await apiRejectRequest(req.from_user_id, req.id)
+    pendingRequests.value = pendingRequests.value.filter(r => r.id !== req.id)
+  } catch (e) {
+    console.error('Failed to reject request:', e)
+  }
+}
 </script>
 
 <style scoped>
@@ -735,5 +800,25 @@ onMounted(async () => {
   text-transform: none;
   padding: 10px 24px !important;
 }
+
+.follow-requests-card {
+  border-left: 3px solid #04ff24;
+}
+
+.follow-request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.follow-request-item:last-child { border-bottom: none; }
+
+.request-username {
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+.request-handle { font-family: 'Montserrat', sans-serif; }
 
 </style>

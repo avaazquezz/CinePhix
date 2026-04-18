@@ -36,27 +36,24 @@
                 <span class="stat-value">{{ user.reviews_count }}</span>
                 <span class="stat-label">Reviews</span>
               </div>
-              <div class="stat-item clickable" @click="showFollowers = true">
+              <div class="stat-item clickable" @click="openFollowers">
                 <span class="stat-value">{{ user.followers_count }}</span>
                 <span class="stat-label">Followers</span>
               </div>
-              <div class="stat-item clickable" @click="showFollowing = true">
+              <div class="stat-item clickable" @click="openFollowing">
                 <span class="stat-value">{{ user.following_count }}</span>
                 <span class="stat-label">Following</span>
               </div>
             </div>
 
-            <!-- Follow button (if logged in and not own profile) -->
-            <v-btn
+            <!-- Follow button -->
+            <FollowButton
               v-if="authStore.isAuthenticated && !isOwnProfile"
-              :color="isFollowing ? 'default' : 'primary'"
-              :variant="isFollowing ? 'outlined' : 'flat'"
+              :user-id="user.id"
+              :initial-following="false"
               class="mt-3"
-              @click="toggleFollow"
-              :loading="followLoading"
-            >
-              {{ isFollowing ? 'Following' : 'Follow' }}
-            </v-btn>
+              @follow-changed="onFollowChanged"
+            />
           </div>
         </div>
 
@@ -128,7 +125,60 @@
           </v-window>
         </div>
       </template>
-    </div>
+
+    <!-- Followers Bottom Sheet -->
+    <v-navigation-drawer v-model="showFollowersDrawer" location="right" temporary width="340">
+      <div class="pa-4">
+        <h2 class="text-h6 font-weight-bold mb-4">Followers</h2>
+        <div v-if="followersLoading" class="d-flex justify-center py-6"><v-progress-circular indeterminate color="primary" /></div>
+        <div v-else-if="followersList.length === 0" class="text-center py-6 text-grey">No followers yet</div>
+        <div v-else>
+          <div v-for="follower in followersList" :key="follower.user_id" class="d-flex align-center mb-3">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="follower.avatar_url" :src="follower.avatar_url" />
+              <span v-else class="text-caption">{{ follower.username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div class="flex-grow-1">
+              <router-link :to="`/CinePhix/user/${follower.username}`" class="user-link">
+                {{ follower.display_name || follower.username }}
+              </router-link>
+              <div class="text-caption text-grey">@{{ follower.username }}</div>
+            </div>
+            <FollowButton v-if="follower.user_id !== authStore.user?.id" :user-id="follower.user_id" :initial-following="follower.is_following" />
+          </div>
+          <div v-if="followersHasMore" class="text-center mt-3">
+            <v-btn size="small" variant="tonal" @click="loadMoreFollowers">Load more</v-btn>
+          </div>
+        </div>
+      </div>
+    </v-navigation-drawer>
+
+    <!-- Following Bottom Sheet -->
+    <v-navigation-drawer v-model="showFollowingDrawer" location="right" temporary width="340">
+      <div class="pa-4">
+        <h2 class="text-h6 font-weight-bold mb-4">Following</h2>
+        <div v-if="followingLoading" class="d-flex justify-center py-6"><v-progress-circular indeterminate color="primary" /></div>
+        <div v-else-if="followingList.length === 0" class="text-center py-6 text-grey">Not following anyone yet</div>
+        <div v-else>
+          <div v-for="followed in followingList" :key="followed.user_id" class="d-flex align-center mb-3">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="followed.avatar_url" :src="followed.avatar_url" />
+              <span v-else class="text-caption">{{ followed.username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div class="flex-grow-1">
+              <router-link :to="`/CinePhix/user/${followed.username}`" class="user-link">
+                {{ followed.display_name || followed.username }}
+              </router-link>
+              <div class="text-caption text-grey">@{{ followed.username }}</div>
+            </div>
+            <FollowButton v-if="followed.user_id !== authStore.user?.id" :user-id="followed.user_id" :initial-following="true" />
+          </div>
+          <div v-if="followingHasMore" class="text-center mt-3">
+            <v-btn size="small" variant="tonal" @click="loadMoreFollowing">Load more</v-btn>
+          </div>
+        </div>
+      </div>
+    </v-navigation-drawer>
   </div>
 </template>
 
@@ -138,12 +188,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { usersApi } from '@/api/client'
 import { useAuthStore } from '@/stores/auth'
 import ReviewCard from '@/components/ReviewCard.vue'
+import FollowButton from '@/components/FollowButton.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
+import { useFollowService } from '@/api/services/followService'
 
 export default {
   name: 'PublicProfilePage',
 
-  components: { ReviewCard },
+  components: { ReviewCard, FollowButton },
 
   setup() {
     const route = useRoute()
@@ -161,6 +213,20 @@ export default {
     const listsLoading = ref(true)
     const isFollowing = ref(false)
     const followLoading = ref(false)
+
+    // Followers / Following drawers
+    const showFollowersDrawer = ref(false)
+    const showFollowingDrawer = ref(false)
+    const followersList = ref([])
+    const followersPage = ref(1)
+    const followersHasMore = ref(false)
+    const followersLoading = ref(false)
+    const followingList = ref([])
+    const followingPage = ref(1)
+    const followingHasMore = ref(false)
+    const followingLoading = ref(false)
+
+    const { getFollowers, getFollowing } = useFollowService()
 
     const initial = computed(() => {
       const name = user.value?.username || user.value?.email || 'U'
@@ -235,6 +301,51 @@ export default {
       }
     }
 
+    async function openFollowers() {
+      showFollowersDrawer.value = true
+      if (followersList.value.length === 0) {
+        followersLoading.value = true
+        try {
+          const data = await getFollowers(user.value.id, { page: 1, per_page: 20 })
+          followersList.value = data.items || []
+          followersHasMore.value = followersList.value.length < data.total
+        } catch { followersList.value = [] }
+        finally { followersLoading.value = false }
+      }
+    }
+
+    async function loadMoreFollowers() {
+      followersPage.value++
+      const data = await getFollowers(user.value.id, { page: followersPage.value, per_page: 20 })
+      followersList.value.push(...(data.items || []))
+      followersHasMore.value = followersList.value.length < data.total
+    }
+
+    async function openFollowing() {
+      showFollowingDrawer.value = true
+      if (followingList.value.length === 0) {
+        followingLoading.value = true
+        try {
+          const data = await getFollowing(user.value.id, { page: 1, per_page: 20 })
+          followingList.value = data.items || []
+          followingHasMore.value = followingList.value.length < data.total
+        } catch { followingList.value = [] }
+        finally { followingLoading.value = false }
+      }
+    }
+
+    async function loadMoreFollowing() {
+      followingPage.value++
+      const data = await getFollowing(user.value.id, { page: followingPage.value, per_page: 20 })
+      followingList.value.push(...(data.items || []))
+      followingHasMore.value = followingList.value.length < data.total
+    }
+
+    function onFollowChanged({ isFollowing: f }) {
+      isFollowing.value = f
+      user.value.followers_count += f ? 1 : -1
+    }
+
     onMounted(async () => {
       await fetchProfile()
       loading.value = false
@@ -256,6 +367,19 @@ export default {
       initial,
       isOwnProfile,
       toggleFollow,
+      showFollowersDrawer,
+      showFollowingDrawer,
+      followersList,
+      followersHasMore,
+      followersLoading,
+      followingList,
+      followingHasMore,
+      followingLoading,
+      openFollowers,
+      openFollowing,
+      loadMoreFollowers,
+      loadMoreFollowing,
+      onFollowChanged,
     }
   },
 }
@@ -460,4 +584,12 @@ export default {
     justify-content: center;
   }
 }
+
+.user-link {
+  color: #04ff24;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+.user-link:hover { text-decoration: underline; }
 </style>

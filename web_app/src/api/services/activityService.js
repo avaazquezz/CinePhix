@@ -7,7 +7,7 @@ export const useActivityService = () => {
   const loading = ref(false)
   const error = ref(null)
 
-  // Get my activity feed
+  // ─── Legacy feeds (Phase 1/2) ────────────────────────────────────────────────
   const getMyActivity = async ({ page = 1, per_page = 20 } = {}) => {
     loading.value = true
     error.value = null
@@ -22,7 +22,6 @@ export const useActivityService = () => {
     }
   }
 
-  // Get public activity feed
   const getPublicActivity = async ({ page = 1, per_page = 20 } = {}) => {
     loading.value = true
     error.value = null
@@ -37,12 +36,15 @@ export const useActivityService = () => {
     }
   }
 
-  // Get activity for a specific user
-  const getUserActivity = async (username, { page = 1, per_page = 20 } = {}) => {
+  // ─── Activity Feed v2 (Phase 3.5 Step 5) ─────────────────────────────────
+  const getFeedV2 = async ({ page = 1, per_page = 20, event_type = null, unread_only = false } = {}) => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.get(`${BASE_URL}/user/${username}`, { params: { page, per_page } })
+      const params = { page, per_page }
+      if (event_type) params.event_type = event_type
+      if (unread_only) params.unread_only = true
+      const response = await api.get(`${BASE_URL}/feed/v2`, { params })
       return response.data
     } catch (err) {
       error.value = err.response?.data || err.message
@@ -52,12 +54,30 @@ export const useActivityService = () => {
     }
   }
 
+  const markFeedRead = async () => {
+    try {
+      await api.post(`${BASE_URL}/feed/v2/read`)
+    } catch (err) {
+      console.error('Failed to mark feed read:', err)
+    }
+  }
+
+  const clearFeed = async () => {
+    try {
+      await api.delete(`${BASE_URL}/feed/v2`)
+    } catch (err) {
+      console.error('Failed to clear feed:', err)
+    }
+  }
+
   return {
     loading,
     error,
     getMyActivity,
     getPublicActivity,
-    getUserActivity,
+    getFeedV2,
+    markFeedRead,
+    clearFeed,
   }
 }
 
