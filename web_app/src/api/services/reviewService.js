@@ -86,6 +86,24 @@ export const getFollowStatus = async (userId) => {
   return response.data
 }
 
+// --- Review Comments ---
+
+export const getComments = async (reviewId, { page = 1, perPage = 20 } = {}) => {
+  const response = await api.get(`/reviews/${reviewId}/comments`, {
+    params: { page, per_page: perPage },
+  })
+  return response.data
+}
+
+export const addComment = async (reviewId, { content }) => {
+  const response = await api.post(`/reviews/${reviewId}/comments`, { content })
+  return response.data
+}
+
+export const deleteComment = async (commentId) => {
+  await api.delete(`/reviews/comments/${commentId}`)
+}
+
 // --- User Stats ---
 
 export const getUserStats = async (userId) => {

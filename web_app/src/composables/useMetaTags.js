@@ -91,7 +91,11 @@ export function useMetaTags() {
     })
   }
 
-  function setReviewMeta({ movieTitle, username, rating, content, poster }) {
+  function setReviewMeta(review) {
+    const movieTitle = review.media?.title || review.tmdb_id || 'Unknown'
+    const username = review.user?.username || 'User'
+    const content = review.content
+    const poster = review.media?.poster_path ? `https://image.tmdb.org/t/p/w342${review.media.poster_path}` : null
     const fullTitle = `${username}'s review of ${movieTitle} — ${APP_NAME}`
     const excerpt = content ? content.slice(0, 160) : `${username} reviewed ${movieTitle} on CinePhix.`
 
