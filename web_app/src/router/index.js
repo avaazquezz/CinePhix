@@ -21,6 +21,7 @@ const RegisterPage = () => import('@/pages/auth/RegisterPage.vue')
 const ProfilePage = () => import('@/pages/ProfilePage.vue')
 const PublicProfilePage = () => import('@/pages/PublicProfilePage.vue')
 const ListsPage = () => import('@/pages/ListsPage.vue')
+const ListDetailPage = () => import('@/pages/ListDetailPage.vue')
 const ActivityPage = () => import('@/pages/ActivityPage.vue')
 const AIConciergePage = () => import('@/pages/AIConciergePage.vue')
 const PricingPage = () => import('@/pages/PricingPage.vue')
@@ -90,6 +91,12 @@ const routes = [
     name: 'Lists',
     component: ListsPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/list/:id',
+    name: 'ListDetail',
+    component: ListDetailPage,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/activity',
