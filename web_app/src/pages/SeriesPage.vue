@@ -181,8 +181,15 @@
                     <i class="fas fa-star"></i>
                     {{ seriesDetail.vote_average?.toFixed(1) || '?' }}/10
                   </span>
+                  <span class="meta-item share-row">
+                    <ShareButtons
+                      :url="seriesShareUrl"
+                      :title="`${seriesDetail.name} on CinePhix`"
+                      description=""
+                    />
+                  </span>
                 </div>
-                
+
                 <div class="dialog-overview-container">
                   <h3 class="overview-title">{{ $t('series.detail.overview') || 'Sinopsis' }}</h3>
                   <p class="dialog-overview">{{ seriesDetail.overview || '—' }}</p>
@@ -208,6 +215,8 @@
 
 <script>
 import { ref, onMounted } from 'vue';
+import ShareButtons from '@/components/ShareButtons.vue';
+import { useMetaTags } from '@/composables/useMetaTags';
 import {
   getPopularSeries,
   getTopRatedSeries,
@@ -218,12 +227,14 @@ import {
 
 export default {
   name: 'SeriesPage',
+  components: { ShareButtons },
   setup() {
     const popularSeries = ref([]);
     const topRatedSeries = ref([]);
     const trendingSeries = ref([]);
     const isDialogOpen = ref(false);
     const seriesDetail = ref({});
+    const { setSeriesMeta, setPageMeta } = useMetaTags();
     const seriesCredits = ref([]);
 
     const popularRow = ref(null);
@@ -254,6 +265,16 @@ export default {
         isDialogOpen.value = true;
         document.body.style.overflow = 'hidden';
         window.dispatchEvent(new CustomEvent('dialog-opened'));
+
+        const s = seriesDetail.value;
+        setSeriesMeta({
+          title: s.name || s.title,
+          year: s.first_air_date ? s.first_air_date.slice(0, 4) : null,
+          rating: s.vote_average ? (s.vote_average / 2).toFixed(1) : null,
+          poster: s.poster_path ? `https://image.tmdb.org/t/p/w780${s.poster_path}` : null,
+          overview: s.overview,
+          genres: s.genres ? s.genres.map(g => g.name).join(', ') : null,
+        });
       } catch (error) {
         console.error('Error al cargar los detalles de la serie:', error);
       }
@@ -288,7 +309,10 @@ export default {
       });
     };
 
-    onMounted(fetchSeries);
+    onMounted(() => {
+      fetchSeries();
+      setPageMeta({ title: 'TV Series', description: 'Browse popular, top-rated and trending TV series on CinePhix.' });
+    });
 
     return {
       popularSeries,
@@ -297,6 +321,10 @@ export default {
       isDialogOpen,
       seriesDetail,
       seriesCredits,
+      seriesShareUrl: computed(() => {
+        if (!seriesDetail.value.id) return window.location.href
+        return `${window.location.origin}/CinePhix/series?open=${seriesDetail.value.id}`
+      }),
       popularRow,
       topRatedRow,
       trendingRow,

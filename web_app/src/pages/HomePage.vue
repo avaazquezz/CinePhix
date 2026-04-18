@@ -99,6 +99,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
+import { useMetaTags } from '@/composables/useMetaTags';
 import { getTrendingAllDay } from '@/ApiController/services/inicioService';
 import SkeletonCard from '@/components/SkeletonCard.vue';
 import MovieCard from '@/components/MovieCard.vue';
@@ -120,6 +121,7 @@ export default {
     const watchlistStore = useWatchlistStore();
     const favoritesStore = useFavoritesStore();
     const authStore = useAuthStore();
+    const { setPageMeta } = useMetaTags();
 
     const isInWatchlist = computed(() => {
       return watchlistStore.hasItem(selectedItem.value.id, selectedItem.value.media_type || 'movie')
@@ -186,7 +188,10 @@ export default {
       selectedItem.value = {};
     };
 
-    onMounted(fetchTrendingContent);
+    onMounted(() => {
+      fetchTrendingContent()
+      setPageMeta({ title: 'Home', description: 'CinePhix — AI-powered movie & TV database. Discover trending movies, get personalized recommendations, and track your watchlist.' })
+    });
 
     return {
       trendingContent,

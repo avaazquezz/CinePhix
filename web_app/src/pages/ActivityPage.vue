@@ -39,6 +39,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useMetaTags } from '@/composables/useMetaTags'
 import { useActivityService } from '@/api/services/activityService'
 
 const { loading: loadingMy, error: errorMy, getMyActivity, getPublicActivity } = useActivityService()
@@ -47,6 +48,7 @@ const myActivities = ref([])
 const publicActivities = ref([])
 const loadingPublic = ref(false)
 const tab = ref('following')
+const { setPageMeta } = useMetaTags()
 
 const loadMyActivity = async () => {
   try {
@@ -72,5 +74,6 @@ const loadPublicActivity = async () => {
 onMounted(() => {
   loadMyActivity()
   loadPublicActivity()
+  setPageMeta({ title: 'Activity', description: 'See what your network is watching, reviewing and listing on CinePhix.' })
 })
 </script>

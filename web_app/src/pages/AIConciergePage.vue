@@ -96,14 +96,20 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, onMounted } from 'vue'
+import { useMetaTags } from '@/composables/useMetaTags'
 import { useAIService } from '@/api/services/aiService'
 
 const { loading, sendChat } = useAIService()
+const { setPageMeta } = useMetaTags()
 
 const messages = ref([])
 const inputMessage = ref('')
 const messagesContainer = ref(null)
+
+onMounted(() => {
+  setPageMeta({ title: 'AI Concierge', description: 'Your AI-powered movie and TV assistant. Get personalized recommendations, detailed info, and smart collections.' })
+})
 
 const suggestions = [
   '🎬 Movies like Inception',

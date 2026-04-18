@@ -12,7 +12,7 @@ const BASE_URL = 'https://cinephix.com'
 const DEFAULT_IMAGE = 'https://cinephix.com/og-default.jpg'
 
 export function useMetaTags() {
-  function setMovieMeta({ title, year, rating, poster, overview, genres }) {
+  function setSeriesMeta({ title, year, rating, poster, overview, genres }) {
     const fullTitle = `${title}${year ? ` (${year})` : ''} — ${APP_NAME}`
     const description = overview
       ? overview.slice(0, 160)
@@ -37,6 +37,35 @@ export function useMetaTags() {
       ],
       link: [
         { rel: 'canonical', href: `${BASE_URL}/CinePhix/movie/${title}` },
+      ],
+    })
+  }
+
+  function setSeriesMeta({ title, year, rating, poster, overview, genres }) {
+    const fullTitle = `${title}${year ? ` (${year})` : ''} — ${APP_NAME}`
+    const description = overview
+      ? overview.slice(0, 160)
+      : `Discover ${title} on CinePhix — AI-powered TV show database.`
+
+    useHead({
+      title: fullTitle,
+      meta: [
+        { name: 'description', content: description },
+        // Open Graph
+        { property: 'og:title', content: fullTitle },
+        { property: 'og:description', content: description },
+        { property: 'og:type', content: 'video.tv_show' },
+        { property: 'og:url', content: `${BASE_URL}/CinePhix/series` },
+        { property: 'og:image', content: poster || DEFAULT_IMAGE },
+        { property: 'og:site_name', content: APP_NAME },
+        // Twitter
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: fullTitle },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: poster || DEFAULT_IMAGE },
+      ],
+      link: [
+        { rel: 'canonical', href: `${BASE_URL}/CinePhix/series` },
       ],
     })
   }
@@ -116,5 +145,5 @@ export function useMetaTags() {
     })
   }
 
-  return { setMovieMeta, setListMeta, setReviewMeta, setUserMeta, setPageMeta }
+  return { setMovieMeta, setSeriesMeta, setListMeta, setReviewMeta, setUserMeta, setPageMeta }
 }
