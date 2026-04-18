@@ -1,19 +1,28 @@
 <template>
   <div class="login-page">
+    <div class="noise-overlay"></div>
+    <div class="bg-glow bg-glow--tl"></div>
+    <div class="bg-glow bg-glow--br"></div>
+
     <div class="auth-container">
+      <!-- Brand -->
+      <div class="auth-brand">
+        <div class="brand-icon"><i class="fas fa-film"></i></div>
+        <div class="brand-name"><span class="brand-accent">C</span>INEPHIX</div>
+        <p class="brand-tagline">Your cinematic universe</p>
+      </div>
+
+      <!-- Card -->
       <div class="auth-card">
-        <!-- Header -->
         <div class="auth-header">
           <h1 class="auth-title">Welcome Back</h1>
-          <p class="auth-subtitle">Sign in to your CinePhix account</p>
+          <p class="auth-subtitle">Sign in to continue your journey</p>
         </div>
 
-        <!-- Error Alert -->
         <v-alert v-if="error" type="error" variant="tonal" class="mb-4" closable @click:close="clearError">
           {{ error }}
         </v-alert>
 
-        <!-- Login Form -->
         <v-form ref="formRef" @submit.prevent="handleLogin" v-model="isFormValid">
           <v-text-field
             v-model="email"
@@ -22,7 +31,7 @@
             variant="outlined"
             :rules="[rules.required, rules.email]"
             prepend-inner-icon="mdi-email-outline"
-            class="mb-2"
+            class="mb-2 auth-field"
           />
 
           <v-text-field
@@ -34,41 +43,28 @@
             prepend-inner-icon="mdi-lock-outline"
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
-            class="mb-4"
+            class="mb-5 auth-field"
           />
 
-          <v-btn
+          <button
             type="submit"
-            color="primary"
-            size="large"
-            block
-            :loading="isLoading"
-            :disabled="!isFormValid"
+            class="submit-btn"
+            :disabled="!isFormValid || isLoading"
           >
-            Sign In
-          </v-btn>
+            <span v-if="!isLoading">Sign In</span>
+            <v-progress-circular v-else indeterminate size="20" width="2" color="white" />
+          </button>
         </v-form>
 
-        <!-- Divider -->
-        <div class="auth-divider">
-          <span>or</span>
-        </div>
+        <div class="auth-divider"><span>or</span></div>
 
-        <!-- Google OAuth -->
-        <v-btn
-          variant="outlined"
-          size="large"
-          block
-          class="google-btn mb-4"
-          @click="handleGoogleLogin"
-        >
-          <v-icon start>mdi-google</v-icon>
+        <button class="google-btn" @click="handleGoogleLogin">
+          <v-icon size="18" class="mr-2">mdi-google</v-icon>
           Continue with Google
-        </v-btn>
+        </button>
 
-        <!-- Register Link -->
         <div class="auth-footer">
-          <span class="text-muted">Don't have an account?</span>
+          <span>Don't have an account?</span>
           <router-link to="/CinePhix/auth/register" class="auth-link">Sign up</router-link>
         </div>
       </div>
@@ -85,51 +81,38 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-// Form state
 const formRef = ref(null)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const isFormValid = ref(false)
-
-// Reactive auth store state
 const isLoading = ref(false)
 const error = ref(null)
 
-// Form rules
 const rules = {
   required: (v) => !!v || 'This field is required',
   email: (v) => /.+@.+\..+/.test(v) || 'Invalid email',
   minLength: (v) => (v && v.length >= 8) || 'Minimum 8 characters',
 }
 
-// Login handler
 async function handleLogin() {
   if (!isFormValid.value) return
-
   isLoading.value = true
   error.value = null
-
   const success = await authStore.login(email.value, password.value)
-
   if (success) {
-    // Redirect to original destination or home
     const redirect = route.query.redirect || '/CinePhix/home'
     router.push(redirect)
   } else {
     error.value = authStore.error
   }
-
   isLoading.value = false
 }
 
-// Google login handler
 async function handleGoogleLogin() {
-  // TODO: Implement Google OAuth flow
   error.value = 'Google OAuth not configured. Please use email/password.'
 }
 
-// Clear error
 function clearError() {
   error.value = null
   authStore.clearError()
@@ -142,86 +125,200 @@ function clearError() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0a0a 0%, #141414 100%);
-  padding: 20px;
+  background: #060606;
+  padding: 24px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bg-glow {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-glow--tl {
+  top: -200px;
+  left: -200px;
+  background: radial-gradient(circle, rgba(229,9,20,0.14) 0%, transparent 65%);
+}
+.bg-glow--br {
+  bottom: -200px;
+  right: -200px;
+  background: radial-gradient(circle, rgba(229,9,20,0.09) 0%, transparent 65%);
 }
 
 .auth-container {
   width: 100%;
   max-width: 420px;
+  position: relative;
+  z-index: 1;
 }
 
+/* Brand */
+.auth-brand {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.brand-icon {
+  font-size: 2rem;
+  color: var(--cp-red, #e50914);
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 16px rgba(229,9,20,0.5));
+}
+
+.brand-name {
+  font-size: 1.7rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.brand-accent { color: var(--cp-red, #e50914); }
+
+.brand-tagline {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Card */
 .auth-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 40px;
+  background: rgba(14,14,14,0.96);
+  border: 1px solid rgba(229,9,20,0.2);
+  border-top: 2px solid var(--cp-red, #e50914);
+  border-radius: 18px;
+  padding: 36px 32px 32px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.03) inset,
+    0 2px 40px rgba(0,0,0,0.7),
+    0 0 60px rgba(229,9,20,0.06);
+  backdrop-filter: blur(12px);
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .auth-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 1.65rem;
+  font-weight: 800;
   color: #fff;
-  margin-bottom: 8px;
+  margin: 0 0 6px;
+  letter-spacing: -0.3px;
 }
 
 .auth-subtitle {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.85rem;
+  margin: 0;
 }
 
+/* Submit button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--cp-red, #e50914);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #c4060f;
+  box-shadow: 0 6px 24px rgba(229,9,20,0.35);
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Divider */
 .auth-divider {
   display: flex;
   align-items: center;
-  margin: 24px 0;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 12px;
+  margin: 22px 0;
+  color: rgba(255,255,255,0.25);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
-
 .auth-divider::before,
 .auth-divider::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.08);
 }
+.auth-divider span { padding: 0 14px; }
 
-.auth-divider span {
-  padding: 0 16px;
-}
-
+/* Google button */
 .google-btn {
-  border-color: rgba(255, 255, 255, 0.2);
+  width: 100%;
+  padding: 13px;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.google-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.25);
   color: #fff;
 }
 
-.google-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
+/* Footer */
 .auth-footer {
   text-align: center;
-  margin-top: 24px;
-  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.45);
 }
 
 .auth-link {
-  color: #04ff24;
+  color: var(--cp-red, #e50914);
   text-decoration: none;
-  margin-left: 8px;
-  font-weight: 600;
+  margin-left: 6px;
+  font-weight: 700;
+  transition: opacity 0.2s;
 }
-
-.auth-link:hover {
-  text-decoration: underline;
-}
-
-.text-muted {
-  color: rgba(255, 255, 255, 0.5);
-}
+.auth-link:hover { opacity: 0.8; text-decoration: underline; }
 </style>

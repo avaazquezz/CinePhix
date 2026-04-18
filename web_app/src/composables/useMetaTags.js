@@ -1,72 +1,97 @@
 /**
  * useMetaTags — dynamic Open Graph + Twitter Card meta tags
  *
- * Usage in a page component:
- *   const { setMovieMeta, setListMeta, setReviewMeta, setUserMeta } = useMetaTags()
- *   setMovieMeta({ title, year, rating, poster, overview })
+ * Uses injectHead() + head.push() so updates work from async callbacks (dialogs, onMounted).
+ * useHead() alone only works during synchronous setup().
  */
-import { useHead } from '@unhead/vue'
+import { injectHead } from '@unhead/vue'
+import { getCurrentInstance, onBeforeUnmount } from 'vue'
 
 const APP_NAME = 'CinePhix'
 const BASE_URL = 'https://cinephix.com'
 const DEFAULT_IMAGE = 'https://cinephix.com/og-default.jpg'
 
 export function useMetaTags() {
-  function setSeriesMeta({ title, year, rating, poster, overview, genres }) {
+  const head = injectHead()
+  let activeEntry = null
+
+  function pushHead(input) {
+    try {
+      activeEntry?.dispose()
+    } catch {
+      /* ignore */
+    }
+    activeEntry = null
+    if (input && typeof input === 'object') {
+      activeEntry = head.push(input)
+    }
+  }
+
+  const vm = getCurrentInstance()
+  if (vm) {
+    onBeforeUnmount(() => {
+      try {
+        activeEntry?.dispose()
+      } catch {
+        /* ignore */
+      }
+      activeEntry = null
+    })
+  }
+
+  function setMovieMeta({ title, year, rating, poster, overview, genres, tmdbId }) {
     const fullTitle = `${title}${year ? ` (${year})` : ''} — ${APP_NAME}`
     const description = overview
       ? overview.slice(0, 160)
       : `Discover ${title} on CinePhix — AI-powered movie database.`
+    const pageUrl = tmdbId
+      ? `${BASE_URL}/CinePhix/movies?open=${encodeURIComponent(String(tmdbId))}`
+      : `${BASE_URL}/CinePhix/movies`
 
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: description },
-        // Open Graph
         { property: 'og:title', content: fullTitle },
         { property: 'og:description', content: description },
         { property: 'og:type', content: 'video.movie' },
-        { property: 'og:url', content: `${BASE_URL}/CinePhix/movie/${title}` },
+        { property: 'og:url', content: pageUrl },
         { property: 'og:image', content: poster || DEFAULT_IMAGE },
         { property: 'og:site_name', content: APP_NAME },
-        // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: fullTitle },
         { name: 'twitter:description', content: description },
         { name: 'twitter:image', content: poster || DEFAULT_IMAGE },
       ],
-      link: [
-        { rel: 'canonical', href: `${BASE_URL}/CinePhix/movie/${title}` },
-      ],
+      link: [{ rel: 'canonical', href: pageUrl }],
     })
   }
 
-  function setSeriesMeta({ title, year, rating, poster, overview, genres }) {
+  function setSeriesMeta({ title, year, rating, poster, overview, genres, tmdbId }) {
     const fullTitle = `${title}${year ? ` (${year})` : ''} — ${APP_NAME}`
     const description = overview
       ? overview.slice(0, 160)
       : `Discover ${title} on CinePhix — AI-powered TV show database.`
+    const pageUrl = tmdbId
+      ? `${BASE_URL}/CinePhix/series?open=${encodeURIComponent(String(tmdbId))}`
+      : `${BASE_URL}/CinePhix/series`
 
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: description },
-        // Open Graph
         { property: 'og:title', content: fullTitle },
         { property: 'og:description', content: description },
         { property: 'og:type', content: 'video.tv_show' },
-        { property: 'og:url', content: `${BASE_URL}/CinePhix/series` },
+        { property: 'og:url', content: pageUrl },
         { property: 'og:image', content: poster || DEFAULT_IMAGE },
         { property: 'og:site_name', content: APP_NAME },
-        // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: fullTitle },
         { name: 'twitter:description', content: description },
         { name: 'twitter:image', content: poster || DEFAULT_IMAGE },
       ],
-      link: [
-        { rel: 'canonical', href: `${BASE_URL}/CinePhix/series` },
-      ],
+      link: [{ rel: 'canonical', href: pageUrl }],
     })
   }
 
@@ -74,7 +99,7 @@ export function useMetaTags() {
     const fullTitle = `${name} — ${APP_NAME}`
     const desc = description || `Check out ${name} on CinePhix — ${itemsCount} movies/shows curated by ${owner}.`
 
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: desc.slice(0, 160) },
@@ -99,7 +124,7 @@ export function useMetaTags() {
     const fullTitle = `${username}'s review of ${movieTitle} — ${APP_NAME}`
     const excerpt = content ? content.slice(0, 160) : `${username} reviewed ${movieTitle} on CinePhix.`
 
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: excerpt },
@@ -118,7 +143,7 @@ export function useMetaTags() {
     const fullTitle = `${displayName || username} (@${username}) — ${APP_NAME}`
     const desc = bio || `${username}'s profile on CinePhix.`
 
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: desc.slice(0, 160) },
@@ -135,7 +160,7 @@ export function useMetaTags() {
 
   function setPageMeta({ title, description, image }) {
     const fullTitle = title ? `${title} — ${APP_NAME}` : APP_NAME
-    useHead({
+    pushHead({
       title: fullTitle,
       meta: [
         { name: 'description', content: description || `${APP_NAME} — AI-powered movie & TV database.` },

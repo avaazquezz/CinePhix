@@ -32,13 +32,13 @@
             <p class="plan-note">€4.99/month</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Priority support</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -66,17 +66,17 @@
             <p class="plan-note">€4.33/month — save 13%</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Priority support</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
           </ul>
           <v-btn
             class="plan-btn"
-            :color="isCurrentPlan('pro_quarterly') ? 'success' : 'accent'"
+            :color="isCurrentPlan('pro_quarterly') ? 'success' : 'primary'"
             :variant="isCurrentPlan('pro_quarterly') ? 'tonal' : 'flat'"
             :disabled="isCurrentPlan('pro_quarterly') || loading === 'pro_quarterly'"
             :loading="loading === 'pro_quarterly'"
@@ -99,13 +99,13 @@
             <p class="plan-note">€3.83/month — save 23%</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Priority support</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -132,13 +132,13 @@
             <p class="plan-note">€3.33/month — save 33%</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#04ff24">mdi-check</v-icon> Priority support</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
+            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -205,7 +205,7 @@ export default {
 
   async mounted() {
     await this.fetchProStatus()
-    this.checkQueryParams()
+    await this.checkQueryParams()
   },
 
   methods: {
@@ -218,12 +218,11 @@ export default {
       }
     },
 
-    checkQueryParams() {
+    async checkQueryParams() {
       const pro = this.$route.query.pro
       if (pro === 'success') {
-        // Refresh pro status and user data
-        this.fetchProStatus()
-        this.authStore.fetchUser()
+        await this.fetchProStatus()
+        await this.authStore.fetchUser()
       }
     },
 
@@ -244,11 +243,34 @@ export default {
       this.error = null
       this.loading = plan
 
+      if (!this.authStore.getAccessToken()) {
+        this.loading = null
+        this.$router.push({
+          path: '/CinePhix/auth/login',
+          query: { redirect: this.$route.fullPath },
+        })
+        return
+      }
+
       try {
         const { checkout_url } = await paymentService.createCheckoutSession(plan)
         window.location.href = checkout_url
       } catch (e) {
-        this.error = e.response?.data?.detail || 'Failed to start checkout. Please try again.'
+        const status = e.response?.status
+        if (status === 403) {
+          this.error =
+            e.response?.data?.detail === 'Account is disabled'
+              ? 'Tu cuenta está desactivada. Contacta con soporte.'
+              : 'Inicia sesión para continuar con el pago.'
+          if (!this.authStore.getAccessToken()) {
+            this.$router.push({
+              path: '/CinePhix/auth/login',
+              query: { redirect: this.$route.fullPath },
+            })
+          }
+        } else {
+          this.error = e.response?.data?.detail || 'Failed to start checkout. Please try again.'
+        }
         this.loading = null
       }
     },
@@ -259,190 +281,201 @@ export default {
 <style scoped>
 .pricing-page {
   min-height: 100vh;
-  background: #0a0a0a;
-  padding: 60px 20px;
+  background: var(--cp-bg-base, #080808);
+  padding: 64px 20px 80px;
 }
 
 .pricing-container {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: 0 auto;
 }
 
+/* ── Header ── */
 .pricing-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 64px;
 }
 
 .pricing-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
   color: #ffffff;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
 }
 
 .pricing-title .accent {
-  color: #04ff24;
-  text-shadow: 0 0 20px rgba(4, 255, 36, 0.4);
+  color: var(--cp-red, #e50914);
+  text-shadow: 0 0 28px rgba(229, 9, 20, 0.4);
 }
 
 .pricing-subtitle {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.1rem;
-  color: #888;
-  max-width: 500px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.05rem;
+  color: var(--cp-text-muted, rgba(255,255,255,0.42));
+  max-width: 480px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
-.pro-banner {
-  max-width: 500px;
-  margin: 0 auto;
-}
+.pro-banner { max-width: 520px; margin: 24px auto 0; }
 
+/* ── Grid ── */
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 18px;
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .plans-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+@media (max-width: 960px) { .plans-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .plans-grid { grid-template-columns: 1fr; } }
 
-@media (max-width: 600px) {
-  .plans-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* ── Card ── */
 .plan-card {
-  background: #141414;
-  border: 1px solid #222;
-  border-radius: 12px;
-  padding: 28px 24px;
+  background: var(--cp-bg-card, #121212);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--cp-radius-lg, 16px);
+  padding: 28px 22px 24px;
   position: relative;
-  transition: border-color 0.2s;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .plan-card:hover {
-  border-color: #04ff24;
+  border-color: rgba(229, 9, 20, 0.35);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  transform: translateY(-3px);
 }
 
 .plan-card--featured {
-  border-color: #04ff24;
-  box-shadow: 0 0 30px rgba(4, 255, 36, 0.15);
+  border-color: rgba(229, 9, 20, 0.5);
+  box-shadow: 0 0 0 1px rgba(229,9,20,0.15), 0 12px 48px rgba(0,0,0,0.5);
+  background: linear-gradient(160deg, #1a1212 0%, var(--cp-bg-card, #121212) 60%);
 }
+
+.plan-card--featured:hover { transform: translateY(-4px); }
 
 .featured-badge {
   position: absolute;
-  top: -12px;
+  top: -13px;
   left: 50%;
   transform: translateX(-50%);
-  background: #04ff24;
-  color: #000;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.7rem;
+  background: var(--cp-red, #e50914);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.68rem;
   font-weight: 800;
-  padding: 4px 12px;
+  padding: 4px 14px;
   border-radius: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
+/* ── Card Header ── */
 .plan-header {
   text-align: center;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid #222;
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
 .plan-name {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #888;
+  color: var(--cp-text-muted, rgba(255,255,255,0.42));
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0 0 12px;
+  letter-spacing: 1.4px;
+  margin: 0 0 14px;
 }
 
 .plan-price {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 2px;
-  margin-bottom: 4px;
+  gap: 1px;
+  margin-bottom: 6px;
 }
 
 .currency {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
+  margin-bottom: 4px;
 }
 
 .amount {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 2.9rem;
   font-weight: 800;
   color: #fff;
   line-height: 1;
+  letter-spacing: -1px;
 }
 
 .period {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
+  margin-bottom: 4px;
 }
 
 .plan-billing {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  color: #555;
-  margin: 0 0 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: var(--cp-text-disabled, rgba(255,255,255,0.25));
+  margin: 0 0 5px;
 }
 
 .plan-note {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.75rem;
-  color: #04ff24;
+  font-weight: 600;
+  color: var(--cp-gold, #f5c518);
   margin: 0;
 }
 
+/* ── Features ── */
 .plan-features {
   list-style: none;
   padding: 0;
-  margin: 0 0 28px;
+  margin: 0 0 26px;
 }
 
 .plan-features li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: 'Montserrat', sans-serif;
+  gap: 9px;
+  font-family: 'Inter', sans-serif;
   font-size: 0.82rem;
-  color: #ccc;
-  margin-bottom: 10px;
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
+  margin-bottom: 9px;
+  line-height: 1.4;
 }
 
+/* ── Button ── */
 .plan-btn {
   width: 100%;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  text-transform: none;
-  letter-spacing: 0.5px;
-  border-radius: 8px;
-  padding: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+  border-radius: var(--cp-radius-sm, 6px) !important;
+  padding: 11px !important;
+  font-size: 0.88rem !important;
 }
 
+/* ── Footer ── */
 .pricing-footer {
   text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.8rem;
-  color: #444;
-  margin-top: 40px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  color: var(--cp-text-disabled, rgba(255,255,255,0.22));
+  margin-top: 48px;
 }
 </style>

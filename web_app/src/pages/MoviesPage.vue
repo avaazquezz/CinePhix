@@ -1,8 +1,8 @@
 <template>
-  <div class="home-container">
+  <div class="page-container">
     <div class="noise-overlay"></div>
-    
-    <main class="main-content">     
+
+    <main class="main-content">
       <!-- Sección de Películas Populares -->
       <section class="movie-section">
         <div class="section-header">
@@ -12,8 +12,8 @@
           </h2>
           <div class="title-underline"></div>
         </div>
-        <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
+        <div class="row-container movie-row-container">
+          <button class="nav-btn nav-button prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="popularRow">
@@ -37,7 +37,7 @@
               />
             </template>
           </div>
-          <button class="nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
+          <button class="nav-btn nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -52,8 +52,8 @@
           </h2>
           <div class="title-underline"></div>
         </div>
-        <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
+        <div class="row-container movie-row-container">
+          <button class="nav-btn nav-button prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="topRatedRow">
@@ -77,7 +77,7 @@
               />
             </template>
           </div>
-          <button class="nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
+          <button class="nav-btn nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -92,8 +92,8 @@
           </h2>
           <div class="title-underline"></div>
         </div>
-        <div class="movie-row-container">
-          <button class="nav-button prev" @click="scrollCategory('trending', 'prev')" v-if="!isLoading">
+        <div class="row-container movie-row-container">
+          <button class="nav-btn nav-button prev" @click="scrollCategory('trending', 'prev')" v-if="!isLoading">
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="trendingRow">
@@ -117,7 +117,7 @@
               />
             </template>
           </div>
-          <button class="nav-button next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
+          <button class="nav-btn nav-button next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
@@ -125,30 +125,30 @@
 
       <!-- Diálogo de Detalles de Película -->
       <transition name="dialog-fade">
-        <div v-if="isDialogOpen" class="movie-dialog" @click.self="closeMovieDialog">
-          <div class="dialog-content">
-            <button class="close-button" @click="closeMovieDialog" aria-label="Cerrar">
+        <div v-if="isDialogOpen" class="cp-dialog-overlay" @click.self="closeMovieDialog">
+          <div class="cp-dialog-box">
+            <button class="cp-dialog-close" @click="closeMovieDialog" aria-label="Cerrar">
               <i class="fas fa-times"></i>
             </button>
 
-            <div class="dialog-layout">
-              <div class="dialog-poster-section">
-                <img :src="getImageUrl(movieDetail.poster_path, true)" :alt="movieDetail.title" class="dialog-poster" />
+            <div class="cp-dialog-layout">
+              <div class="cp-dialog-poster-wrap">
+                <img :src="getImageUrl(movieDetail.poster_path, true)" :alt="movieDetail.title" class="cp-dialog-poster" />
               </div>
-              
-              <div class="dialog-details">
-                <h2 class="dialog-title">{{ movieDetail.title }}</h2>
-                
-                <div class="dialog-meta">
-                  <span class="meta-item">
+
+              <div class="cp-dialog-details">
+                <h2 class="cp-dialog-title">{{ movieDetail.title }}</h2>
+
+                <div class="cp-dialog-meta">
+                  <span class="cp-meta-chip">
                     <i class="fas fa-calendar"></i>
                     {{ movieDetail.release_date || '—' }}
                   </span>
-                  <span class="meta-item rating-badge">
+                  <span class="cp-meta-chip rating">
                     <i class="fas fa-star"></i>
                     {{ movieDetail.vote_average?.toFixed(1) || '?' }}/10
                   </span>
-                  <span class="meta-item share-row">
+                  <span class="cp-meta-chip share-chip">
                     <ShareButtons
                       :url="movieShareUrl"
                       :title="`${movieDetail.title} on CinePhix`"
@@ -157,25 +157,47 @@
                   </span>
                 </div>
 
-                <div class="dialog-overview-container">
-                  <h3 class="overview-title">{{ $t('movies.detail.overview') || 'Overview' }}</h3>
-                  <p class="dialog-overview">{{ movieDetail.overview || '—' }}</p>
+                <!-- Action Buttons -->
+                <div class="cp-dialog-actions">
+                  <button
+                    class="cp-action-btn"
+                    :class="{ active: isInWatchlist }"
+                    @click="toggleWatchlist"
+                  >
+                    <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                    {{ isInWatchlist ? 'In Watchlist' : 'Watchlist' }}
+                  </button>
+                  <button
+                    class="cp-action-btn"
+                    :class="{ active: isFavorite }"
+                    @click="toggleFavorite"
+                  >
+                    <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+                    {{ isFavorite ? 'Favorited' : 'Favorite' }}
+                  </button>
                 </div>
-                
-                <div class="dialog-credits-container">
-                  <h3 class="credits-title">{{ $t('movies.detail.credits') || 'Cast' }}</h3>
-                  <div class="credits-list">
-                    <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="credit-item">
-                      <span class="actor-name">{{ actor.name }}</span>
-                      <span class="actor-character">{{ actor.character }}</span>
+
+                <!-- Synopsis -->
+                <div>
+                  <p class="cp-section-label">{{ $t('movies.detail.overview') || 'Synopsis' }}</p>
+                  <p class="cp-overview">{{ movieDetail.overview || '—' }}</p>
+                </div>
+
+                <!-- Credits -->
+                <div>
+                  <p class="cp-section-label">{{ $t('movies.detail.credits') || 'Cast' }}</p>
+                  <div class="cp-credits-grid">
+                    <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="cp-credit-item">
+                      <span class="cp-credit-name">{{ actor.name }}</span>
+                      <span class="cp-credit-char">{{ actor.character }}</span>
                     </div>
                   </div>
                 </div>
 
-                <!-- Reviews Section -->
-                <div class="dialog-reviews-container">
-                  <div class="reviews-header">
-                    <h3 class="reviews-title">Reviews</h3>
+                <!-- Reviews -->
+                <div class="movie-reviews-section">
+                  <div class="cp-reviews-header">
+                    <p class="cp-reviews-title">Reviews</p>
                     <v-btn
                       size="small"
                       color="primary"
@@ -352,6 +374,7 @@ export default {
           poster: m.poster_path ? `https://image.tmdb.org/t/p/w780${m.poster_path}` : null,
           overview: m.overview,
           genres: m.genres ? m.genres.map(g => g.name).join(', ') : null,
+          tmdbId: m.id,
         });
       } catch (error) {
         console.error('Error al cargar los detalles de la película:', error);
@@ -367,6 +390,7 @@ export default {
       editingReview.value = null;
       document.body.style.overflow = '';
       window.dispatchEvent(new CustomEvent('dialog-closed'));
+      setPageMeta({ title: 'Movies', description: 'Discover and track movies with CinePhix — AI-powered recommendations and smart collections.' });
     };
 
     const scrollCategory = (category, direction) => {
@@ -478,6 +502,8 @@ export default {
       reviewError,
       showReviewForm,
       editingReview,
+      authStore,
+      movieShareUrl,
       isInWatchlist,
       isFavorite,
       toggleWatchlist,
@@ -504,26 +530,13 @@ export default {
 </script>
 
 <style scoped>
-.home-container {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
-  color: #e0e0e0;
-  /* TIPOGRAFÍA INTER: Consistencia con HomePage */
-  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-  position: relative;
-  overflow-x: hidden;
-}
-
 .noise-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
   z-index: 1;
-  opacity: 0.05;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .main-content {
@@ -531,1058 +544,75 @@ export default {
   position: relative;
   z-index: 2;
 }
+@media (min-width: 600px)  { .main-content { padding: 2rem 1.5rem; } }
+@media (min-width: 900px)  { .main-content { padding: 2.5rem 3rem; } }
+@media (min-width: 1200px) { .main-content { padding: 3rem 4rem; } }
 
-@media (min-width: 600px) {
-  .main-content {
-    padding: 2rem 1.5rem;
-  }
-}
+.movie-section { margin-bottom: 2.5rem; }
+@media (min-width: 600px)  { .movie-section { margin-bottom: 3rem; } }
+@media (min-width: 1200px) { .movie-section { margin-bottom: 4rem; } }
 
-@media (min-width: 900px) {
-  .main-content {
-    padding: 2.5rem 3rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .main-content {
-    padding: 3rem 4rem;
-  }
-}
-
-.movie-section {
-  margin-bottom: 2.5rem;
-}
-
-@media (min-width: 600px) {
-  .movie-section {
-    margin-bottom: 3rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-section {
-    margin-bottom: 4rem;
-  }
-}
-
-.section-header {
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-@media (min-width: 600px) {
-  .section-header {
-    margin-bottom: 1.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .section-header {
-    margin-bottom: 2rem;
-  }
-}
-
-.section-title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-@media (min-width: 600px) {
-  .section-title {
-    font-size: 1.6rem;
-    letter-spacing: 1.5px;
-    gap: 12px;
-  }
-}
-
-@media (min-width: 900px) {
-  .section-title {
-    font-size: 1.8rem;
-    gap: 13px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .section-title {
-    font-size: 2rem;
-    letter-spacing: 2px;
-    gap: 15px;
-    margin-bottom: 10px;
-  }
-}
-
-.title-accent {
-  width: 4px;
-  height: 25px;
-  background: linear-gradient(to bottom, #e50914, #ff4c4c);
-  box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
-}
-
-@media (min-width: 600px) {
-  .title-accent {
-    width: 4px;
-    height: 30px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .title-accent {
-    width: 5px;
-    height: 35px;
-  }
-}
-
-.title-underline {
-  height: 2px;
-  width: 60px;
-  background: linear-gradient(to right, #e50914, transparent);
-  margin-top: 5px;
-}
-
-@media (min-width: 600px) {
-  .title-underline {
-    width: 80px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .title-underline {
-    width: 100px;
-  }
-}
-
-/* Estilo de fila de películas */
+/* Carousel rows — keep old class names for the existing refs */
 .movie-row-container {
   position: relative;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0 2.25rem;
 }
-
-@media (min-width: 600px) {
-  .movie-row-container {
-    padding: 0 2.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-row-container {
-    padding: 0 3rem;
-  }
-}
+@media (min-width: 1200px) { .movie-row-container { padding: 0 3rem; } }
 
 .movie-row {
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 1rem 0;
-  gap: 1rem;
+  padding: 0.75rem 0 1rem;
+  gap: 0.875rem;
   scrollbar-width: none;
 }
+.movie-row::-webkit-scrollbar { display: none; }
+@media (min-width: 600px)  { .movie-row { gap: 1rem; } }
+@media (min-width: 1200px) { .movie-row { gap: 1.25rem; } }
 
-@media (min-width: 600px) {
-  .movie-row {
-    padding: 1.25rem 0;
-    gap: 1.25rem;
-  }
-}
+.movie-card-skeleton { flex: 0 0 auto; width: 150px; }
+@media (min-width: 481px)  { .movie-card-skeleton { width: 185px; } }
+@media (min-width: 769px)  { .movie-card-skeleton { width: 210px; } }
+@media (min-width: 1200px) { .movie-card-skeleton { width: 240px; } }
 
-@media (min-width: 1200px) {
-  .movie-row {
-    padding: 1.5rem 0;
-    gap: 1.5rem;
-  }
-}
-
-.movie-row::-webkit-scrollbar {
-  display: none;
-}
-
-/* Estilos para las tarjetas de películas */
-.movie-card {
-  flex: 0 0 auto;
-  width: 130px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-/* Skeleton cards en carrusel */
-.movie-card-skeleton {
-  flex: 0 0 auto;
-  width: 130px;
-}
-
-@media (min-width: 600px) {
-  .movie-card {
-    width: 160px;
-  }
-  
-  .movie-card-skeleton {
-    width: 160px;
-  }
-}
-
-@media (min-width: 900px) {
-  .movie-card {
-    width: 180px;
-  }
-  
-  .movie-card-skeleton {
-    width: 180px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-card {
-    width: 200px;
-  }
-  
-  .movie-card-skeleton {
-    width: 200px;
-  }
-}
-
-.movie-card:hover {
-  transform: translateY(-10px) scale(1.05);
-}
-
-.card-inner {
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.card-inner:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(229, 9, 20, 0.8);
-  box-shadow: 
-    0 0 25px rgba(229, 9, 20, 0.7),
-    0 0 50px rgba(229, 9, 20, 0.4),
-    0 15px 40px rgba(0, 0, 0, 0.6);
-}
-
-.poster-container {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 2/3;
-}
-
-.movie-poster {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.5s ease, filter 0.4s ease;
-}
-
-.card-inner:hover .movie-poster {
-  transform: scale(1.1);
-  filter: brightness(0.6);
-}
-
-.poster-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.card-inner:hover .poster-overlay {
-  opacity: 1;
-}
-
-.play-icon {
-  width: 40px;
-  height: 40px;
-  background: #e50914;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  color: white;
-  box-shadow: 0 0 15px rgba(229, 9, 20, 0.6);
-  transform: scale(0.8);
-  transition: transform 0.3s ease;
-}
-
-@media (min-width: 600px) {
-  .play-icon {
-    width: 45px;
-    height: 45px;
-    font-size: 1.1rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .play-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-    box-shadow: 0 0 20px rgba(229, 9, 20, 0.6);
-  }
-}
-
-.card-inner:hover .play-icon {
-  transform: scale(1);
-}
-
-.card-info {
-  padding: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .card-info {
-    padding: 0.85rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .card-info {
-    padding: 1rem;
-  }
-}
-
-.movie-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: white;
-  margin-bottom: 0.4rem;
-  line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.2rem;
-}
-
-@media (min-width: 600px) {
-  .movie-title {
-    font-size: 0.9rem;
-    min-height: 2.3rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-title {
-    font-size: 0.95rem;
-    margin-bottom: 0.5rem;
-    min-height: 2.4rem;
-  }
-}
-
-.movie-meta {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.movie-rating {
-  color: #e50914;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 600;
-  font-size: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .movie-rating {
-    font-size: 0.8rem;
-    gap: 4px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-rating {
-    font-size: 0.85rem;
-    gap: 5px;
-  }
-}
-
-.movie-rating i {
-  font-size: 0.65rem;
-}
-
-@media (min-width: 1200px) {
-  .movie-rating i {
-    font-size: 0.7rem;
-  }
-}
-
-/* Botones de navegación */
+/* Nav buttons  */
 .nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 35px;
-  height: 35px;
-  background: rgba(229, 9, 20, 0.2);
-  border: 1px solid rgba(229, 9, 20, 0.4);
+  width: 36px;
+  height: 36px;
+  background: rgba(15, 15, 15, 0.9);
+  border: 1px solid var(--cp-border-accent, rgba(229,9,20,0.28));
   color: white;
-  font-size: 1rem;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 20;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+  border-radius: var(--cp-radius-sm, 6px);
 }
-
-@media (min-width: 600px) {
-  .nav-button {
-    width: 40px;
-    height: 40px;
-    font-size: 1.1rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .nav-button {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-  }
-}
-
 .nav-button:hover {
-  background: rgba(229, 9, 20, 0.8);
-  border-color: #e50914;
-  transform: translateY(-50%) scale(1.1);
-}
-
-.prev {
-  left: 0;
-}
-
-.next {
-  right: 0;
-}
-
-/* Estilos para el diálogo */
-.dialog-fade-enter-active,
-.dialog-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.dialog-fade-enter-from,
-.dialog-fade-leave-to {
-  opacity: 0;
-}
-
-.movie-dialog {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  padding: 0.75rem;
-  overflow-y: auto;
-  backdrop-filter: blur(10px);
-}
-
-@media (min-width: 600px) {
-  .movie-dialog {
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .movie-dialog {
-    padding: 2rem;
-  }
-}
-
-.dialog-content {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
-  color: #fff;
-  width: 100%;
-  max-width: 1100px;
-  position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-  animation: slideUp 0.4s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.dialog-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 2.5rem 1rem 1rem;
-}
-
-@media (min-width: 480px) {
-  .dialog-layout {
-    gap: 1.25rem;
-    padding: 2.5rem 1.25rem 1.25rem;
-  }
-}
-
-@media (min-width: 600px) {
-  .dialog-layout {
-    gap: 2rem;
-    padding: 2rem;
-  }
-}
-
-@media (min-width: 900px) {
-  .dialog-layout {
-    flex-direction: row;
-    gap: 2.5rem;
-    padding: 2.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-layout {
-    gap: 3rem;
-    padding: 3rem;
-  }
-}
-
-.dialog-poster-section {
-  flex: 0 0 auto;
-  width: 100%;
-  max-width: 180px;
-  margin: 0 auto;
-}
-
-@media (min-width: 480px) {
-  .dialog-poster-section {
-    max-width: 220px;
-  }
-}
-
-@media (min-width: 600px) {
-  .dialog-poster-section {
-    max-width: 280px;
-  }
-}
-
-@media (min-width: 900px) {
-  .dialog-poster-section {
-    flex: 0 0 300px;
-    max-width: 300px;
-    margin: 0;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-poster-section {
-    flex: 0 0 350px;
-    max-width: 350px;
-  }
-}
-
-.dialog-poster {
-  width: 100%;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-@media (min-width: 1200px) {
-  .dialog-poster {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-  }
-}
-
-.dialog-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-@media (min-width: 600px) {
-  .dialog-details {
-    gap: 1.25rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-details {
-    gap: 1.5rem;
-  }
-}
-
-.dialog-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  line-height: 1.3;
-  margin: 0;
-}
-
-@media (min-width: 600px) {
-  .dialog-title {
-    font-size: 2rem;
-    letter-spacing: 0.75px;
-  }
-}
-
-@media (min-width: 900px) {
-  .dialog-title {
-    font-size: 2.4rem;
-    letter-spacing: 1px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-title {
-    font-size: 2.7rem;
-  }
-}
-
-.dialog-meta {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-@media (min-width: 600px) {
-  .dialog-meta {
-    gap: 1.5rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-meta {
-    gap: 2rem;
-  }
-}
-
-.meta-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-@media (min-width: 600px) {
-  .meta-item {
-    gap: 8px;
-    font-size: 1rem;
-    letter-spacing: 0.75px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .meta-item {
-    gap: 9px;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-  }
-}
-
-.meta-item i {
-  color: #e50914;
-  font-size: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .meta-item i {
-    font-size: 0.8rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .meta-item i {
-    font-size: 0.9rem;
-  }
-}
-
-.rating-badge {
-  background: rgba(229, 9, 20, 0.15);
-  padding: 6px 12px;
-  border: 1px solid rgba(229, 9, 20, 0.3);
-  color: #e50914;
-  font-weight: 700;
-}
-
-@media (min-width: 600px) {
-  .rating-badge {
-    padding: 7px 13px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .rating-badge {
-    padding: 8px 15px;
-  }
-}
-
-.dialog-overview-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .dialog-overview-container {
-    gap: 0.85rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-overview-container {
-    gap: 1rem;
-  }
-}
-
-.overview-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-@media (min-width: 600px) {
-  .overview-title {
-    font-size: 1.25rem;
-    letter-spacing: 0.75px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .overview-title {
-    font-size: 1.35rem;
-    letter-spacing: 1px;
-  }
-}
-
-.dialog-overview {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.85);
-  text-align: left;
-  max-height: 180px;
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-@media (min-width: 600px) {
-  .dialog-overview {
-    font-size: 1.05rem;
-    line-height: 1.75;
-    max-height: 190px;
-    text-align: justify;
-  }
-}
-
-@media (min-width: 900px) {
-  .dialog-overview {
-    max-height: 195px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-overview {
-    font-size: 1.15rem;
-    line-height: 1.8;
-    max-height: 200px;
-    padding-right: 10px;
-  }
-}
-
-.dialog-overview::-webkit-scrollbar {
-  width: 4px;
-}
-
-.dialog-overview::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.dialog-overview::-webkit-scrollbar-thumb {
-  background: #e50914;
-}
-
-.dialog-credits-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .dialog-credits-container {
-    gap: 0.85rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .dialog-credits-container {
-    gap: 1rem;
-  }
-}
-
-.credits-title {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
-
-@media (min-width: 600px) {
-  .credits-title {
-    font-size: 1.25rem;
-    letter-spacing: 0.75px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .credits-title {
-    font-size: 1.35rem;
-    letter-spacing: 1px;
-  }
-}
-
-.credits-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
-  max-height: 180px;
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-@media (min-width: 600px) {
-  .credits-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.7rem;
-    max-height: 190px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .credits-list {
-    gap: 0.75rem;
-    max-height: 200px;
-    padding-right: 10px;
-  }
-}
-
-.credits-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.credits-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.credits-list::-webkit-scrollbar-thumb {
-  background: #e50914;
-}
-
-.credit-item {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 0.6rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-@media (min-width: 600px) {
-  .credit-item {
-    padding: 0.65rem;
-    gap: 0.22rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .credit-item {
-    padding: 0.75rem;
-    gap: 0.25rem;
-  }
-}
-
-.actor-name {
-  font-weight: 600;
-  color: white;
-  font-size: 0.9rem;
-}
-
-@media (min-width: 600px) {
-  .actor-name {
-    font-size: 0.95rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .actor-name {
-    font-size: 0.9rem;
-  }
-}
-
-.actor-character {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.75rem;
-}
-
-@media (min-width: 600px) {
-  .actor-character {
-    font-size: 0.8rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .actor-character {
-    font-size: 0.85rem;
-  }
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(229, 9, 20, 0.2);
-  border: 1px solid #e50914;
-  color: #e50914;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 10;
-}
-
-@media (min-width: 600px) {
-  .close-button {
-    top: 15px;
-    right: 15px;
-    width: 38px;
-    height: 38px;
-    font-size: 1.1rem;
-  }
-}
-
-@media (min-width: 1200px) {
-  .close-button {
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
-}
-
-.close-button:hover {
-  background: #e50914;
-  color: white;
-  transform: rotate(90deg);
-}
-
-/* Dialog Action Buttons */
-.dialog-actions {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
-.dialog-action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dialog-action-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.4);
-}
-
-.dialog-action-btn.active {
-  background: rgba(229, 9, 20, 0.2);
-  border-color: #e50914;
-  color: #e50914;
-}
-
-.dialog-action-btn i {
-  font-size: 1rem;
-}
-
-@media (max-width: 480px) {
-  .dialog-actions {
-    flex-direction: column;
-  }
-  .dialog-action-btn {
-    justify-content: center;
-  }
-}
-
-/* Reviews Section */
-.dialog-reviews-container {
-  margin-top: 1.5rem;
+  background: var(--cp-red, #e50914);
+  border-color: var(--cp-red, #e50914);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: var(--cp-shadow-red, 0 0 28px rgba(229,9,20,0.45));
+}
+.prev { left: 0; }
+.next { right: 0; }
+
+/* Reviews wrapper */
+.movie-reviews-section {
+  border-top: 1px solid rgba(255,255,255,0.07);
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.5rem;
 }
 
-.reviews-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.reviews-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0;
-}
+/* ShareButtons chip fix */
+.share-chip { padding: 0 !important; background: transparent !important; border: none !important; }
 </style>

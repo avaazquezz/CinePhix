@@ -546,7 +546,7 @@ onMounted(async () => {
 <style scoped>
 .profile-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #050505, #0a0a0a);
+  background: var(--cp-bg-base, #080808);
   padding: 40px 20px;
 }
 
@@ -589,9 +589,9 @@ onMounted(async () => {
 }
 
 .profile-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  background: var(--cp-bg-elevated, #161616);
+  border: 1px solid var(--cp-border, rgba(255,255,255,0.07));
+  border-radius: var(--cp-radius-lg, 16px);
   padding: 24px;
   margin-bottom: 24px;
 }
@@ -697,9 +697,9 @@ onMounted(async () => {
 }
 
 .pro-upsell-banner {
-  background: linear-gradient(135deg, #0a1a0a 0%, #0d0d0d 100%);
+  background: linear-gradient(135deg, #0a1a0a 0%, #0f0f0f 100%);
   border: 1px solid rgba(4, 255, 36, 0.2);
-  border-radius: 12px;
+  border-radius: var(--cp-radius-lg, 16px);
   padding: 24px 28px;
   margin: 24px 0;
 }
@@ -713,7 +713,7 @@ onMounted(async () => {
 }
 
 .pro-upsell-text h3 {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   color: #fff;
@@ -721,14 +721,14 @@ onMounted(async () => {
 }
 
 .pro-upsell-text p {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   color: #888;
   margin: 0;
 }
 
 .pro-upsell-btn {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
   color: #000;
   border-radius: 8px;
