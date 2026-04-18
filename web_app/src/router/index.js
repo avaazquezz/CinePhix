@@ -22,6 +22,7 @@ const ProfilePage = () => import('@/pages/ProfilePage.vue')
 const ListsPage = () => import('@/pages/ListsPage.vue')
 const ActivityPage = () => import('@/pages/ActivityPage.vue')
 const AIConciergePage = () => import('@/pages/AIConciergePage.vue')
+const PricingPage = () => import('@/pages/PricingPage.vue')
 
 const routes = [
   // Public routes
@@ -94,6 +95,12 @@ const routes = [
     name: 'AIConcierge',
     component: AIConciergePage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/pricing',
+    name: 'Pricing',
+    component: PricingPage,
+    meta: { public: true },
   },
 ]
 

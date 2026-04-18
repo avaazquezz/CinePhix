@@ -53,6 +53,7 @@
               <v-list-item>
                 <v-list-item-title class="user-name-dropdown">
                   {{ authStore.displayName }}
+                  <v-chip v-if="authStore.isPro" color="accent" size="x-small" class="ml-2">PRO</v-chip>
                 </v-list-item-title>
                 <v-list-item-subtitle>@{{ authStore.username }}</v-list-item-subtitle>
               </v-list-item>
@@ -74,6 +75,12 @@
                 </template>
                 <v-list-item-title>Activity</v-list-item-title>
               </v-list-item>
+              <v-list-item v-if="!authStore.isPro" @click="$router.push('/CinePhix/pricing')" class="dropdown-item pro-item">
+                <template #prepend>
+                  <v-icon color="#04ff24">mdi-rocket-launch</v-icon>
+                </template>
+                <v-list-item-title class="pro-text">Go Pro</v-list-item-title>
+              </v-list-item>
               <v-divider class="my-2" />
               <v-list-item @click="handleLogout" class="dropdown-item logout">
                 <template #prepend>
@@ -90,6 +97,9 @@
           </router-link>
           <router-link to="/CinePhix/auth/register" class="auth-btn auth-btn-primary">
             Sign Up
+          </router-link>
+          <router-link to="/CinePhix/pricing" class="auth-btn pro-nav-btn">
+            Go Pro
           </router-link>
         </template>
 
@@ -427,5 +437,48 @@ export default {
     font-size: 0.75rem;
     min-width: 32px;
   }
+}
+
+.pro-item {
+  border-radius: 8px;
+  margin: 4px 8px;
+}
+
+.pro-text {
+  color: #04ff24 !important;
+  font-weight: 700;
+}
+  .pro-nav-btn {
+  background: #04ff24;
+  color: #000;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+  .pro-nav-btn:hover {
+  background: #00e020;
+  box-shadow: 0 0 15px rgba(4, 255, 36, 0.4);
+}
+
+.pro-nav-btn {
+  background: #04ff24;
+  color: #000;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.pro-nav-btn:hover {
+  background: #00e020;
+  box-shadow: 0 0 15px rgba(4, 255, 36, 0.4);
 }
 </style>

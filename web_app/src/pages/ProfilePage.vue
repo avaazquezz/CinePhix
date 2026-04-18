@@ -12,9 +12,38 @@
         <div class="user-info">
           <h1 class="user-name">{{ user?.display_name || user?.username }}</h1>
           <p class="user-username">@{{ user?.username }}</p>
-          <v-chip v-if="user?.is_pro" color="accent" size="small" class="mt-2">
+          <v-chip v-if="proStatus.pro" color="accent" size="small" class="mt-2">
             PRO
           </v-chip>
+          <v-btn
+            v-else
+            variant="flat"
+            color="#04ff24"
+            size="small"
+            class="mt-2"
+            @click="$router.push('/CinePhix/pricing')"
+          >
+            <v-icon start size="16">mdi-rocket-launch</v-icon>
+            Go Pro
+          </v-btn>
+        </div>
+      </div>
+
+      <!-- Pro Upsell Banner (shown when user is not Pro) -->
+      <div v-if="!proStatus.pro" class="pro-upsell-banner">
+        <div class="pro-upsell-content">
+          <div class="pro-upsell-text">
+            <h3>Unlock CinePhix Pro</h3>
+            <p>AI Concierge, semantic search, smart collections, review assistant, and more.</p>
+          </div>
+          <v-btn
+            variant="flat"
+            color="#04ff24"
+            class="pro-upsell-btn"
+            @click="$router.push('/CinePhix/pricing')"
+          >
+            See Plans
+          </v-btn>
         </div>
       </div>
 
@@ -220,6 +249,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { paymentService } from '@/api/services/paymentService'
 import { useUserStore } from '@/stores/user'
 import { useWatchlistStore } from '@/stores/watchlist'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -248,6 +278,7 @@ const preferredDecade = ref(null)
 const isUpdatingProfile = ref(false)
 const profileError = ref(null)
 const prefsError = ref(null)
+const proStatus = ref({ pro: false, plan: null, expires_at: null })
 const isLoadingWatchlist = ref(false)
 const isLoadingFavorites = ref(false)
 
@@ -475,6 +506,14 @@ async function handleLogout() {
   router.push('/CinePhix/home')
 }
 
+async function fetchProStatus() {
+  try {
+    proStatus.value = await paymentService.getProStatus()
+  } catch {
+    proStatus.value = { pro: false, plan: null, expires_at: null }
+  }
+}
+
 // Load user data on mount
 onMounted(async () => {
   if (user.value) {
@@ -484,6 +523,7 @@ onMounted(async () => {
   }
 
   await userStore.fetchPreferences()
+  await fetchProStatus()
 
   if (userStore.preferences) {
     selectedLanguage.value = userStore.language || 'en'
@@ -655,4 +695,45 @@ onMounted(async () => {
     text-align: center;
   }
 }
+
+.pro-upsell-banner {
+  background: linear-gradient(135deg, #0a1a0a 0%, #0d0d0d 100%);
+  border: 1px solid rgba(4, 255, 36, 0.2);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin: 24px 0;
+}
+
+.pro-upsell-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pro-upsell-text h3 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.pro-upsell-text p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+}
+
+.pro-upsell-btn {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #000;
+  border-radius: 8px;
+  text-transform: none;
+  padding: 10px 24px !important;
+}
+
 </style>
