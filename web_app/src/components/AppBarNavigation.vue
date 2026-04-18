@@ -33,6 +33,13 @@
       <div class="nav-actions">
         <!-- Auth buttons or user menu -->
         <template v-if="authStore.isAuthenticated">
+          <!-- Notification Bell -->
+          <v-btn icon variant="text" @click="showNotifications = true" class="notif-btn">
+            <v-badge :content="notifUnread" :model-value="notifUnread > 0" color="error">
+              <v-icon>mdi-bell-outline</v-icon>
+            </v-badge>
+          </v-btn>
+
           <v-menu>
             <template #activator="{ props }">
               <v-btn icon v-bind="props" variant="text" class="user-menu-btn">
@@ -112,11 +119,16 @@
   </header>
 </template>
 
+<NotificationPanel v-model="showNotifications" />
+
 <script>
 import { useRoute, useRouter } from 'vue-router'
+import { onMounted, onUnmounted } from 'vue'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { setLocale, getLocale } from '@/i18n'
+import { useNotificationsSocket } from '@/composables/useNotificationsSocket'
+import NotificationPanel from './NotificationPanel.vue'
 
 export default {
   name: 'AppBarNavigation',
@@ -125,6 +137,11 @@ export default {
     const router = useRouter()
     const authStore = useAuthStore()
     const currentLang = ref(getLocale())
+    const showNotifications = ref(false)
+    const { unreadCount: notifUnread, connect: connectSocket, disconnect: disconnectSocket, decrementUnread } = useNotificationsSocket()
+    const onNotification = () => { decrementUnread() }
+    onMounted(() => { if (authStore.isAuthenticated) connectSocket() })
+    onUnmounted(() => disconnectSocket())
 
     const isActive = (path) => {
       return route.path === path || route.path.startsWith(path + '/')
@@ -157,6 +174,10 @@ export default {
       userInitial,
       goToProfile,
       handleLogout,
+      showNotifications,
+      notifUnread,
+      onNotification,
+      NotificationPanel,
     }
   },
 }
