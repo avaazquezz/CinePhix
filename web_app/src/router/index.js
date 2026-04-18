@@ -23,6 +23,7 @@ const PublicProfilePage = () => import('@/pages/PublicProfilePage.vue')
 const ListsPage = () => import('@/pages/ListsPage.vue')
 const ListDetailPage = () => import('@/pages/ListDetailPage.vue')
 const DiscoverPage = () => import('@/pages/DiscoverPage.vue')
+const WatchedPage = () => import('@/pages/WatchedPage.vue')
 const ActivityPage = () => import('@/pages/ActivityPage.vue')
 const AIConciergePage = () => import('@/pages/AIConciergePage.vue')
 const PricingPage = () => import('@/pages/PricingPage.vue')
@@ -104,6 +105,12 @@ const routes = [
     name: 'Discover',
     component: DiscoverPage,
     meta: { public: true },
+  },
+  {
+    path: '/CinePhix/watched',
+    name: 'Watched',
+    component: WatchedPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/CinePhix/activity',
