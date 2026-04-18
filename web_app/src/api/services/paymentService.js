@@ -1,7 +1,7 @@
 /**
  * Payment Service — Stripe checkout for CinePhix Pro plans
  */
-import { apiClient } from './client'
+import api from '@/api/client'
 
 const BASE = '/payments'
 
@@ -11,7 +11,7 @@ export const paymentService = {
    * @returns {Promise<{pro: boolean, plan: string|null, expires_at: string|null}>}
    */
   async getProStatus() {
-    const response = await apiClient.get(`${BASE}/pro-status`)
+    const response = await api.get(`${BASE}/pro-status`)
     return response.data
   },
 
@@ -22,7 +22,7 @@ export const paymentService = {
    * @returns {Promise<{checkout_url: string, session_id: string}>}
    */
   async createCheckoutSession(plan) {
-    const response = await apiClient.post(`${BASE}/create-checkout-session?plan=${encodeURIComponent(plan)}`)
+    const response = await api.post(`${BASE}/create-checkout-session?plan=${encodeURIComponent(plan)}`)
     return response.data
   },
 }
