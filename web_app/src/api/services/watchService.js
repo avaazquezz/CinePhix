@@ -1,7 +1,7 @@
 /**
  * Watch service — watched history + progress tracking
  */
-import api from '@/api'
+import api from '@/api/client'
 
 export function getWatched({ page = 1, per_page = 20, media_type = null, completed = null } = {}) {
   const params = { page, per_page }

@@ -3,6 +3,11 @@ import { ref } from 'vue'
 
 const BASE_URL = '/lists'
 
+/** Plain axios-style helpers (full response) for Options API / legacy callers */
+export const listService = {
+  getList: (listId) => api.get(`${BASE_URL}/${listId}`),
+}
+
 export const useListsService = () => {
   const loading = ref(false)
   const error = ref(null)

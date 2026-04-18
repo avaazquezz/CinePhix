@@ -136,7 +136,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usersApi } from '@/api/client'
-import { listsApi } from '@/api/services/listService'
 import { useAuthStore } from '@/stores/auth'
 import ReviewCard from '@/components/ReviewCard.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
