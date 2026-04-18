@@ -19,22 +19,27 @@
           <div class="movie-row" ref="popularRow">
             <!-- Skeleton Loading -->
             <template v-if="isLoading">
-              <div v-for="n in 8" :key="`skeleton-popular-${n}`" class="movie-card-skeleton">
+              <div v-for="n in 8" :key="`skeleton-popular-${n}`" class="carousel-card-slot">
                 <SkeletonCard />
               </div>
             </template>
             <!-- Contenido Real -->
             <template v-if="!isLoading">
-              <MovieCard
+              <div
                 v-for="item in popularMovies"
                 :key="item.id"
-                :id="item.id"
-                :title="item.title"
-                :image="getImageUrl(item.poster_path)"
-                media-type="movie"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openMovieDialog(item.id)"
-              />
+                class="carousel-card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.title"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="movie"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openMovieDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
@@ -59,22 +64,27 @@
           <div class="movie-row" ref="topRatedRow">
             <!-- Skeleton Loading -->
             <template v-if="isLoading">
-              <div v-for="n in 8" :key="`skeleton-toprated-${n}`" class="movie-card-skeleton">
+              <div v-for="n in 8" :key="`skeleton-toprated-${n}`" class="carousel-card-slot">
                 <SkeletonCard />
               </div>
             </template>
             <!-- Contenido Real -->
             <template v-if="!isLoading">
-              <MovieCard
+              <div
                 v-for="item in topRatedMovies"
                 :key="item.id"
-                :id="item.id"
-                :title="item.title"
-                :image="getImageUrl(item.poster_path)"
-                media-type="movie"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openMovieDialog(item.id)"
-              />
+                class="carousel-card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.title"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="movie"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openMovieDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
@@ -99,22 +109,27 @@
           <div class="movie-row" ref="trendingRow">
             <!-- Skeleton Loading -->
             <template v-if="isLoading">
-              <div v-for="n in 8" :key="`skeleton-trending-${n}`" class="movie-card-skeleton">
+              <div v-for="n in 8" :key="`skeleton-trending-${n}`" class="carousel-card-slot">
                 <SkeletonCard />
               </div>
             </template>
             <!-- Contenido Real -->
             <template v-if="!isLoading">
-              <MovieCard
+              <div
                 v-for="item in trendingMovies"
                 :key="item.id"
-                :id="item.id"
-                :title="item.title"
-                :image="getImageUrl(item.poster_path)"
-                media-type="movie"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openMovieDialog(item.id)"
-              />
+                class="carousel-card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.title"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="movie"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openMovieDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn nav-button next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
@@ -324,7 +339,10 @@ export default {
       if (!path) return '';
 
       const isMobile = window.innerWidth <= 480;
-      const size = isDetail ? (isMobile ? 'w342' : 'w500') : (isMobile ? 'w185' : 'w342');
+      // List posters: same TMDB sizes as HomePage trending grid for matching sharpness.
+      const size = isDetail
+        ? (isMobile ? 'w342' : 'w500')
+        : (isMobile ? 'w342' : 'w500');
 
       return `https://image.tmdb.org/t/p/${size}${path}`;
     };
@@ -565,17 +583,22 @@ export default {
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 0.75rem 0 1rem;
-  gap: 0.875rem;
+  gap: 1rem;
   scrollbar-width: none;
 }
 .movie-row::-webkit-scrollbar { display: none; }
-@media (min-width: 600px)  { .movie-row { gap: 1rem; } }
-@media (min-width: 1200px) { .movie-row { gap: 1.25rem; } }
+@media (min-width: 600px)  { .movie-row { gap: 1.25rem; } }
+@media (min-width: 900px)  { .movie-row { gap: 1.5rem; } }
+@media (min-width: 1200px) { .movie-row { gap: 1.75rem; } }
 
-.movie-card-skeleton { flex: 0 0 auto; width: 150px; }
-@media (min-width: 481px)  { .movie-card-skeleton { width: 185px; } }
-@media (min-width: 769px)  { .movie-card-skeleton { width: 210px; } }
-@media (min-width: 1200px) { .movie-card-skeleton { width: 240px; } }
+/* Match Home grid “cell” width so carousel posters read the same as Inicio */
+.carousel-card-slot {
+  flex: 0 0 auto;
+  width: 150px;
+}
+@media (min-width: 481px)  { .carousel-card-slot { width: 185px; } }
+@media (min-width: 769px)  { .carousel-card-slot { width: 210px; } }
+@media (min-width: 1200px) { .carousel-card-slot { width: 240px; } }
 
 /* Nav buttons  */
 .nav-button {

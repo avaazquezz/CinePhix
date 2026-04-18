@@ -24,16 +24,21 @@
               </div>
             </template>
             <template v-else>
-              <MovieCard
+              <div
                 v-for="item in popularSeries"
                 :key="item.id"
-                :id="item.id"
-                :title="item.name"
-                :image="getImageUrl(item.poster_path)"
-                media-type="tv"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openDialog(item.id)"
-              />
+                class="card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.name"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="tv"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
@@ -62,16 +67,21 @@
               </div>
             </template>
             <template v-else>
-              <MovieCard
+              <div
                 v-for="item in topRatedSeries"
                 :key="item.id"
-                :id="item.id"
-                :title="item.name"
-                :image="getImageUrl(item.poster_path)"
-                media-type="tv"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openDialog(item.id)"
-              />
+                class="card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.name"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="tv"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
@@ -100,16 +110,21 @@
               </div>
             </template>
             <template v-else>
-              <MovieCard
+              <div
                 v-for="item in trendingSeries"
                 :key="item.id"
-                :id="item.id"
-                :title="item.name"
-                :image="getImageUrl(item.poster_path)"
-                media-type="tv"
-                :rating="item.vote_average ? item.vote_average / 2 : null"
-                @select="openDialog(item.id)"
-              />
+                class="card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.name"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="tv"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openDialog(item.id)"
+                />
+              </div>
             </template>
           </div>
           <button class="nav-btn next" @click="scrollCategory('trending', 'next')" v-if="!isLoading">
@@ -302,7 +317,9 @@ export default {
     const getImageUrl = (path, isDetail = false) => {
       if (!path) return ''
       const isMobile = window.innerWidth <= 480
-      const size = isDetail ? (isMobile ? 'w342' : 'w500') : (isMobile ? 'w185' : 'w342')
+      const size = isDetail
+        ? (isMobile ? 'w342' : 'w500')
+        : (isMobile ? 'w342' : 'w500')
       return `https://image.tmdb.org/t/p/${size}${path}`
     }
 

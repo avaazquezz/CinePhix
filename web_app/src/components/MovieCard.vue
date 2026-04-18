@@ -1,5 +1,10 @@
 <template>
-  <div class="movie-card" @click="$emit('select')" data-cy="movie-card">
+  <div
+    class="movie-card"
+    :class="{ 'movie-card--fill': fillParent }"
+    @click="$emit('select')"
+    data-cy="movie-card"
+  >
     <div class="poster-wrapper">
       <img :src="image" :alt="title" class="movie-poster" loading="lazy" />
       <div class="poster-overlay">
@@ -52,7 +57,9 @@ export default {
     title:     { type: String, required: true },
     image:     { type: String, required: true },
     mediaType: { type: String, default: 'movie' },
-    rating:    { type: Number, default: null },
+    rating:     { type: Number, default: null },
+    /** When true, card stretches to parent width (carousel slots sized like Home grid). */
+    fillParent: { type: Boolean, default: false },
   },
   emits: ['select'],
   setup(props) {
@@ -244,9 +251,21 @@ export default {
   gap: 3px;
 }
 
-/* ── Responsive widths ── */
-@media (max-width: 480px) { .movie-card { width: 110px; } }
-@media (min-width: 481px) and (max-width: 768px) { .movie-card { width: 130px; } }
-@media (min-width: 769px) and (max-width: 1199px) { .movie-card { width: 150px; } }
-@media (min-width: 1200px) { .movie-card { width: 165px; } }
+/* ── Default widths (compact rows). Use fillParent for home-style carousel slots. ── */
+.movie-card--fill {
+  width: 100%;
+  max-width: 100%;
+}
+@media (max-width: 480px) {
+  .movie-card:not(.movie-card--fill) { width: 110px; }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+  .movie-card:not(.movie-card--fill) { width: 130px; }
+}
+@media (min-width: 769px) and (max-width: 1199px) {
+  .movie-card:not(.movie-card--fill) { width: 150px; }
+}
+@media (min-width: 1200px) {
+  .movie-card:not(.movie-card--fill) { width: 165px; }
+}
 </style>

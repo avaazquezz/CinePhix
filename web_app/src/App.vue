@@ -201,12 +201,13 @@ html, body {
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 0.75rem 0 1rem;
-  gap: 0.875rem;
+  gap: 1rem;
   scrollbar-width: none;
 }
 .content-row::-webkit-scrollbar { display: none; }
-@media (min-width: 600px)  { .content-row { gap: 1rem; } }
-@media (min-width: 1200px) { .content-row { gap: 1.25rem; } }
+@media (min-width: 600px)  { .content-row { gap: 1.25rem; } }
+@media (min-width: 900px)  { .content-row { gap: 1.5rem; } }
+@media (min-width: 1200px) { .content-row { gap: 1.75rem; } }
 
 /* ── Shared nav buttons ── */
 .nav-btn {
