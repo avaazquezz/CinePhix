@@ -9,6 +9,10 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
+// PWA + SW often prevent Cypress from seeing a stable `load` event after repeated visits.
+// CI sets DISABLE_PWA=true for the E2E build only (see .github/workflows/tests.yml).
+const pwaEnabled = process.env.DISABLE_PWA !== 'true'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   // Important for GitHub Pages under https://<user>.github.io/CinePhix/
@@ -29,43 +33,47 @@ export default defineConfig({
         }],
       },
     }),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'icons/*.png'],
-      manifest: {
-        name: 'CinePhix',
-        short_name: 'CinePhix',
-        description: 'AI-powered movie & TV database',
-        theme_color: '#04ff24',
-        background_color: '#000000',
-        display: 'standalone',
-        icons: [
-          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-        ],
-      },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/api\.themoviedb\.org\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'tmdb-cache',
-              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 }, // 1h
+    ...(pwaEnabled
+      ? [
+          VitePWA({
+            registerType: 'autoUpdate',
+            includeAssets: ['favicon.ico', 'icons/*.png'],
+            manifest: {
+              name: 'CinePhix',
+              short_name: 'CinePhix',
+              description: 'AI-powered movie & TV database',
+              theme_color: '#04ff24',
+              background_color: '#000000',
+              display: 'standalone',
+              icons: [
+                { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+                { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+              ],
             },
-          },
-          {
-            urlPattern: /^https:\/\/image\.tmdb\.org\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'tmdb-images-cache',
-              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 }, // 24h
+            workbox: {
+              globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+              runtimeCaching: [
+                {
+                  urlPattern: /^https:\/\/api\.themoviedb\.org\/.*/i,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'tmdb-cache',
+                    expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 }, // 1h
+                  },
+                },
+                {
+                  urlPattern: /^https:\/\/image\.tmdb\.org\/.*/i,
+                  handler: 'CacheFirst',
+                  options: {
+                    cacheName: 'tmdb-images-cache',
+                    expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 }, // 24h
+                  },
+                },
+              ],
             },
-          },
-        ],
-      },
-    }),
+          }),
+        ]
+      : []),
   ],
   test: {
     environment: 'jsdom',

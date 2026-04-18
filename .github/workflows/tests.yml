@@ -26,6 +26,7 @@ jobs:
       - name: Build app
         run: npm run build
         env:
+          DISABLE_PWA: 'true'
           VITE_API_URL: ${{ secrets.VITE_API_URL || 'http://localhost:8001' }}
           VITE_TMDB_API_KEY: ${{ secrets.VITE_TMDB_API_KEY }}
       - name: Start preview server
