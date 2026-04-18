@@ -61,6 +61,17 @@ export const getMovieDetail = async (id) => {
   }
 }
 
+//  Detalle de serie por ID
+export const getSeriesDetail = async (id) => {
+  try {
+    const response = await api.get(`/tv/${id}`)
+    return response.data
+  } catch (error) {
+    console.error(`Error al obtener los detalles de la serie con ID ${id}`, error)
+    throw error
+  }
+}
+
 //  Créditos de Película por ID
 export const getMovieCredits = async (id) => {
   try {

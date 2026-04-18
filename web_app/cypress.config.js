@@ -8,6 +8,8 @@ export default defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
     defaultCommandTimeout: 10000,
+    // Preview + PWA/fonts can delay `load`; CI was timing at 60s on repeated visits
+    pageLoadTimeout: 120000,
     env: {
       VITE_TMDB_API_KEY: process.env.VITE_TMDB_API_KEY || 'e546f0210838c597382ddcad9f8e0647',
       VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:8001',

@@ -1,5 +1,5 @@
 <template>
-  <div class="actors-page">
+  <div class="actors-page page-container">
     <!-- Header con efecto parallax -->
     <div class="hero-parallax">
       <div class="hero-content">
@@ -84,44 +84,60 @@
       </div>
     </div>
 
-    <!-- Página inicial mejorada con cards de características -->
+    <!-- Popular actors landing grid -->
     <div class="content-container" v-if="!actors.length && !searchQuery">
-      <div class="trending-section">
-  <h2 class="section-title">{{ $t('actors.discoverTitle') }}</h2>
-  <p class="section-subtitle">{{ $t('actors.discoverSubtitle') }}</p>
+      <div class="popular-section">
+        <div class="popular-header">
+          <h2 class="popular-title">
+            <span class="title-accent"></span>
+            {{ $t('actors.discoverTitle') }}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
 
-        <div class="features">
-          <div class="feature-card">
-            <div class="feature-content">
-              <h3>{{ $t('actors.features.filmography.title') }}</h3>
-              <p>{{ $t('actors.features.filmography.description') }}</p>
+        <div v-if="isLoadingPopular" class="actors-grid">
+          <div v-for="n in 20" :key="`skel-${n}`" class="actor-card actor-card--skeleton">
+            <div class="actor-image-container skeleton-img"></div>
+            <div class="actor-info">
+              <div class="skeleton-line skeleton-name"></div>
+              <div class="skeleton-line skeleton-dept"></div>
             </div>
           </div>
+        </div>
 
-          <div class="feature-card">
-            <div class="feature-content">
-              <h3>{{ $t('actors.features.career.title') }}</h3>
-              <p>{{ $t('actors.features.career.description') }}</p>
+        <div v-else class="actors-grid">
+          <div
+            v-for="(actor, index) in popularActors"
+            :key="actor.id"
+            class="actor-card"
+            :style="{'--animation-order': index}"
+            @click="openActorDialog(actor.id)"
+          >
+            <div class="actor-image-container">
+              <div class="actor-image">
+                <img :src="getActorImage(actor.profile_path)" :alt="actor.name" loading="lazy" />
+              </div>
+              <div class="actor-overlay">
+                <span class="view-details">{{ $t('actors.viewDetails') }}</span>
+              </div>
             </div>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-content">
-              <h3>{{ $t('actors.features.roles.title') }}</h3>
-              <p>{{ $t('actors.features.roles.description') }}</p>
+            <div class="actor-info">
+              <h3 class="actor-name">{{ actor.name }}</h3>
+              <div class="actor-known-for" v-if="actor.known_for_department">
+                <span class="department-badge">{{ actor.known_for_department }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal de créditos del actor completamente rediseñado -->
-    <transition name="modal-fade">
-      <div v-if="showDialog" class="modal" @click.self="closeDialog">
-        <div class="modal-content">
-          <button class="close-button" @click="closeDialog" :aria-label="$t('common.close')">
-            <span class="close-icon">✖</span>
-            <span class="sr-only">{{ $t('common.close') }}</span>
+    <!-- Modal de créditos del actor -->
+    <transition name="dialog-fade">
+      <div v-if="showDialog" class="cp-dialog-overlay" @click.self="closeDialog">
+        <div class="cp-dialog-box actor-dialog-box">
+          <button class="cp-dialog-close" @click="closeDialog" :aria-label="$t('common.close')">
+            <i class="fas fa-times"></i>
           </button>
 
           <div class="actor-profile">
@@ -169,7 +185,7 @@
 </template>
 
 <script>
-import { searchActors, getActorCredits } from "@/ApiController/services/actorService";
+import { searchActors, getActorCredits, getPopularActors } from "@/ApiController/services/actorService";
 
 export default {
   name: "ActorsPage",
@@ -177,6 +193,8 @@ export default {
     return {
       searchQuery: "",
       actors: [],
+      popularActors: [],
+      isLoadingPopular: false,
       credits: [],
       selectedActorName: "",
       showDialog: false,
@@ -187,16 +205,26 @@ export default {
       return [...this.credits].sort((a, b) => {
         const yearA = this.getYearFromDate(a.release_date || a.first_air_date) || 0;
         const yearB = this.getYearFromDate(b.release_date || b.first_air_date) || 0;
-        return yearB - yearA; // Orden descendente (más reciente primero)
+        return yearB - yearA;
       });
     },
+  },
+  async mounted() {
+    this.isLoadingPopular = true;
+    try {
+      this.popularActors = await getPopularActors();
+    } catch (e) {
+      console.error('Error al cargar actores populares', e);
+    } finally {
+      this.isLoadingPopular = false;
+    }
   },
   methods: {
     async searchForActors() {
       if (!this.searchQuery.trim()) return;
       try {
         this.actors = await searchActors(this.searchQuery);
-        this.credits = []; // Limpiar créditos al realizar una nueva búsqueda
+        this.credits = [];
         this.selectedActorName = "";
       } catch (error) {
         console.error("Error al buscar actores:", error);
@@ -238,37 +266,9 @@ export default {
 </script>
 
 <style scoped>
-/* Variables globales para colores y estilos consistentes */
-:root {
-  --primary-color: #ff5252;
-  --primary-dark: #c50e29;
-  --primary-light: #ff867f;
-  --dark-bg: #121212;
-  --card-bg: #1d1d1d;
-  --card-hover: #252525;
-  --text-primary: #ffffff;
-  --text-secondary: #bbbbbb;
-  --text-muted: #8c8c8c;
-  --gradient-primary: linear-gradient(135deg, #ff5252, #ff867f);
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.6);
-  --border-radius-sm: 6px;
-  --border-radius-md: 10px;
-  --border-radius-lg: 16px;
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
-}
-
-/* Estilos base y reset */
 .actors-page {
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #050505 0%, #0a0a0a 50%, #050505 100%);
-  color: #e0e0e0;
-  font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--cp-text-primary, #ffffff);
   overflow-x: hidden;
-  position: relative;
 }
 
 /* Hero con diseño cinematográfico premium */
@@ -566,7 +566,7 @@ export default {
 /* Sugerencias de búsqueda mejoradas */
 .search-suggestion {
   margin-top: 1rem;
-  color: var(--text-secondary);
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
   font-size: 1rem;
   animation: fadeIn 1s ease-out;
 }
@@ -625,7 +625,7 @@ export default {
 }
 
 .results-count {
-  color: var(--text-secondary);
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
   font-size: 1rem;
   background: rgba(255, 255, 255, 0.08);
   padding: 0.5rem 1rem;
@@ -855,245 +855,69 @@ export default {
 }
 
 .no-results p {
-  color: var(--text-secondary);
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
   margin-bottom: 2rem;
 }
 
 .retry-button {
   background: transparent;
-  border: 2px solid rgba(255, 82, 82, 0.5);
-  color: var(--primary-light);
+  border: 2px solid rgba(229, 9, 20, 0.5);
+  color: #ff4c4c;
   padding: 0.8rem 1.5rem;
   border-radius: 30px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition-normal);
+  transition: 0.3s ease;
 }
 
 .retry-button:hover {
-  background: var(--primary-color);
+  background: var(--cp-red, #e50914);
   color: white;
-  border-color: var(--primary-color);
+  border-color: var(--cp-red, #e50914);
 }
 
-/* Sección de características */
-.trending-section {
-  text-align: center;
-  animation: fadeIn 0.8s ease-out;
-}
+/* Popular section */
+.popular-section { animation: fadeIn 0.5s ease-out; }
 
-.section-title {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  position: relative;
-  display: inline-block;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: white;
-}
+.popular-header { margin-bottom: 2rem; }
 
-@media (min-width: 600px) {
-  .section-title {
-    font-size: 2rem;
-  }
-}
-
-@media (min-width: 900px) {
-  .section-title {
-    font-size: 2.2rem;
-  }
-}
-
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  width: 60px;
-  height: 4px;
-  background: linear-gradient(135deg, #e50914, #ff4c4c);
-  transform: translateX(-50%);
-  border-radius: 2px;
-  box-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
-}
-
-@media (min-width: 600px) {
-  .section-title::after {
-    width: 80px;
-  }
-}
-
-.section-subtitle {
-  color: var(--text-secondary);
-  margin-bottom: 4rem;
+.popular-title {
   font-size: 1.1rem;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.feature-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  padding: 2rem 1.5rem;
-  text-align: left;
-  display: flex;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(229, 9, 20, 0.2);
-}
-
-@media (min-width: 600px) {
-  .feature-card {
-    padding: 2.5rem 2rem;
-  }
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-  border-color: rgba(229, 9, 20, 0.4);
-}
-
-.feature-icon {
-  font-size: 2rem;
-  margin-right: 1.5rem;
-  color: var(--primary-color);
-  background: rgba(255, 82, 82, 0.1);
-  height: 4rem;
-  width: 4rem;
-  border-radius: 50%;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cp-text-primary, #fff);
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: var(--transition-normal);
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
-.feature-card:hover .feature-icon {
-  background: var(--primary-color);
-  color: white;
-  transform: scale(1.1);
-  box-shadow: 0 5px 15px rgba(255, 82, 82, 0.3);
+/* Skeleton states */
+.actor-card--skeleton { pointer-events: none; }
+.skeleton-img {
+  background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmerAnim 1.5s ease-in-out infinite;
+}
+.skeleton-line {
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1a1a1a 25%, #242424 50%, #1a1a1a 75%);
+  background-size: 200% 100%;
+  animation: shimmerAnim 1.5s ease-in-out infinite;
+}
+.skeleton-name { height: 14px; width: 80%; margin-bottom: 8px; }
+.skeleton-dept { height: 10px; width: 50%; }
+@keyframes shimmerAnim {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-.feature-content h3 {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.feature-content p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-/* Modal de créditos completamente rediseñado */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.92);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(15px) saturate(150%);
-  -webkit-backdrop-filter: blur(15px) saturate(150%);
-  padding: 1rem;
-  animation: modalBackdropFade 0.3s ease-out;
-}
-
-@keyframes modalBackdropFade {
-  from { opacity: 0; backdrop-filter: blur(0px); }
-  to { opacity: 1; backdrop-filter: blur(15px); }
-}
-
-.modal-content {
-  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%);
-  color: white;
-  border-radius: 20px;
-  width: 95%;
-  max-width: 900px;
-  max-height: 85vh;
+/* Actor-specific dialog sizing */
+.actor-dialog-box {
+  max-height: 80vh;
   overflow: hidden;
-  position: relative;
-  border: 2px solid transparent;
-  background-image: 
-    linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 50%, #1a1a1a 100%),
-    linear-gradient(135deg, #e50914 0%, #ff4c4c 50%, #e50914 100%);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  box-shadow: 
-    0 30px 60px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(229, 9, 20, 0.3) inset,
-    0 0 50px rgba(229, 9, 20, 0.2);
-  display: flex;
-  flex-direction: column;
-  transform: scale(0.9);
-  animation: modalScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-@keyframes modalScale {
-  to { transform: scale(1); }
-}
-
-.modal-fade-enter-active, .modal-fade-leave-active {
-  transition: all 0.3s;
-}
-
-.modal-fade-enter-from, .modal-fade-leave-to {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  border: 2px solid #ff0000;
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition-fast);
-  z-index: 10;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
-}
-
-.close-icon {
-  font-size: 24px;
-  color: white;
-  font-weight: bold;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-}
-
-.close-button:hover {
-  background: #ff0000;
-  transform: rotate(90deg);
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.9);
-  border: 2px solid white;
-}
-
-.close-button:hover .close-icon {
-  transform: scale(1.2);
 }
 
 .actor-profile {
@@ -1152,7 +976,7 @@ export default {
   padding: 0.4rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--cp-text-secondary, rgba(255,255,255,0.70));
 }
 
 .credits-container {
@@ -1346,7 +1170,7 @@ export default {
 
   .credit-year-badge {
     padding: 0.4rem;
-    border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
+    border-radius: 6px 6px 0 0;
     width: 100%;
   }
 }
@@ -1403,14 +1227,14 @@ export default {
   /* Ajustes para el buscador */
   .search-bar {
     flex-direction: column;
-    border-radius: var(--border-radius-lg);
+    border-radius: 16px;
     overflow: visible;
     width: 100%; /* Asegurar ancho completo */
     background: rgba(37, 37, 37, 0.9);
   }
 
   .search-bar input {
-    border-radius: var(--border-radius-lg);
+    border-radius: 16px;
     padding: 1rem 1rem 1rem 2.8rem;
     width: 100%;
     background: transparent; /* Fondo transparente para el input */
@@ -1418,7 +1242,7 @@ export default {
   }
 
   .search-button {
-    border-radius: var(--border-radius-lg);
+    border-radius: 16px;
     margin-top: 0; /* Eliminar margen superior */
     width: 100%;
     padding: 0.8rem;
@@ -1505,46 +1329,6 @@ export default {
     margin-top: 0.5rem;
   }
   
-  /* Mejorar visibilidad del botón de cierre en dispositivos muy pequeños */
-  .close-button {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: rgba(229, 9, 20, 1);
-    border: 2px solid white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  }
-  
-  .close-icon {
-    font-size: 24px;
-  }
 }
 
-/* Media queries específicas para el botón de cierre */
-@media (max-width: 768px) {
-  .close-button {
-    width: 50px;
-    height: 50px;
-    background: #ff0000;
-  }
-  
-  .close-icon {
-    font-size: 28px;
-  }
-}
-
-@media (max-width: 480px) {
-  .close-button {
-    width: 55px;
-    height: 55px;
-    background: #ff0000;
-    border: 3px solid white;
-  }
-  
-  .close-icon {
-    font-size: 32px;
-  }
-}
 </style>

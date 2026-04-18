@@ -186,6 +186,37 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
   }
 
+  /** Reload current user from `/auth/me` (e.g. after returning from Stripe checkout). */
+  async function fetchUser() {
+    const token = getAccessToken()
+    if (!token) {
+      user.value = null
+      isAuthenticated.value = false
+      return
+    }
+    try {
+      const response = await authApi.me()
+      user.value = response.data
+      isAuthenticated.value = true
+    } catch {
+      const refreshToken = getRefreshToken()
+      if (refreshToken) {
+        try {
+          const refreshResponse = await authApi.refresh(refreshToken)
+          const { access_token, refresh_token } = refreshResponse.data
+          setTokens(access_token, refresh_token)
+          const userResponse = await authApi.me()
+          user.value = userResponse.data
+          isAuthenticated.value = true
+        } catch {
+          clearTokens()
+        }
+      } else {
+        clearTokens()
+      }
+    }
+  }
+
   return {
     // State
     user,
@@ -208,5 +239,6 @@ export const useAuthStore = defineStore('auth', () => {
     clearError,
     getAccessToken,
     getRefreshToken,
+    fetchUser,
   }
 })

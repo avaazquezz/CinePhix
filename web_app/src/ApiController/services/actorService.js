@@ -19,6 +19,17 @@ export const searchActors = async (query) => {
 };
 
 
+// Actores populares del momento
+export const getPopularActors = async () => {
+  try {
+    const response = await api.get('/person/popular');
+    return response.data.results;
+  } catch (error) {
+    console.error('Error al obtener actores populares', error);
+    throw error;
+  }
+};
+
 // Pelis y series en las que ha trabajado un actor
 export const getActorCredits = async (personId) => {
   try {

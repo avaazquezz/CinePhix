@@ -85,6 +85,9 @@ export const usersApi = {
   getPreferences: () => api.get('/users/me/preferences'),
   updatePreferences: (data) => api.put('/users/me/preferences', data),
   getPublicProfile: (username) => api.get(`/users/${username}`),
+  getPublicUserReviews: (username) => api.get(`/users/${username}/reviews`),
+  getPublicUserLists: (username) => api.get(`/users/${username}/lists`),
+  toggleFollow: (userId) => api.post(`/users/${userId}/follow`),
 }
 
 export const watchlistApi = {

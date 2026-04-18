@@ -19,6 +19,14 @@ const RegisterPage = () => import('@/pages/auth/RegisterPage.vue')
 
 // Profile page
 const ProfilePage = () => import('@/pages/ProfilePage.vue')
+const PublicProfilePage = () => import('@/pages/PublicProfilePage.vue')
+const ListsPage = () => import('@/pages/ListsPage.vue')
+const ListDetailPage = () => import('@/pages/ListDetailPage.vue')
+const DiscoverPage = () => import('@/pages/DiscoverPage.vue')
+const WatchedPage = () => import('@/pages/WatchedPage.vue')
+const ActivityPage = () => import('@/pages/ActivityPage.vue')
+const AIConciergePage = () => import('@/pages/AIConciergePage.vue')
+const PricingPage = () => import('@/pages/PricingPage.vue')
 
 const routes = [
   // Public routes
@@ -73,6 +81,54 @@ const routes = [
     name: 'Profile',
     component: ProfilePage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/user/:username',
+    name: 'PublicProfile',
+    component: PublicProfilePage,
+    meta: { public: true },
+  },
+  {
+    path: '/CinePhix/lists',
+    name: 'Lists',
+    component: ListsPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/list/:id',
+    name: 'ListDetail',
+    component: ListDetailPage,
+    meta: { public: true },
+  },
+  {
+    path: '/CinePhix/discover',
+    name: 'Discover',
+    component: DiscoverPage,
+    meta: { public: true },
+  },
+  {
+    path: '/CinePhix/watched',
+    name: 'Watched',
+    component: WatchedPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/activity',
+    name: 'Activity',
+    component: ActivityPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/ai',
+    name: 'AIConcierge',
+    component: AIConciergePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/pricing',
+    name: 'Pricing',
+    component: PricingPage,
+    meta: { public: true },
   },
 ]
 
