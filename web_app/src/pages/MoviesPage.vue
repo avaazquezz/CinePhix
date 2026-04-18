@@ -148,8 +148,15 @@
                     <i class="fas fa-star"></i>
                     {{ movieDetail.vote_average?.toFixed(1) || '?' }}/10
                   </span>
+                  <span class="meta-item share-row">
+                    <ShareButtons
+                      :url="movieShareUrl"
+                      :title="`${movieDetail.title} on CinePhix`"
+                      description=""
+                    />
+                  </span>
                 </div>
-                
+
                 <div class="dialog-overview-container">
                   <h3 class="overview-title">{{ $t('movies.detail.overview') || 'Overview' }}</h3>
                   <p class="dialog-overview">{{ movieDetail.overview || '—' }}</p>
@@ -223,12 +230,14 @@ import { useAuthStore } from '@/stores/auth';
 import { getReviewsForMedia, createReview, voteReview } from '@/api/services/reviewService';
 import ReviewForm from '@/components/ReviewForm.vue';
 import ReviewList from '@/components/ReviewList.vue';
+import ShareButtons from '@/components/ShareButtons.vue';
+import { useMetaTags } from '@/composables/useMetaTags';
 
 import SkeletonCard from '@/components/SkeletonCard.vue';
 
 export default {
   name: 'MoviesPage',
-  components: { SearchBar, MovieCard, SkeletonCard, ReviewForm, ReviewList },
+  components: { SearchBar, MovieCard, SkeletonCard, ReviewForm, ReviewList, ShareButtons },
   setup() {
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
@@ -249,9 +258,16 @@ export default {
     const watchlistStore = useWatchlistStore();
     const favoritesStore = useFavoritesStore();
     const authStore = useAuthStore();
+    const { setMovieMeta, setPageMeta } = useMetaTags();
+    setPageMeta({ title: 'Movies', description: 'Discover and track movies with CinePhix — AI-powered recommendations and smart collections.' });
 
     const isInWatchlist = computed(() => {
       return watchlistStore.hasItem(movieDetail.value.id, 'movie')
+    })
+
+    const movieShareUrl = computed(() => {
+      if (!movieDetail.value.id) return window.location.href
+      return `${window.location.origin}/CinePhix/movie/${movieDetail.value.id}`
     })
 
     const isFavorite = computed(() => {
@@ -326,6 +342,17 @@ export default {
         isDialogOpen.value = true;
         document.body.style.overflow = 'hidden';
         window.dispatchEvent(new CustomEvent('dialog-opened'));
+
+        // Update meta tags
+        const m = movieDetail.value;
+        setMovieMeta({
+          title: m.title || m.name,
+          year: m.release_date ? m.release_date.slice(0, 4) : null,
+          rating: m.vote_average ? (m.vote_average / 2).toFixed(1) : null,
+          poster: m.poster_path ? `https://image.tmdb.org/t/p/w780${m.poster_path}` : null,
+          overview: m.overview,
+          genres: m.genres ? m.genres.map(g => g.name).join(', ') : null,
+        });
       } catch (error) {
         console.error('Error al cargar los detalles de la película:', error);
       }

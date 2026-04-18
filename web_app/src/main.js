@@ -22,6 +22,10 @@ const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 
+// Unhead for dynamic meta tags
+import { createHead } from '@unhead/vue'
+app.use(createHead())
+
 // Register plugins (Vuetify, i18n, etc.)
 registerPlugins(app)
 

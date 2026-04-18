@@ -139,6 +139,7 @@ import { usersApi } from '@/api/client'
 import { listsApi } from '@/api/services/listService'
 import { useAuthStore } from '@/stores/auth'
 import ReviewCard from '@/components/ReviewCard.vue'
+import { useMetaTags } from '@/composables/useMetaTags'
 
 export default {
   name: 'PublicProfilePage',
@@ -149,6 +150,7 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const authStore = useAuthStore()
+    const { setUserMeta } = useMetaTags()
 
     const user = ref(null)
     const loading = ref(true)
@@ -177,7 +179,12 @@ export default {
         const username = route.params.username
         const response = await usersApi.getPublicProfile(username)
         user.value = response.data
-        document.title = `${user.value.display_name || user.value.username} — CinePhix`
+        setUserMeta({
+          username: user.value.username,
+          displayName: user.value.display_name,
+          bio: user.value.bio,
+          avatarUrl: user.value.avatar_url,
+        })
       } catch (e) {
         error.value = e.response?.status === 404
           ? 'User not found.'
