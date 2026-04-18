@@ -19,6 +19,8 @@ const RegisterPage = () => import('@/pages/auth/RegisterPage.vue')
 
 // Profile page
 const ProfilePage = () => import('@/pages/ProfilePage.vue')
+const ListsPage = () => import('@/pages/ListsPage.vue')
+const ActivityPage = () => import('@/pages/ActivityPage.vue')
 
 const routes = [
   // Public routes
@@ -72,6 +74,18 @@ const routes = [
     path: '/CinePhix/profile',
     name: 'Profile',
     component: ProfilePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/lists',
+    name: 'Lists',
+    component: ListsPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/activity',
+    name: 'Activity',
+    component: ActivityPage,
     meta: { requiresAuth: true },
   },
 ]

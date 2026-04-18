@@ -49,13 +49,25 @@
                 </v-list-item-title>
                 <v-list-item-subtitle>@{{ authStore.username }}</v-list-item-subtitle>
               </v-list-item>
-              <v-divider class="my-2" />
               <v-list-item @click="goToProfile" class="dropdown-item">
                 <template #prepend>
                   <v-icon>mdi-account</v-icon>
                 </template>
                 <v-list-item-title>Profile</v-list-item-title>
               </v-list-item>
+              <v-list-item @click="$router.push('/CinePhix/lists')" class="dropdown-item">
+                <template #prepend>
+                  <v-icon>mdi-format-list-bulleted</v-icon>
+                </template>
+                <v-list-item-title>My Lists</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="$router.push('/CinePhix/activity')" class="dropdown-item">
+                <template #prepend>
+                  <v-icon>mdi-bulletin-board</v-icon>
+                </template>
+                <v-list-item-title>Activity</v-list-item-title>
+              </v-list-item>
+              <v-divider class="my-2" />
               <v-list-item @click="handleLogout" class="dropdown-item logout">
                 <template #prepend>
                   <v-icon>mdi-logout</v-icon>
