@@ -252,10 +252,28 @@ export default {
         return
       }
 
+      // Open synchronously (before await) so the browser does not block the new tab as a popup.
+      // Do not use `noopener` here: Chromium then isolates the tab and the opener cannot set
+      // `location` to the Stripe URL, leaving the tab stuck on `about:blank`.
+      const checkoutTab = window.open('about:blank', '_blank')
+      if (!checkoutTab) {
+        this.error =
+          'No se pudo abrir la ventana de pago. Permite ventanas emergentes para este sitio e inténtalo de nuevo.'
+        this.loading = null
+        return
+      }
+
       try {
-        const { checkout_url } = await paymentService.createCheckoutSession(plan)
-        window.location.href = checkout_url
+        const data = await paymentService.createCheckoutSession(plan)
+        const checkoutUrl = data.checkout_url || data.checkoutUrl
+        if (!checkoutUrl) {
+          checkoutTab.close()
+          this.error = 'No se recibió la URL de pago. Inténtalo de nuevo o contacta con soporte.'
+          return
+        }
+        checkoutTab.location.assign(checkoutUrl)
       } catch (e) {
+        checkoutTab.close()
         const status = e.response?.status
         if (status === 403) {
           this.error =
@@ -271,6 +289,7 @@ export default {
         } else {
           this.error = e.response?.data?.detail || 'Failed to start checkout. Please try again.'
         }
+      } finally {
         this.loading = null
       }
     },
