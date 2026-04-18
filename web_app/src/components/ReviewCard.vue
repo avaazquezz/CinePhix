@@ -18,7 +18,7 @@
     <div v-else class="review-content">
       <!-- Header -->
       <div class="review-header">
-        <div class="user-info" @click="$emit('click-user', review.user)">
+        <div class="user-info" @click="$router.push(`/CinePhix/user/${review.user?.username}`)">
           <v-avatar size="36" color="primary">
             <v-img v-if="review.user?.avatar_url" :src="review.user.avatar_url" />
             <span v-else>{{ review.user?.username?.charAt(0).toUpperCase() }}</span>

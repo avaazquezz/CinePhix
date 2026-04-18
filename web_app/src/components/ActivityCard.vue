@@ -7,7 +7,12 @@
         </v-avatar>
       </template>
       <v-card-title class="text-body-2">
-        <span class="font-weight-bold">{{ activity.actor?.username || 'Unknown' }}</span>
+        <router-link
+          :to="`/CinePhix/user/${activity.actor?.username}`"
+          class="user-link"
+        >
+          {{ activity.actor?.username || 'Unknown' }}
+        </router-link>
         <span class="text-grey"> · {{ activityLabel }}</span>
       </v-card-title>
       <v-card-subtitle class="text-caption">
@@ -86,6 +91,16 @@ const formatDate = (dateStr) => {
 </script>
 
 <style scoped>
+.user-link {
+  color: #04ff24;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}
+
 .activity-card {
   border-left: 3px solid rgb(var(--v-theme-primary));
 }
