@@ -24,6 +24,9 @@ const ListsPage = () => import('@/pages/ListsPage.vue')
 const ListDetailPage = () => import('@/pages/ListDetailPage.vue')
 const DiscoverPage = () => import('@/pages/DiscoverPage.vue')
 const WatchedPage = () => import('@/pages/WatchedPage.vue')
+const PersonDetailPage = () => import('@/pages/PersonDetailPage.vue')
+const RecommendationsPage = () => import('@/pages/RecommendationsPage.vue')
+const SearchV2Page = () => import('@/pages/SearchV2Page.vue')
 const ActivityPage = () => import('@/pages/ActivityPage.vue')
 const AIConciergePage = () => import('@/pages/AIConciergePage.vue')
 const PricingPage = () => import('@/pages/PricingPage.vue')
@@ -111,6 +114,24 @@ const routes = [
     name: 'Watched',
     component: WatchedPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/CinePhix/person/:id',
+    name: 'PersonDetail',
+    component: PersonDetailPage,
+    meta: { public: true },
+  },
+  {
+    path: '/CinePhix/recommendations',
+    name: 'Recommendations',
+    component: RecommendationsPage,
+    meta: { public: true },
+  },
+  {
+    path: '/CinePhix/search-v2',
+    name: 'SearchV2',
+    component: SearchV2Page,
+    meta: { public: true },
   },
   {
     path: '/CinePhix/activity',
