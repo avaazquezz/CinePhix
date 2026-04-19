@@ -35,6 +35,7 @@
   },
   "home": {
     "todayTrending": "Películas y Series en Tendencia HOY",
+    "weeklyTrending": "Películas y Series en Tendencia Semanal",
     "type": {
       "movie": "Película",
       "tv": "Serie"
@@ -43,6 +44,7 @@
       "close": "Cerrar",
       "type": "Tipo",
       "rating": "Puntuación",
+      "overview": "Sinopsis",
       "noOverview": "No hay descripción disponible.",
       "na": "N/D"
     }
@@ -78,7 +80,7 @@
     "noResultsTitle": "No encontramos resultados para \"{query}\"",
     "noResultsHint": "Intenta con otro nombre o verifica la ortografía",
     "newSearch": "Nueva búsqueda",
-    "discoverTitle": "Descubre el talento detrás del cine",
+    "discoverTitle": "10 leyendas del cine mundial",
     "discoverSubtitle": "Utiliza el buscador para explorar información sobre tus actores favoritos",
     "filmography": "Filmografía",
     "titles": "{count} títulos",
@@ -106,14 +108,49 @@
     }
   },
   "common": {
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "media": {
+      "share": "Compartir",
+      "watchlist": "Lista",
+      "inWatchlist": "En tu lista",
+      "favorite": "Favorito",
+      "favorited": "En favoritos",
+      "reviews": "Reseñas",
+      "writeReview": "Escribir reseña",
+      "cancel": "Cancelar",
+      "seasonSingular": "{count} temporada",
+      "seasonPlural": "{count} temporadas"
+    }
   },
   "footer": {
-    "tagline": "Tu plataforma de descubrimiento cinematográfico",
-    "quickLinks": "Enlaces Rápidos",
-    "connect": "Conecta",
-    "projectDesc": "Este proyecto fue desarrollado por un <strong>Desarrollador Fullstack</strong> para demostrar habilidades en <strong>Desarrollo Web</strong> y el manejo de <strong>APIs</strong> con <strong>JavaScript</strong>. Los datos utilizados provienen de la API de <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",
-    "by": "Desarrollado por <a href=\"https://www.vazquezdev.pro\" target=\"_blank\"><strong>Adrián Vázquez</strong></a>"
+    "tagline": "Descubre, organiza y comparte películas y series — listas inteligentes, actividad social e IA en un solo espacio para cinéfilos.",
+    "exploreTitle": "Explorar",
+    "productTitle": "Producto",
+    "trustTitle": "Confianza y datos",
+    "trustLead": "Pensado para quienes se toman el cine en serio.",
+    "trustBody": "Exploración, lista, reseñas, recomendaciones y colecciones en un mismo flujo. Tu cuenta vive en CinePhix; los metadatos del catálogo llegan mediante APIs estándar del sector.",
+    "tmdbAttribution": "Este producto utiliza la API de TMDB pero no está avalado ni certificado por TMDB.",
+    "tmdbLink": "The Movie Database (TMDB)",
+    "newsletterTitle": "Novedades del producto",
+    "newsletterHint": "Notas de versión y selecciones curadas — sin spam. Control total de baja cuando esté activo.",
+    "newsletterPlaceholder": "Correo profesional",
+    "newsletterButton": "Avísame",
+    "newsletterThanks": "Gracias — te avisaremos cuando activemos el boletín.",
+    "socialGithubAria": "CinePhix en GitHub",
+    "socialLinkedinAria": "Adrián Vázquez en LinkedIn",
+    "linkDiscover": "Descubrir",
+    "linkSearch": "Buscar",
+    "linkRecommendations": "Para ti",
+    "linkWatched": "Vistos",
+    "linkLists": "Listas",
+    "linkActivity": "Actividad",
+    "linkAi": "Concierge IA",
+    "linkPricing": "Precios",
+    "linkGithub": "GitHub",
+    "linkLinkedin": "LinkedIn",
+    "copyright": "© {year} CinePhix",
+    "rightsReserved": "Todos los derechos reservados.",
+    "creditsHtml": "Ingeniería por <a href=\"https://www.vazquezdev.pro\" target=\"_blank\" rel=\"noopener noreferrer\">Adrián Vázquez</a>"
   },
   "lang": {
     "label": "Idioma",

@@ -96,7 +96,7 @@
         </div>
 
         <div v-if="isLoadingPopular" class="actors-grid">
-          <div v-for="n in 20" :key="`skel-${n}`" class="actor-card actor-card--skeleton">
+          <div v-for="n in 10" :key="`skel-${n}`" class="actor-card actor-card--skeleton">
             <div class="actor-image-container skeleton-img"></div>
             <div class="actor-info">
               <div class="skeleton-line skeleton-name"></div>
@@ -185,7 +185,7 @@
 </template>
 
 <script>
-import { searchActors, getActorCredits, getPopularActors } from "@/ApiController/services/actorService";
+import { searchActors, getActorCredits, getSpotlightActors } from "@/ApiController/services/actorService";
 
 export default {
   name: "ActorsPage",
@@ -212,7 +212,7 @@ export default {
   async mounted() {
     this.isLoadingPopular = true;
     try {
-      this.popularActors = await getPopularActors();
+      this.popularActors = await getSpotlightActors();
     } catch (e) {
       console.error('Error al cargar actores populares', e);
     } finally {
@@ -236,7 +236,9 @@ export default {
     },
     async openActorDialog(actorId) {
       try {
-        const actor = this.actors.find((actor) => actor.id === actorId);
+        const actor =
+          this.actors.find((a) => a.id === actorId) ||
+          this.popularActors.find((a) => a.id === actorId);
         if (!actor) {
           console.error("Actor no encontrado en el array de actores.");
           return;
@@ -258,7 +260,7 @@ export default {
       return `https://image.tmdb.org/t/p/w342${path}`; // Imagen más grande y de mayor calidad
     },
     getYearFromDate(dateString) {
-      if (!dateString) return 'Desconocido';
+      if (!dateString) return this.$t("actors.unknown");
       return dateString.split('-')[0];
     },
   },
@@ -914,15 +916,20 @@ export default {
   100% { background-position: -200% 0; }
 }
 
-/* Actor-specific dialog sizing */
+/* Actor-specific dialog sizing: flex so inner area scrolls (long filmographies) */
 .actor-dialog-box {
-  max-height: 80vh;
+  max-height: min(85vh, 100dvh - 2rem);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
 .actor-profile {
   padding: 2rem;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .actor-profile-name {

@@ -1,79 +1,179 @@
 <template>
-  <v-container class="py-8">
-    <h1 class="text-h5 font-weight-bold text-high-emphasis mb-4">Activity Feed</h1>
+  <v-container class="py-6" style="max-width: 720px;">
+    <!-- Header -->
+    <div class="d-flex align-center justify-space-between mb-4">
+      <div>
+        <h1 class="text-h5 font-weight-bold text-high-emphasis">{{ $t('activity.title') }}</h1>
+        <div v-if="unreadCount > 0" class="text-caption text-grey">
+          {{ $t('activity.unreadLine', { count: unreadCount }) }}
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <v-btn
+          v-if="unreadCount > 0"
+          size="small"
+          variant="tonal"
+          color="primary"
+          @click="markAllRead"
+        >
+          <v-icon icon="mdi-check-all" class="mr-1" /> {{ $t('activity.markRead') }}
+        </v-btn>
+        <v-btn
+          size="small"
+          variant="outlined"
+          color="default"
+          @click="loadFeed(true)"
+        >
+          <v-icon icon="mdi-refresh" />
+        </v-btn>
+      </div>
+    </div>
 
-    <!-- Tabs -->
-    <v-tabs v-model="tab" color="primary" class="mb-4">
-      <v-tab value="following">Following</v-tab>
-      <v-tab value="public">Public</v-tab>
+    <!-- Filter tabs -->
+    <v-tabs v-model="activeFilter" color="primary" class="mb-4" density="compact">
+      <v-tab value="all">{{ $t('activity.tabAll') }}</v-tab>
+      <v-tab value="follow">{{ $t('activity.tabFollow') }}</v-tab>
+      <v-tab value="like">{{ $t('activity.tabLike') }}</v-tab>
+      <v-tab value="review">{{ $t('activity.tabReview') }}</v-tab>
+      <v-tab value="comment">{{ $t('activity.tabComment') }}</v-tab>
+      <v-tab value="list">{{ $t('activity.tabList') }}</v-tab>
+      <v-tab value="watch">{{ $t('activity.tabWatch') }}</v-tab>
     </v-tabs>
 
-    <v-window v-model="tab">
-      <!-- My Feed (Following) -->
-      <v-window-item value="following">
-        <div v-if="loadingMy && myActivities.length === 0" class="d-flex justify-center py-12">
-          <v-progress-circular indeterminate color="primary" />
-        </div>
-        <div v-else-if="myActivities.length === 0" class="text-center py-12">
-          <v-icon icon="mdi-account-group" size="64" color="grey-darken-1" class="mb-4" />
-          <div class="text-h6 text-grey-darken-1 mb-2">No activity yet</div>
-          <div class="text-body-2 text-grey">Follow users to see their activity here</div>
-        </div>
-        <ActivityCard v-else v-for="activity in myActivities" :key="activity.id" :activity="activity" class="mb-3" />
-      </v-window-item>
+    <!-- Loading -->
+    <div v-if="loading && items.length === 0" class="d-flex justify-center py-12">
+      <v-progress-circular indeterminate color="primary" />
+    </div>
 
-      <!-- Public Feed -->
-      <v-window-item value="public">
-        <div v-if="loadingPublic && publicActivities.length === 0" class="d-flex justify-center py-12">
-          <v-progress-circular indeterminate color="primary" />
-        </div>
-        <div v-else-if="publicActivities.length === 0" class="text-center py-12">
-          <v-icon icon="mdi-earth" size="64" color="grey-darken-1" class="mb-4" />
-          <div class="text-h6 text-grey-darken-1">No public activity</div>
-        </div>
-        <ActivityCard v-else v-for="activity in publicActivities" :key="activity.id" :activity="activity" class="mb-3" />
-      </v-window-item>
-    </v-window>
+    <!-- Empty state -->
+    <div v-else-if="!loading && items.length === 0" class="text-center py-12">
+      <v-icon icon="mdi-bell-sleep-outline" size="64" color="grey-darken-1" class="mb-4" />
+      <div class="text-h6 text-grey-darken-1 mb-2">
+        {{ emptyTitle }}
+      </div>
+      <div class="text-body-2 text-grey">
+        {{ emptyHint }}
+      </div>
+    </div>
+
+    <!-- Feed items -->
+    <div v-else>
+      <ActivityCard
+        v-for="activity in items"
+        :key="activity.id"
+        :activity="activity"
+        class="mb-3"
+      />
+
+      <!-- Load more -->
+      <div v-if="hasMore" class="text-center py-6">
+        <v-btn
+          v-if="!loading"
+          variant="tonal"
+          color="primary"
+          @click="loadMore"
+        >
+          {{ $t('activity.loadMore') }}
+        </v-btn>
+        <v-progress-circular v-else indeterminate color="primary" size="24" />
+      </div>
+    </div>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useMetaTags } from '@/composables/useMetaTags'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useActivityService } from '@/api/services/activityService'
+import { useMetaTags } from '@/composables/useMetaTags'
 
-const { loading: loadingMy, error: errorMy, getMyActivity, getPublicActivity } = useActivityService()
-
-const myActivities = ref([])
-const publicActivities = ref([])
-const loadingPublic = ref(false)
-const tab = ref('following')
+const { t } = useI18n()
 const { setPageMeta } = useMetaTags()
+const { loading, getFeedV2, markFeedRead } = useActivityService()
 
-const loadMyActivity = async () => {
+const items = ref([])
+const unreadCount = ref(0)
+const currentPage = ref(1)
+const hasMore = ref(false)
+const activeFilter = ref('all')
+
+function filterTabLabel(f) {
+  const key = {
+    all: 'tabAll',
+    follow: 'tabFollow',
+    like: 'tabLike',
+    review: 'tabReview',
+    comment: 'tabComment',
+    list: 'tabList',
+    watch: 'tabWatch',
+  }[f]
+  return key ? t(`activity.${key}`) : f
+}
+
+const emptyTitle = computed(() =>
+  activeFilter.value === 'all'
+    ? t('activity.empty')
+    : t('activity.emptyForFilter', { label: filterTabLabel(activeFilter.value) })
+)
+
+const emptyHint = computed(() =>
+  activeFilter.value === 'all'
+    ? t('activity.hintAll')
+    : t('activity.hintFilter', { label: filterTabLabel(activeFilter.value) })
+)
+
+const filterMap = {
+  all: null,
+  follow: 'follow',
+  like: 'like',
+  review: 'review',
+  comment: 'comment',
+  list: 'list',
+  watch: 'watch',
+}
+
+const loadFeed = async (reset = false) => {
+  if (reset) {
+    currentPage.value = 1
+    items.value = []
+  }
   try {
-    const data = await getMyActivity({ page: 1, per_page: 20 })
-    myActivities.value = data.items || []
+    const data = await getFeedV2({
+      page: currentPage.value,
+      per_page: 20,
+      event_type: filterMap[activeFilter.value],
+    })
+    if (reset) {
+      items.value = data.items || []
+    } else {
+      items.value.push(...(data.items || []))
+    }
+    unreadCount.value = data.unread_count || 0
+    hasMore.value = items.value.length < data.total
   } catch (e) {
-    console.error('Failed to load my activity:', e)
+    console.error('Failed to load activity feed:', e)
   }
 }
 
-const loadPublicActivity = async () => {
-  loadingPublic.value = true
-  try {
-    const data = await getPublicActivity({ page: 1, per_page: 20 })
-    publicActivities.value = data.items || []
-  } catch (e) {
-    console.error('Failed to load public activity:', e)
-  } finally {
-    loadingPublic.value = false
-  }
+const loadMore = async () => {
+  currentPage.value++
+  await loadFeed(false)
 }
+
+const markAllRead = async () => {
+  await markFeedRead()
+  unreadCount.value = 0
+  items.value.forEach(item => item.is_read = true)
+}
+
+// Reload when filter changes
+watch(activeFilter, () => loadFeed(true))
 
 onMounted(() => {
-  loadMyActivity()
-  loadPublicActivity()
-  setPageMeta({ title: 'Activity', description: 'See what your network is watching, reviewing and listing on CinePhix.' })
+  setPageMeta({
+    title: t('meta.activity.title'),
+    description: t('meta.activity.description'),
+  })
+  loadFeed(true)
 })
 </script>

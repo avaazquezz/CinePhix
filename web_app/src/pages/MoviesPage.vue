@@ -3,97 +3,7 @@
     <div class="noise-overlay"></div>
 
     <main class="main-content">
-      <!-- Sección de Películas Populares -->
-      <section class="movie-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="title-accent"></span>
-            {{$t('movies.popular')}}
-          </h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="row-container movie-row-container">
-          <button class="nav-btn nav-button prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="movie-row" ref="popularRow">
-            <!-- Skeleton Loading -->
-            <template v-if="isLoading">
-              <div v-for="n in 8" :key="`skeleton-popular-${n}`" class="carousel-card-slot">
-                <SkeletonCard />
-              </div>
-            </template>
-            <!-- Contenido Real -->
-            <template v-if="!isLoading">
-              <div
-                v-for="item in popularMovies"
-                :key="item.id"
-                class="carousel-card-slot"
-              >
-                <MovieCard
-                  :id="item.id"
-                  :title="item.title"
-                  :image="getImageUrl(item.poster_path)"
-                  media-type="movie"
-                  :rating="item.vote_average ? item.vote_average / 2 : null"
-                  fill-parent
-                  @select="openMovieDialog(item.id)"
-                />
-              </div>
-            </template>
-          </div>
-          <button class="nav-btn nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- Sección de Películas Mejor Valoradas -->
-      <section class="movie-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="title-accent"></span>
-            {{$t('movies.topRated')}}
-          </h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="row-container movie-row-container">
-          <button class="nav-btn nav-button prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="movie-row" ref="topRatedRow">
-            <!-- Skeleton Loading -->
-            <template v-if="isLoading">
-              <div v-for="n in 8" :key="`skeleton-toprated-${n}`" class="carousel-card-slot">
-                <SkeletonCard />
-              </div>
-            </template>
-            <!-- Contenido Real -->
-            <template v-if="!isLoading">
-              <div
-                v-for="item in topRatedMovies"
-                :key="item.id"
-                class="carousel-card-slot"
-              >
-                <MovieCard
-                  :id="item.id"
-                  :title="item.title"
-                  :image="getImageUrl(item.poster_path)"
-                  media-type="movie"
-                  :rating="item.vote_average ? item.vote_average / 2 : null"
-                  fill-parent
-                  @select="openMovieDialog(item.id)"
-                />
-              </div>
-            </template>
-          </div>
-          <button class="nav-btn nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- Sección de Películas en Tendencia -->
+      <!-- Tendencia semanal primero -->
       <section class="movie-section">
         <div class="section-header">
           <h2 class="section-title">
@@ -107,13 +17,11 @@
             <i class="fas fa-chevron-left"></i>
           </button>
           <div class="movie-row" ref="trendingRow">
-            <!-- Skeleton Loading -->
             <template v-if="isLoading">
               <div v-for="n in 8" :key="`skeleton-trending-${n}`" class="carousel-card-slot">
                 <SkeletonCard />
               </div>
             </template>
-            <!-- Contenido Real -->
             <template v-if="!isLoading">
               <div
                 v-for="item in trendingMovies"
@@ -138,120 +46,216 @@
         </div>
       </section>
 
-      <!-- Diálogo de Detalles de Película -->
-      <transition name="dialog-fade">
-        <div v-if="isDialogOpen" class="cp-dialog-overlay" @click.self="closeMovieDialog">
-          <div class="cp-dialog-box">
-            <button class="cp-dialog-close" @click="closeMovieDialog" aria-label="Cerrar">
-              <i class="fas fa-times"></i>
-            </button>
-
-            <div class="cp-dialog-layout">
-              <div class="cp-dialog-poster-wrap">
-                <img :src="getImageUrl(movieDetail.poster_path, true)" :alt="movieDetail.title" class="cp-dialog-poster" />
+      <section class="movie-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{$t('movies.popular')}}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
+        <div class="row-container movie-row-container">
+          <button class="nav-btn nav-button prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="movie-row" ref="popularRow">
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`skeleton-popular-${n}`" class="carousel-card-slot">
+                <SkeletonCard />
               </div>
+            </template>
+            <template v-if="!isLoading">
+              <div
+                v-for="item in popularMovies"
+                :key="item.id"
+                class="carousel-card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.title"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="movie"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openMovieDialog(item.id)"
+                />
+              </div>
+            </template>
+          </div>
+          <button class="nav-btn nav-button next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
 
-              <div class="cp-dialog-details">
-                <h2 class="cp-dialog-title">{{ movieDetail.title }}</h2>
+      <section class="movie-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{$t('movies.topRated')}}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
+        <div class="row-container movie-row-container">
+          <button class="nav-btn nav-button prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="movie-row" ref="topRatedRow">
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`skeleton-toprated-${n}`" class="carousel-card-slot">
+                <SkeletonCard />
+              </div>
+            </template>
+            <template v-if="!isLoading">
+              <div
+                v-for="item in topRatedMovies"
+                :key="item.id"
+                class="carousel-card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.title"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="movie"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openMovieDialog(item.id)"
+                />
+              </div>
+            </template>
+          </div>
+          <button class="nav-btn nav-button next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+    </main>
 
-                <div class="cp-dialog-meta">
+    <!-- Modal fuera de <main>: el main tiene z-index bajo y encerraría el fixed bajo el navbar -->
+    <transition name="dialog-fade">
+      <div v-if="isDialogOpen" class="cp-dialog-overlay" @click.self="closeMovieDialog">
+        <div class="cp-dialog-box media-detail-dialog">
+          <button class="cp-dialog-close" @click="closeMovieDialog" :aria-label="$t('common.close')">
+            <i class="fas fa-times"></i>
+          </button>
+
+          <div class="media-detail-dialog-inner">
+            <div class="media-detail-hero">
+              <div class="cp-dialog-poster-wrap">
+                <img
+                  :src="getImageUrl(movieDetail.poster_path, true)"
+                  :alt="movieDetail.title"
+                  class="cp-dialog-poster"
+                />
+              </div>
+              <div class="media-detail-hero-main">
+                <h2 class="cp-dialog-title media-detail-title">{{ movieDetail.title }}</h2>
+                <div v-if="movieGenres.length" class="media-detail-genres">
+                  <span
+                    v-for="g in movieGenres"
+                    :key="g.id"
+                    class="media-detail-genre-pill"
+                  >{{ g.name }}</span>
+                </div>
+                <div class="cp-dialog-meta media-detail-meta-row">
                   <span class="cp-meta-chip">
                     <i class="fas fa-calendar"></i>
-                    {{ movieDetail.release_date || '—' }}
+                    {{ formattedReleaseDate }}
                   </span>
                   <span class="cp-meta-chip rating">
                     <i class="fas fa-star"></i>
                     {{ movieDetail.vote_average?.toFixed(1) || '?' }}/10
                   </span>
-                  <span class="cp-meta-chip share-chip">
-                    <ShareButtons
-                      :url="movieShareUrl"
-                      :title="`${movieDetail.title} on CinePhix`"
-                      description=""
-                    />
+                  <span v-if="formattedRuntime" class="cp-meta-chip">
+                    <i class="fas fa-clock"></i>
+                    {{ formattedRuntime }}
                   </span>
                 </div>
-
-                <!-- Action Buttons -->
-                <div class="cp-dialog-actions">
+                <div class="media-detail-share-row">
+                  <span class="media-detail-share-label">{{ $t('common.media.share') }}</span>
+                  <ShareButtons
+                    :url="movieShareUrl"
+                    :title="`${movieDetail.title} — CinePhix`"
+                    description=""
+                  />
+                </div>
+                <div class="cp-dialog-actions media-detail-actions">
                   <button
-                    class="cp-action-btn"
+                    type="button"
+                    class="cp-action-btn cp-action-btn--primary"
                     :class="{ active: isInWatchlist }"
                     @click="toggleWatchlist"
                   >
                     <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                    {{ isInWatchlist ? 'In Watchlist' : 'Watchlist' }}
+                    {{ isInWatchlist ? $t('common.media.inWatchlist') : $t('common.media.watchlist') }}
                   </button>
                   <button
+                    type="button"
                     class="cp-action-btn"
                     :class="{ active: isFavorite }"
                     @click="toggleFavorite"
                   >
                     <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
-                    {{ isFavorite ? 'Favorited' : 'Favorite' }}
+                    {{ isFavorite ? $t('common.media.favorited') : $t('common.media.favorite') }}
                   </button>
                 </div>
+              </div>
+            </div>
 
-                <!-- Synopsis -->
-                <div>
-                  <p class="cp-section-label">{{ $t('movies.detail.overview') || 'Synopsis' }}</p>
-                  <p class="cp-overview">{{ movieDetail.overview || '—' }}</p>
-                </div>
-
-                <!-- Credits -->
-                <div>
-                  <p class="cp-section-label">{{ $t('movies.detail.credits') || 'Cast' }}</p>
-                  <div class="cp-credits-grid">
-                    <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="cp-credit-item">
-                      <span class="cp-credit-name">{{ actor.name }}</span>
-                      <span class="cp-credit-char">{{ actor.character }}</span>
-                    </div>
+            <div class="media-detail-scroll">
+              <div class="media-detail-block">
+                <p class="cp-section-label">{{ $t('movies.detail.overview') }}</p>
+                <p class="cp-overview media-detail-overview">{{ movieDetail.overview || '—' }}</p>
+              </div>
+              <div class="media-detail-block">
+                <p class="cp-section-label">{{ $t('movies.detail.credits') }}</p>
+                <div class="cp-credits-grid media-detail-credits">
+                  <div v-for="actor in movieCredits.slice(0, 8)" :key="actor.id" class="cp-credit-item">
+                    <span class="cp-credit-name">{{ actor.name }}</span>
+                    <span class="cp-credit-char">{{ actor.character }}</span>
                   </div>
                 </div>
-
-                <!-- Reviews -->
-                <div class="movie-reviews-section">
-                  <div class="cp-reviews-header">
-                    <p class="cp-reviews-title">Reviews</p>
-                    <v-btn
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                      @click="showReviewForm = !showReviewForm"
-                    >
-                      {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
-                    </v-btn>
-                  </div>
-
-                  <ReviewForm
-                    v-if="showReviewForm"
-                    :is-submitting="isSubmittingReview"
-                    :error="reviewError"
-                    @submit="handleCreateReview"
-                    @cancel="handleCancelReview"
-                  />
-
-                  <ReviewList
-                    :reviews="movieReviews"
-                    :is-loading="isLoadingReviews"
-                    :current-sort="reviewsSort"
-                    :current-user-id="authStore.user?.id"
-                    @update:sort="handleSortChange"
-                    @vote="handleVoteReview"
-                    @edit="handleEditReview"
-                  />
+              </div>
+              <div class="media-detail-reviews">
+                <div class="cp-reviews-header">
+                  <p class="cp-reviews-title">{{ $t('common.media.reviews') }}</p>
+                  <v-btn
+                    size="small"
+                    color="primary"
+                    variant="outlined"
+                    @click="showReviewForm = !showReviewForm"
+                  >
+                    {{ showReviewForm ? $t('common.media.cancel') : $t('common.media.writeReview') }}
+                  </v-btn>
                 </div>
+                <ReviewForm
+                  v-if="showReviewForm"
+                  :is-submitting="isSubmittingReview"
+                  :error="reviewError"
+                  @submit="handleCreateReview"
+                  @cancel="handleCancelReview"
+                />
+                <ReviewList
+                  :reviews="movieReviews"
+                  :is-loading="isLoadingReviews"
+                  :current-sort="reviewsSort"
+                  :current-user-id="authStore.user?.id"
+                  @update:sort="handleSortChange"
+                  @vote="handleVoteReview"
+                  @edit="handleEditReview"
+                />
               </div>
             </div>
           </div>
         </div>
-      </transition>
-    </main>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SearchBar from '@/components/SearchBar.vue'
 import MovieCard from '@/components/MovieCard.vue'
 import {
@@ -276,6 +280,7 @@ export default {
   name: 'MoviesPage',
   components: { SearchBar, MovieCard, SkeletonCard, ReviewForm, ReviewList, ShareButtons },
   setup() {
+    const { t } = useI18n()
     const popularMovies = ref([]);
     const topRatedMovies = ref([]);
     const trendingMovies = ref([]);
@@ -295,8 +300,8 @@ export default {
     const watchlistStore = useWatchlistStore();
     const favoritesStore = useFavoritesStore();
     const authStore = useAuthStore();
-    const { setMovieMeta, setPageMeta } = useMetaTags();
-    setPageMeta({ title: 'Movies', description: 'Discover and track movies with CinePhix — AI-powered recommendations and smart collections.' });
+    const { setMovieMeta, setPageMeta } = useMetaTags()
+    setPageMeta({ title: t('meta.movies.title'), description: t('meta.movies.description') })
 
     const isInWatchlist = computed(() => {
       return watchlistStore.hasItem(movieDetail.value.id, 'movie')
@@ -309,6 +314,32 @@ export default {
 
     const isFavorite = computed(() => {
       return favoritesStore.hasItem(movieDetail.value.id, 'movie')
+    })
+
+    const movieGenres = computed(() => movieDetail.value.genres || [])
+
+    const formattedReleaseDate = computed(() => {
+      const d = movieDetail.value.release_date
+      if (!d) return '—'
+      try {
+        return new Intl.DateTimeFormat(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }).format(new Date(`${d}T12:00:00`))
+      } catch {
+        return d
+      }
+    })
+
+    const formattedRuntime = computed(() => {
+      const m = movieDetail.value.runtime
+      if (m == null || m <= 0) return null
+      const h = Math.floor(m / 60)
+      const min = m % 60
+      if (h <= 0) return `${min} min`
+      if (min === 0) return `${h}h`
+      return `${h}h ${min}m`
     })
 
     const toggleWatchlist = async () => {
@@ -349,16 +380,21 @@ export default {
 
     const fetchMovies = async () => {
       try {
-        isLoading.value = true;
-        popularMovies.value = await getPopularMovies();
-        topRatedMovies.value = await getTopRatedMovies();
-        trendingMovies.value = await getTrendingMovies();
+        isLoading.value = true
+        const [trending, popular, topRated] = await Promise.all([
+          getTrendingMovies(),
+          getPopularMovies(),
+          getTopRatedMovies(),
+        ])
+        trendingMovies.value = trending
+        popularMovies.value = popular
+        topRatedMovies.value = topRated
       } catch (error) {
-        console.error('Error al cargar las películas:', error);
+        console.error('Error al cargar las películas:', error)
       } finally {
-        isLoading.value = false;
+        isLoading.value = false
       }
-    };
+    }
 
     const onSearch = async () => {
       if (!query.value.trim()) { searchResults.value = []; return }
@@ -408,7 +444,7 @@ export default {
       editingReview.value = null;
       document.body.style.overflow = '';
       window.dispatchEvent(new CustomEvent('dialog-closed'));
-      setPageMeta({ title: 'Movies', description: 'Discover and track movies with CinePhix — AI-powered recommendations and smart collections.' });
+      setPageMeta({ title: t('meta.movies.title'), description: t('meta.movies.description') })
     };
 
     const scrollCategory = (category, direction) => {
@@ -475,7 +511,7 @@ export default {
         showReviewForm.value = false
         await fetchMovieReviews()
       } catch (e) {
-        reviewError.value = e.response?.data?.detail || 'Failed to post review'
+        reviewError.value = e.response?.data?.detail || t('errors.reviewPostFailed')
       } finally {
         isSubmittingReview.value = false
       }
@@ -524,6 +560,9 @@ export default {
       movieShareUrl,
       isInWatchlist,
       isFavorite,
+      movieGenres,
+      formattedReleaseDate,
+      formattedRuntime,
       toggleWatchlist,
       toggleFavorite,
       query,
@@ -629,13 +668,4 @@ export default {
 .prev { left: 0; }
 .next { right: 0; }
 
-/* Reviews wrapper */
-.movie-reviews-section {
-  border-top: 1px solid rgba(255,255,255,0.07);
-  padding-top: 1.5rem;
-  margin-top: 0.5rem;
-}
-
-/* ShareButtons chip fix */
-.share-chip { padding: 0 !important; background: transparent !important; border: none !important; }
 </style>

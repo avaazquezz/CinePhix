@@ -9,7 +9,7 @@
       <!-- Error -->
       <div v-else-if="error" class="error-state">
         <v-alert type="error" variant="tonal">{{ error }}</v-alert>
-        <v-btn @click="$router.push('/CinePhix/home')" class="mt-4">Back to Home</v-btn>
+        <v-btn @click="$router.push('/CinePhix/home')" class="mt-4">{{ $t('publicProfile.backHome') }}</v-btn>
       </div>
 
       <!-- Profile -->
@@ -34,29 +34,26 @@
             <div class="stats-row">
               <div class="stat-item">
                 <span class="stat-value">{{ user.reviews_count }}</span>
-                <span class="stat-label">Reviews</span>
+                <span class="stat-label">{{ $t('publicProfile.reviews') }}</span>
               </div>
-              <div class="stat-item clickable" @click="showFollowers = true">
+              <div class="stat-item clickable" @click="openFollowers">
                 <span class="stat-value">{{ user.followers_count }}</span>
-                <span class="stat-label">Followers</span>
+                <span class="stat-label">{{ $t('publicProfile.followers') }}</span>
               </div>
-              <div class="stat-item clickable" @click="showFollowing = true">
+              <div class="stat-item clickable" @click="openFollowing">
                 <span class="stat-value">{{ user.following_count }}</span>
-                <span class="stat-label">Following</span>
+                <span class="stat-label">{{ $t('publicProfile.following') }}</span>
               </div>
             </div>
 
-            <!-- Follow button (if logged in and not own profile) -->
-            <v-btn
+            <!-- Follow button -->
+            <FollowButton
               v-if="authStore.isAuthenticated && !isOwnProfile"
-              :color="isFollowing ? 'default' : 'primary'"
-              :variant="isFollowing ? 'outlined' : 'flat'"
+              :user-id="user.id"
+              :initial-following="false"
               class="mt-3"
-              @click="toggleFollow"
-              :loading="followLoading"
-            >
-              {{ isFollowing ? 'Following' : 'Follow' }}
-            </v-btn>
+              @follow-changed="onFollowChanged"
+            />
           </div>
         </div>
 
@@ -64,11 +61,11 @@
         <div class="profile-tabs">
           <v-tabs v-model="activeTab" color="primary" align-tabs="start">
             <v-tab value="reviews">
-              Reviews
+              {{ $t('publicProfile.reviews') }}
               <v-badge :content="reviews.total" inline />
             </v-tab>
             <v-tab value="lists">
-              Lists
+              {{ $t('publicProfile.listsTab') }}
               <v-badge :content="lists.total" inline />
             </v-tab>
           </v-tabs>
@@ -80,7 +77,7 @@
                 <v-progress-circular indeterminate color="primary" />
               </div>
               <div v-else-if="reviews.items.length === 0" class="empty-state">
-                <p>No reviews yet.</p>
+                <p>{{ $t('publicProfile.noReviews') }}</p>
               </div>
               <div v-else class="reviews-list">
                 <ReviewCard
@@ -99,7 +96,7 @@
                 <v-progress-circular indeterminate color="primary" />
               </div>
               <div v-else-if="lists.length === 0" class="empty-state">
-                <p>No public lists yet.</p>
+                <p>{{ $t('publicProfile.noLists') }}</p>
               </div>
               <div v-else class="lists-grid">
                 <div
@@ -120,7 +117,7 @@
                   </div>
                   <div class="list-info">
                     <h3 class="list-name">{{ list.name }}</h3>
-                    <p class="list-meta">{{ list.items_count }} items</p>
+                    <p class="list-meta">{{ $t('publicProfile.listItemsCount', { count: list.items_count }) }}</p>
                   </div>
                 </div>
               </div>
@@ -129,23 +126,81 @@
         </div>
       </template>
     </div>
+
+    <!-- Followers Bottom Sheet -->
+    <v-navigation-drawer v-model="showFollowersDrawer" location="right" temporary width="340">
+      <div class="pa-4">
+        <h2 class="text-h6 font-weight-bold mb-4">{{ $t('publicProfile.followersTitle') }}</h2>
+        <div v-if="followersLoading" class="d-flex justify-center py-6"><v-progress-circular indeterminate color="primary" /></div>
+        <div v-else-if="followersList.length === 0" class="text-center py-6 text-grey">{{ $t('publicProfile.noFollowers') }}</div>
+        <div v-else>
+          <div v-for="follower in followersList" :key="follower.user_id" class="d-flex align-center mb-3">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="follower.avatar_url" :src="follower.avatar_url" />
+              <span v-else class="text-caption">{{ follower.username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div class="flex-grow-1">
+              <router-link :to="`/CinePhix/user/${follower.username}`" class="user-link">
+                {{ follower.display_name || follower.username }}
+              </router-link>
+              <div class="text-caption text-grey">@{{ follower.username }}</div>
+            </div>
+            <FollowButton v-if="follower.user_id !== authStore.user?.id" :user-id="follower.user_id" :initial-following="follower.is_following" />
+          </div>
+          <div v-if="followersHasMore" class="text-center mt-3">
+            <v-btn size="small" variant="tonal" @click="loadMoreFollowers">{{ $t('publicProfile.loadMore') }}</v-btn>
+          </div>
+        </div>
+      </div>
+    </v-navigation-drawer>
+
+    <!-- Following Bottom Sheet -->
+    <v-navigation-drawer v-model="showFollowingDrawer" location="right" temporary width="340">
+      <div class="pa-4">
+        <h2 class="text-h6 font-weight-bold mb-4">{{ $t('publicProfile.followingTitle') }}</h2>
+        <div v-if="followingLoading" class="d-flex justify-center py-6"><v-progress-circular indeterminate color="primary" /></div>
+        <div v-else-if="followingList.length === 0" class="text-center py-6 text-grey">{{ $t('publicProfile.notFollowing') }}</div>
+        <div v-else>
+          <div v-for="followed in followingList" :key="followed.user_id" class="d-flex align-center mb-3">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="followed.avatar_url" :src="followed.avatar_url" />
+              <span v-else class="text-caption">{{ followed.username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div class="flex-grow-1">
+              <router-link :to="`/CinePhix/user/${followed.username}`" class="user-link">
+                {{ followed.display_name || followed.username }}
+              </router-link>
+              <div class="text-caption text-grey">@{{ followed.username }}</div>
+            </div>
+            <FollowButton v-if="followed.user_id !== authStore.user?.id" :user-id="followed.user_id" :initial-following="true" />
+          </div>
+          <div v-if="followingHasMore" class="text-center mt-3">
+            <v-btn size="small" variant="tonal" @click="loadMoreFollowing">{{ $t('publicProfile.loadMore') }}</v-btn>
+          </div>
+        </div>
+      </div>
+    </v-navigation-drawer>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { usersApi } from '@/api/client'
 import { useAuthStore } from '@/stores/auth'
 import ReviewCard from '@/components/ReviewCard.vue'
+import FollowButton from '@/components/FollowButton.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
+import { useFollowService } from '@/api/services/followService'
 
 export default {
   name: 'PublicProfilePage',
 
-  components: { ReviewCard },
+  components: { ReviewCard, FollowButton },
 
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const router = useRouter()
     const authStore = useAuthStore()
@@ -161,6 +216,20 @@ export default {
     const listsLoading = ref(true)
     const isFollowing = ref(false)
     const followLoading = ref(false)
+
+    // Followers / Following drawers
+    const showFollowersDrawer = ref(false)
+    const showFollowingDrawer = ref(false)
+    const followersList = ref([])
+    const followersPage = ref(1)
+    const followersHasMore = ref(false)
+    const followersLoading = ref(false)
+    const followingList = ref([])
+    const followingPage = ref(1)
+    const followingHasMore = ref(false)
+    const followingLoading = ref(false)
+
+    const { getFollowers, getFollowing } = useFollowService()
 
     const initial = computed(() => {
       const name = user.value?.username || user.value?.email || 'U'
@@ -186,8 +255,8 @@ export default {
         })
       } catch (e) {
         error.value = e.response?.status === 404
-          ? 'User not found.'
-          : 'Failed to load profile.'
+          ? t('publicProfile.userNotFound')
+          : t('publicProfile.loadFailed')
         loading.value = false
       }
     }
@@ -235,6 +304,51 @@ export default {
       }
     }
 
+    async function openFollowers() {
+      showFollowersDrawer.value = true
+      if (followersList.value.length === 0) {
+        followersLoading.value = true
+        try {
+          const data = await getFollowers(user.value.id, { page: 1, per_page: 20 })
+          followersList.value = data.items || []
+          followersHasMore.value = followersList.value.length < data.total
+        } catch { followersList.value = [] }
+        finally { followersLoading.value = false }
+      }
+    }
+
+    async function loadMoreFollowers() {
+      followersPage.value++
+      const data = await getFollowers(user.value.id, { page: followersPage.value, per_page: 20 })
+      followersList.value.push(...(data.items || []))
+      followersHasMore.value = followersList.value.length < data.total
+    }
+
+    async function openFollowing() {
+      showFollowingDrawer.value = true
+      if (followingList.value.length === 0) {
+        followingLoading.value = true
+        try {
+          const data = await getFollowing(user.value.id, { page: 1, per_page: 20 })
+          followingList.value = data.items || []
+          followingHasMore.value = followingList.value.length < data.total
+        } catch { followingList.value = [] }
+        finally { followingLoading.value = false }
+      }
+    }
+
+    async function loadMoreFollowing() {
+      followingPage.value++
+      const data = await getFollowing(user.value.id, { page: followingPage.value, per_page: 20 })
+      followingList.value.push(...(data.items || []))
+      followingHasMore.value = followingList.value.length < data.total
+    }
+
+    function onFollowChanged({ isFollowing: f }) {
+      isFollowing.value = f
+      user.value.followers_count += f ? 1 : -1
+    }
+
     onMounted(async () => {
       await fetchProfile()
       loading.value = false
@@ -256,6 +370,19 @@ export default {
       initial,
       isOwnProfile,
       toggleFollow,
+      showFollowersDrawer,
+      showFollowingDrawer,
+      followersList,
+      followersHasMore,
+      followersLoading,
+      followingList,
+      followingHasMore,
+      followingLoading,
+      openFollowers,
+      openFollowing,
+      loadMoreFollowers,
+      loadMoreFollowing,
+      onFollowChanged,
     }
   },
 }
@@ -460,4 +587,12 @@ export default {
     justify-content: center;
   }
 }
+
+.user-link {
+  color: #04ff24;
+  text-decoration: none;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+.user-link:hover { text-decoration: underline; }
 </style>

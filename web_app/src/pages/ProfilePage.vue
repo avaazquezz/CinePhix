@@ -24,7 +24,7 @@
             @click="$router.push('/CinePhix/pricing')"
           >
             <v-icon start size="16">mdi-rocket-launch</v-icon>
-            Go Pro
+            {{ $t('profile.goPro') }}
           </v-btn>
         </div>
       </div>
@@ -33,8 +33,8 @@
       <div v-if="!proStatus.pro" class="pro-upsell-banner">
         <div class="pro-upsell-content">
           <div class="pro-upsell-text">
-            <h3>Unlock CinePhix Pro</h3>
-            <p>AI Concierge, semantic search, smart collections, review assistant, and more.</p>
+            <h3>{{ $t('profile.unlockTitle') }}</h3>
+            <p>{{ $t('profile.unlockDesc') }}</p>
           </div>
           <v-btn
             variant="flat"
@@ -42,14 +42,39 @@
             class="pro-upsell-btn"
             @click="$router.push('/CinePhix/pricing')"
           >
-            See Plans
+            {{ $t('profile.upgrade') }}
           </v-btn>
+        </div>
+      </div>
+
+      <!-- Follow Requests Section -->
+      <div v-if="pendingRequests.length > 0" class="profile-card follow-requests-card">
+        <h2 class="section-title">
+          <v-icon icon="mdi-account-clock" class="mr-2" />
+          {{ $t('profile.followRequests') }}
+          <v-chip size="x-small" color="primary" class="ml-2">{{ pendingRequests.length }}</v-chip>
+        </h2>
+        <div v-for="req in pendingRequests" :key="req.id" class="follow-request-item">
+          <div class="d-flex align-center flex-grow-1">
+            <v-avatar size="40" color="primary" class="mr-3">
+              <v-img v-if="req.from_avatar" :src="req.from_avatar" />
+              <span v-else>{{ req.from_username?.[0]?.toUpperCase() }}</span>
+            </v-avatar>
+            <div>
+              <div class="request-username">{{ req.from_display_name || req.from_username }}</div>
+              <div class="request-handle text-caption text-grey">@{{ req.from_username }}</div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <v-btn size="small" color="#04ff24" class="text-black" @click="acceptRequest(req)">{{ $t('profile.accept') }}</v-btn>
+            <v-btn size="small" variant="outlined" @click="rejectRequest(req)">{{ $t('profile.decline') }}</v-btn>
+          </div>
         </div>
       </div>
 
       <!-- Profile Form -->
       <div class="profile-card">
-        <h2 class="section-title">Profile Settings</h2>
+        <h2 class="section-title">{{ $t('profile.settings') }}</h2>
 
         <v-alert v-if="profileError" type="error" variant="tonal" class="mb-4" closable @click:close="profileError = null">
           {{ profileError }}
@@ -58,38 +83,38 @@
         <v-form @submit.prevent="handleUpdateProfile">
           <v-text-field
             v-model="displayName"
-            label="Display Name"
+            :label="$t('profile.displayName')"
             variant="outlined"
             class="mb-3"
           />
 
           <v-text-field
             v-model="username"
-            label="Username"
+            :label="$t('profile.username')"
             variant="outlined"
             :rules="[rules.username]"
-            hint="3-50 characters, letters, numbers and underscores only"
+            :hint="$t('profile.usernameFieldHint')"
             persistent-hint
             class="mb-3"
           />
 
           <v-text-field
             v-model="avatarUrl"
-            label="Avatar URL"
+            :label="$t('profile.avatarUrl')"
             variant="outlined"
             prepend-inner-icon="mdi-link"
             class="mb-4"
           />
 
           <v-btn type="submit" color="primary" :loading="isUpdatingProfile">
-            Save Changes
+            {{ $t('profile.saveChanges') }}
           </v-btn>
         </v-form>
       </div>
 
       <!-- Preferences Section -->
       <div class="profile-card">
-        <h2 class="section-title">Preferences</h2>
+        <h2 class="section-title">{{ $t('profile.preferences') }}</h2>
 
         <v-alert v-if="prefsError" type="error" variant="tonal" class="mb-4" closable @click:close="prefsError = null">
           {{ prefsError }}
@@ -97,7 +122,7 @@
 
         <!-- Favorite Genres -->
         <div class="preference-section">
-          <h3 class="preference-label">Favorite Genres</h3>
+          <h3 class="preference-label">{{ $t('profile.favoriteGenres') }}</h3>
           <div class="genre-chips">
             <v-chip
               v-for="genre in availableGenres"
@@ -114,7 +139,7 @@
 
         <!-- Language -->
         <div class="preference-section">
-          <h3 class="preference-label">Preferred Language</h3>
+          <h3 class="preference-label">{{ $t('profile.preferredLanguage') }}</h3>
           <v-select
             v-model="selectedLanguage"
             :items="languages"
@@ -126,7 +151,7 @@
 
         <!-- Min Rating -->
         <div class="preference-section">
-          <h3 class="preference-label">Minimum Rating</h3>
+          <h3 class="preference-label">{{ $t('profile.minimumRating') }}</h3>
           <v-slider
             v-model="minRating"
             :min="0"
@@ -142,10 +167,10 @@
 
         <!-- Preferred Decade -->
         <div class="preference-section">
-          <h3 class="preference-label">Preferred Decade</h3>
+          <h3 class="preference-label">{{ $t('profile.decade') }}</h3>
           <v-select
             v-model="preferredDecade"
-            :items="decades"
+            :items="decadeItems"
             variant="outlined"
             class="mt-2"
             @update:model-value="updatePreferredDecade"
@@ -155,16 +180,16 @@
 
       <!-- My Watchlist -->
       <div class="profile-card">
-        <h2 class="section-title">My Watchlist</h2>
+        <h2 class="section-title">{{ $t('profile.myWatchlist') }}</h2>
 
         <div v-if="isLoadingWatchlist" class="content-loading">
           <v-progress-circular indeterminate color="primary" />
         </div>
 
         <div v-else-if="watchlistItems.length === 0" class="empty-state">
-          <p>Your watchlist is empty.</p>
+          <p>{{ $t('profile.watchlistEmpty') }}</p>
           <v-btn color="primary" variant="tonal" to="/CinePhix/home">
-            Browse Movies
+            {{ $t('profile.browseHome') }}
           </v-btn>
         </div>
 
@@ -185,7 +210,7 @@
             <button
               class="remove-btn"
               @click="removeFromWatchlist(item.tmdbId, item.mediaType)"
-              title="Remove from Watchlist"
+              :title="$t('profile.removeWatchlist')"
             >
               <v-icon size="16">mdi-close</v-icon>
             </button>
@@ -195,16 +220,16 @@
 
       <!-- My Favorites -->
       <div class="profile-card">
-        <h2 class="section-title">My Favorites</h2>
+        <h2 class="section-title">{{ $t('profile.myFavorites') }}</h2>
 
         <div v-if="isLoadingFavorites" class="content-loading">
           <v-progress-circular indeterminate color="primary" />
         </div>
 
         <div v-else-if="favoriteItems.length === 0" class="empty-state">
-          <p>You haven't added any favorites yet.</p>
+          <p>{{ $t('profile.favoritesEmpty') }}</p>
           <v-btn color="primary" variant="tonal" to="/CinePhix/home">
-            Browse Movies
+            {{ $t('profile.browseHome') }}
           </v-btn>
         </div>
 
@@ -225,7 +250,7 @@
             <button
               class="remove-btn"
               @click="removeFromFavorites(item.tmdbId, item.mediaType)"
-              title="Remove from Favorites"
+              :title="$t('profile.removeFavorite')"
             >
               <v-icon size="16">mdi-close</v-icon>
             </button>
@@ -235,10 +260,10 @@
 
       <!-- Danger Zone -->
       <div class="profile-card danger-card">
-        <h2 class="section-title">Account</h2>
+        <h2 class="section-title">{{ $t('profile.account') }}</h2>
         <v-btn color="error" variant="outlined" @click="handleLogout">
           <v-icon start>mdi-logout</v-icon>
-          Sign Out
+          {{ $t('profile.signOut') }}
         </v-btn>
       </div>
     </div>
@@ -247,6 +272,8 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useMetaTags } from '@/composables/useMetaTags'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { paymentService } from '@/api/services/paymentService'
@@ -254,9 +281,12 @@ import { useUserStore } from '@/stores/user'
 import { useWatchlistStore } from '@/stores/watchlist'
 import { useFavoritesStore } from '@/stores/favorites'
 import MovieCard from '@/components/MovieCard.vue'
+import { useFollowService } from '@/api/services/followService'
 import { getMovieDetail } from '@/ApiController/services/movieService'
 import { getSeriesDetail } from '@/ApiController/services/seriesService'
 
+const { t } = useI18n()
+const { setPageMeta } = useMetaTags()
 const router = useRouter()
 const authStore = useAuthStore()
 const userStore = useUserStore()
@@ -281,6 +311,11 @@ const prefsError = ref(null)
 const proStatus = ref({ pro: false, plan: null, expires_at: null })
 const isLoadingWatchlist = ref(false)
 const isLoadingFavorites = ref(false)
+
+// Follow Requests
+const pendingRequests = ref([])
+const followRequestsLoading = ref(false)
+const { getFollowRequests, acceptFollowRequest: apiAcceptRequest, rejectFollowRequest: apiRejectRequest } = useFollowService()
 
 // Watchlist & Favorites with full TMDB details
 const watchlistItems = ref([])
@@ -318,7 +353,7 @@ const languages = [
   { title: 'Português', value: 'pt' },
 ]
 
-const decades = [
+const decadeItems = computed(() => [
   { title: '2020s', value: '2020s' },
   { title: '2010s', value: '2010s' },
   { title: '2000s', value: '2000s' },
@@ -326,12 +361,12 @@ const decades = [
   { title: '1980s', value: '1980s' },
   { title: '1970s', value: '1970s' },
   { title: '1960s', value: '1960s' },
-  { title: 'Any decade', value: null },
-]
+  { title: t('profile.anyDecade'), value: null },
+])
 
-const rules = {
-  username: (v) => /^[a-zA-Z0-9_]+$/.test(v) || 'Only letters, numbers and underscores',
-}
+const rules = computed(() => ({
+  username: (v) => /^[a-zA-Z0-9_]+$/.test(v) || t('profile.usernameRule'),
+}))
 
 // Computed
 const initial = computed(() => {
@@ -516,6 +551,10 @@ async function fetchProStatus() {
 
 // Load user data on mount
 onMounted(async () => {
+  setPageMeta({
+    title: t('meta.profile.title'),
+    description: t('meta.profile.description'),
+  })
   if (user.value) {
     displayName.value = user.value.display_name || ''
     username.value = user.value.username || ''
@@ -540,7 +579,41 @@ onMounted(async () => {
     fetchWatchlistDetails(),
     fetchFavoriteDetails(),
   ])
+
+  // Fetch pending follow requests
+  await fetchPendingRequests()
 })
+
+async function fetchPendingRequests() {
+  followRequestsLoading.value = true
+  try {
+    const data = await getFollowRequests({ page: 1, per_page: 50 })
+    pendingRequests.value = data.items || []
+  } catch {
+    pendingRequests.value = []
+  } finally {
+    followRequestsLoading.value = false
+  }
+}
+
+async function acceptRequest(req) {
+  try {
+    await apiAcceptRequest(req.from_user_id, req.id)
+    pendingRequests.value = pendingRequests.value.filter(r => r.id !== req.id)
+    user.value.followers_count = (user.value.followers_count || 0) + 1
+  } catch (e) {
+    console.error('Failed to accept request:', e)
+  }
+}
+
+async function rejectRequest(req) {
+  try {
+    await apiRejectRequest(req.from_user_id, req.id)
+    pendingRequests.value = pendingRequests.value.filter(r => r.id !== req.id)
+  } catch (e) {
+    console.error('Failed to reject request:', e)
+  }
+}
 </script>
 
 <style scoped>
@@ -735,5 +808,25 @@ onMounted(async () => {
   text-transform: none;
   padding: 10px 24px !important;
 }
+
+.follow-requests-card {
+  border-left: 3px solid #04ff24;
+}
+
+.follow-request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.follow-request-item:last-child { border-bottom: none; }
+
+.request-username {
+  font-weight: 700;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+}
+.request-handle { font-family: 'Montserrat', sans-serif; }
 
 </style>

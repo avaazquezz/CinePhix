@@ -9,14 +9,14 @@
       <div class="auth-brand">
         <div class="brand-icon"><i class="fas fa-film"></i></div>
         <div class="brand-name"><span class="brand-accent">C</span>INEPHIX</div>
-        <p class="brand-tagline">Your cinematic universe</p>
+        <p class="brand-tagline">{{ $t('auth.login.tagline') }}</p>
       </div>
 
       <!-- Card -->
       <div class="auth-card">
         <div class="auth-header">
-          <h1 class="auth-title">Create Account</h1>
-          <p class="auth-subtitle">Join the community of cinephiles</p>
+          <h1 class="auth-title">{{ $t('auth.register.title') }}</h1>
+          <p class="auth-subtitle">{{ $t('auth.register.subtitle') }}</p>
         </div>
 
         <v-alert v-if="error" type="error" variant="tonal" class="mb-4" closable @click:close="clearError">
@@ -26,18 +26,18 @@
         <v-form ref="formRef" @submit.prevent="handleRegister" v-model="isFormValid">
           <v-text-field
             v-model="username"
-            label="Username"
+            :label="$t('auth.register.username')"
             variant="outlined"
             :rules="[rules.required, rules.minLength(3), rules.username]"
             prepend-inner-icon="mdi-at"
             class="mb-2 auth-field"
-            hint="3-50 characters, letters, numbers and underscores only"
+            :hint="$t('auth.register.usernameHint')"
             persistent-hint
           />
 
           <v-text-field
             v-model="email"
-            label="Email"
+            :label="$t('auth.register.email')"
             type="email"
             variant="outlined"
             :rules="[rules.required, rules.email]"
@@ -47,7 +47,7 @@
 
           <v-text-field
             v-model="password"
-            label="Password"
+            :label="$t('auth.register.password')"
             :type="showPassword ? 'text' : 'password'"
             variant="outlined"
             :rules="[rules.required, rules.minLength(8), rules.passwordStrength]"
@@ -55,13 +55,13 @@
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             @click:append-inner="showPassword = !showPassword"
             class="mb-2 auth-field"
-            hint="Minimum 8 characters with letters and numbers"
+            :hint="$t('auth.register.passwordHint')"
             persistent-hint
           />
 
           <v-text-field
             v-model="confirmPassword"
-            label="Confirm Password"
+            :label="$t('auth.register.confirmPassword')"
             :type="showPassword ? 'text' : 'password'"
             variant="outlined"
             :rules="[rules.required, rules.matchPassword]"
@@ -74,25 +74,23 @@
             class="submit-btn"
             :disabled="!isFormValid || isLoading"
           >
-            <span v-if="!isLoading">Create Account</span>
+            <span v-if="!isLoading">{{ $t('auth.register.create') }}</span>
             <v-progress-circular v-else indeterminate size="20" width="2" color="white" />
           </button>
         </v-form>
 
-        <p class="terms-text">
-          By signing up, you agree to our Terms of Service and Privacy Policy
-        </p>
+        <p class="terms-text">{{ $t('auth.register.terms') }}</p>
 
-        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-divider"><span>{{ $t('auth.register.or') }}</span></div>
 
         <button class="google-btn" @click="handleGoogleRegister">
           <v-icon size="18" class="mr-2">mdi-google</v-icon>
-          Sign up with Google
+          {{ $t('auth.register.google') }}
         </button>
 
         <div class="auth-footer">
-          <span>Already have an account?</span>
-          <router-link to="/CinePhix/auth/login" class="auth-link">Sign in</router-link>
+          <span>{{ $t('auth.register.hasAccount') }}</span>
+          <router-link to="/CinePhix/auth/login" class="auth-link">{{ $t('auth.register.signIn') }}</router-link>
         </div>
       </div>
     </div>
@@ -102,11 +100,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const formRef = ref(null)
 const username = ref('')
@@ -119,12 +119,12 @@ const isLoading = ref(false)
 const error = ref(null)
 
 const rules = {
-  required: (v) => !!v || 'This field is required',
-  email: (v) => /.+@.+\..+/.test(v) || 'Invalid email',
-  minLength: (min) => (v) => (v && v.length >= min) || `Minimum ${min} characters`,
-  username: (v) => /^[a-zA-Z0-9_]+$/.test(v) || 'Only letters, numbers and underscores',
-  passwordStrength: (v) => /^(?=.*[A-Za-z])(?=.*\d)/.test(v) || 'Must contain letters and numbers',
-  matchPassword: (v) => v === password.value || 'Passwords do not match',
+  required: (v) => !!v || t('auth.validation.required'),
+  email: (v) => /.+@.+\..+/.test(v) || t('auth.validation.email'),
+  minLength: (min) => (v) => (v && v.length >= min) || t('auth.validation.minChars', { min }),
+  username: (v) => /^[a-zA-Z0-9_]+$/.test(v) || t('auth.validation.usernameCharset'),
+  passwordStrength: (v) => /^(?=.*[A-Za-z])(?=.*\d)/.test(v) || t('auth.validation.passwordStrength'),
+  matchPassword: (v) => v === password.value || t('auth.validation.passwordMatch'),
 }
 
 async function handleRegister() {
@@ -141,7 +141,7 @@ async function handleRegister() {
 }
 
 async function handleGoogleRegister() {
-  error.value = 'Google OAuth not configured. Please use email/password.'
+  error.value = t('auth.googleNotConfigured')
 }
 
 function clearError() {

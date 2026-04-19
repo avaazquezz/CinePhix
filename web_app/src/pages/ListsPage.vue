@@ -2,10 +2,10 @@
   <v-container class="py-8">
     <!-- Header -->
     <div class="d-flex align-center mb-6">
-      <h1 class="text-h5 font-weight-bold text-high-emphasis">My Lists</h1>
+      <h1 class="text-h5 font-weight-bold text-high-emphasis">{{ $t('lists.myLists') }}</h1>
       <v-spacer />
       <v-btn color="primary" prepend-icon="mdi-plus" @click="showCreateDialog = true">
-        New List
+        {{ $t('lists.newList') }}
       </v-btn>
     </div>
 
@@ -17,9 +17,9 @@
     <!-- Empty State -->
     <div v-else-if="!loading && lists.length === 0" class="text-center py-12">
       <v-icon icon="mdi-format-list-bulleted" size="64" color="grey-darken-1" class="mb-4" />
-      <div class="text-h6 text-grey-darken-1 mb-2">No lists yet</div>
-      <div class="text-body-2 text-grey mb-4">Create your first list to organize your favorite movies and shows</div>
-      <v-btn color="primary" @click="showCreateDialog = true">Create List</v-btn>
+      <div class="text-h6 text-grey-darken-1 mb-2">{{ $t('lists.emptyTitle') }}</div>
+      <div class="text-body-2 text-grey mb-4">{{ $t('lists.emptyHint') }}</div>
+      <v-btn color="primary" @click="showCreateDialog = true">{{ $t('lists.createListBtn') }}</v-btn>
     </div>
 
     <!-- Lists Grid -->
@@ -31,12 +31,12 @@
               <v-icon icon="mdi-format-list-bulleted" color="primary" />
             </template>
             <v-card-title class="text-body-1">{{ list.name }}</v-card-title>
-            <v-card-subtitle>{{ list.items_count }} items · {{ list.is_public ? 'Public' : 'Private' }}</v-card-subtitle>
+            <v-card-subtitle>{{ $t('lists.itemsMeta', { count: list.items_count, visibility: list.is_public ? $t('lists.public') : $t('lists.private') }) }}</v-card-subtitle>
           </v-card-item>
 
           <v-card-actions>
-            <v-btn variant="text" size="small" @click.stop="openList(list)">Open</v-btn>
-            <v-btn variant="text" size="small" @click.stop="editList(list)">Edit</v-btn>
+            <v-btn variant="text" size="small" @click.stop="openList(list)">{{ $t('lists.open') }}</v-btn>
+            <v-btn variant="text" size="small" @click.stop="editList(list)">{{ $t('lists.edit') }}</v-btn>
             <v-spacer />
             <v-menu>
               <template #activator="{ props }">
@@ -45,11 +45,11 @@
               <v-list density="compact">
                 <v-list-item @click="shareList(list)">
                   <template #prepend><v-icon icon="mdi-share-variant" size="small" /></template>
-                  <v-list-item-title>Share</v-list-item-title>
+                  <v-list-item-title>{{ $t('lists.share') }}</v-list-item-title>
                 </v-list-item>
                 <v-list-item class="text-error" @click="confirmDelete(list)">
                   <template #prepend><v-icon icon="mdi-delete" size="small" color="error" /></template>
-                  <v-list-item-title>Delete</v-list-item-title>
+                  <v-list-item-title>{{ $t('lists.delete') }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -61,19 +61,19 @@
     <!-- Create/Edit Dialog -->
     <v-dialog v-model="showCreateDialog" max-width="500">
       <v-card>
-        <v-card-title>{{ editingList ? 'Edit List' : 'Create New List' }}</v-card-title>
+        <v-card-title>{{ editingList ? $t('lists.dialogEditTitle') : $t('lists.dialogCreateTitle') }}</v-card-title>
         <v-card-text>
           <v-form ref="formRef" @submit.prevent="submitList">
-            <v-text-field v-model="form.name" label="List Name" :rules="[v => !!v || 'Required']" class="mb-2" />
-            <v-textarea v-model="form.description" label="Description (optional)" rows="2" class="mb-2" />
-            <v-switch v-model="form.is_public" label="Make public" color="primary" />
+            <v-text-field v-model="form.name" :label="$t('lists.listName')" :rules="nameRules" class="mb-2" />
+            <v-textarea v-model="form.description" :label="$t('lists.descriptionOptional')" rows="2" class="mb-2" />
+            <v-switch v-model="form.is_public" :label="$t('lists.makePublic')" color="primary" />
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="closeDialog">Cancel</v-btn>
+          <v-btn variant="text" @click="closeDialog">{{ $t('lists.cancel') }}</v-btn>
           <v-btn color="primary" :loading="saving" @click="submitList">
-            {{ editingList ? 'Save' : 'Create' }}
+            {{ editingList ? $t('lists.save') : $t('lists.submitCreate') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -84,7 +84,7 @@
       <v-card v-if="selectedList">
         <v-card-item>
           <v-card-title>{{ selectedList.name }}</v-card-title>
-          <v-card-subtitle>{{ selectedList.items_count }} items</v-card-subtitle>
+          <v-card-subtitle>{{ $t('publicProfile.listItemsCount', { count: selectedList.items_count }) }}</v-card-subtitle>
           <template #append>
             <v-btn icon="mdi-close" variant="text" @click="showDetailDialog = false" />
           </template>
@@ -96,21 +96,21 @@
             <v-text-field
               v-model="addItemTmdb"
               type="number"
-              label="TMDB ID"
+              :label="$t('lists.tmdbId')"
               density="compact"
               hide-details
               style="max-width: 150px"
             />
             <v-select
               v-model="addItemMediaType"
-              :items="[{ title: 'Movie', value: 'movie' }, { title: 'TV', value: 'tv' }]"
-              label="Type"
+              :items="mediaTypeItems"
+              :label="$t('lists.type')"
               density="compact"
               hide-details
               style="max-width: 120px"
             />
             <v-btn color="primary" :loading="addingItem" :disabled="!addItemTmdb" @click="addItem">
-              Add
+              {{ $t('lists.add') }}
             </v-btn>
           </div>
         </v-card-text>
@@ -118,14 +118,14 @@
         <!-- Items List -->
         <v-card-text>
           <div v-if="listItems.length === 0" class="text-center py-6 text-grey">
-            No items yet
+            {{ $t('lists.noItemsInList') }}
           </div>
           <v-list density="compact" v-else>
             <v-list-item v-for="item in listItems" :key="item.id">
               <template #prepend>
                 <v-icon icon="mdi-movie" />
               </template>
-              <v-list-item-title>TMDB {{ item.tmdb_id }} ({{ item.media_type }})</v-list-item-title>
+              <v-list-item-title>{{ $t('lists.tmdbRow', { id: item.tmdb_id, type: item.media_type }) }}</v-list-item-title>
               <template #append>
                 <v-btn icon="mdi-delete" variant="text" size="small" color="error" @click="removeItem(item)" />
               </template>
@@ -138,12 +138,12 @@
     <!-- Delete Confirm -->
     <v-dialog v-model="showDeleteDialog" max-width="400">
       <v-card>
-        <v-card-title>Delete List?</v-card-title>
-        <v-card-text>This action cannot be undone.</v-card-text>
+        <v-card-title>{{ $t('lists.deleteConfirmTitle') }}</v-card-title>
+        <v-card-text>{{ $t('lists.deleteConfirmBody') }}</v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn variant="text" @click="showDeleteDialog = false">Cancel</v-btn>
-          <v-btn color="error" :loading="deleting" @click="deleteListConfirmed">Delete</v-btn>
+          <v-btn variant="text" @click="showDeleteDialog = false">{{ $t('lists.cancel') }}</v-btn>
+          <v-btn color="error" :loading="deleting" @click="deleteListConfirmed">{{ $t('lists.delete') }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -151,10 +151,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useListsService } from '@/api/services/listService'
+import { useMetaTags } from '@/composables/useMetaTags'
 
+const { t } = useI18n()
+const { setPageMeta } = useMetaTags()
 const { loading, error, getMyLists, createList, updateList, deleteList, getList, addItemToList, removeItemFromList } = useListsService()
+
+const mediaTypeItems = computed(() => [
+  { title: t('lists.movie'), value: 'movie' },
+  { title: t('lists.tv'), value: 'tv' },
+])
+
+const nameRules = [(v) => !!v || t('lists.required')]
 
 const lists = ref([])
 const showCreateDialog = ref(false)
@@ -273,7 +284,13 @@ const shareList = (list) => {
   navigator.clipboard.writeText(url)
 }
 
-onMounted(loadLists)
+onMounted(() => {
+  setPageMeta({
+    title: t('meta.lists.title'),
+    description: t('meta.lists.description'),
+  })
+  loadLists()
+})
 </script>
 
 <style scoped>

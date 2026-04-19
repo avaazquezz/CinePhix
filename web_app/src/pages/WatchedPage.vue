@@ -7,9 +7,9 @@
       <div class="page-header">
         <h1 class="page-title">
           <span class="title-accent"></span>
-          Watched
+          {{ $t('watched.title') }}
         </h1>
-        <p class="page-subtitle">Your watch history and progress</p>
+        <p class="page-subtitle">{{ $t('watched.historySubtitle') }}</p>
       </div>
 
       <!-- Filters -->
@@ -17,23 +17,23 @@
         <button
           :class="['tab-btn', { active: filter === 'all' }]"
           @click="setFilter('all')"
-        >All</button>
+        >{{ $t('watched.filterAll') }}</button>
         <button
           :class="['tab-btn', { active: filter === 'movie' }]"
           @click="setFilter('movie')"
-        >Movies</button>
+        >{{ $t('watched.filterMovies') }}</button>
         <button
           :class="['tab-btn', { active: filter === 'tv' }]"
           @click="setFilter('tv')"
-        >TV Shows</button>
+        >{{ $t('watched.filterTv') }}</button>
         <button
           :class="['tab-btn', { active: filter === 'in_progress' }]"
           @click="setFilter('in_progress')"
-        >In Progress</button>
+        >{{ $t('watched.inProgress') }}</button>
         <button
           :class="['tab-btn', { active: filter === 'completed' }]"
           @click="setFilter('completed')"
-        >Completed</button>
+        >{{ $t('watched.completed') }}</button>
       </div>
 
       <!-- Loading -->
@@ -44,8 +44,8 @@
       <!-- Empty -->
       <div v-else-if="items.length === 0" class="empty-state">
         <v-icon size="64" color="#333">mdi-play-circle-outline</v-icon>
-        <p>Nothing here yet. Start watching some movies or series!</p>
-        <v-btn color="primary" @click="$router.push('/CinePhix/discover')">Discover</v-btn>
+        <p>{{ $t('watched.emptyHint') }}</p>
+        <v-btn color="primary" @click="$router.push('/CinePhix/discover')">{{ $t('watched.discover') }}</v-btn>
       </div>
 
       <!-- Grid -->
@@ -82,7 +82,7 @@
 
             <!-- Type badge -->
             <div class="type-badge">
-              {{ item.media_type === 'movie' ? 'Movie' : 'TV' }}
+              {{ item.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}
             </div>
           </div>
 
@@ -101,7 +101,7 @@
         <v-btn variant="outlined" :disabled="page === 1" @click="goToPage(page - 1)">
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>
-        <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+        <span class="page-info">{{ $t('watched.pageOf', { current: page, total: totalPages }) }}</span>
         <v-btn variant="outlined" :disabled="page >= totalPages" @click="goToPage(page + 1)">
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
@@ -112,6 +112,8 @@
 
 <script>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getLocale } from '@/i18n'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
 import { useAuthStore } from '@/stores/auth'
@@ -123,6 +125,7 @@ export default {
   components: { SkeletonCard },
 
   setup() {
+    const { t } = useI18n()
     const { setPageMeta } = useMetaTags()
     const authStore = useAuthStore()
 
@@ -189,9 +192,9 @@ export default {
       if (item.duration_seconds) {
         const watched = formatTime(item.progress_seconds)
         const total = formatTime(item.duration_seconds)
-        return `${watched} / ${total} (${pct}%)`
+        return t('watched.progressFraction', { watched, total, pct })
       }
-      return `${pct}% watched`
+      return t('watched.progressPct', { pct })
     }
 
     function formatTime(seconds) {
@@ -201,7 +204,8 @@ export default {
     }
 
     function formatDate(dateStr) {
-      return new Date(dateStr).toLocaleDateString('en-US', {
+      const loc = getLocale() === 'es' ? 'es-ES' : 'en-US'
+      return new Date(dateStr).toLocaleDateString(loc, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -211,8 +215,8 @@ export default {
     onMounted(() => {
       fetchWatched()
       setPageMeta({
-        title: 'Watched',
-        description: 'Your watch history and progress on CinePhix.',
+        title: t('meta.watched.title'),
+        description: t('meta.watched.description'),
       })
     })
 

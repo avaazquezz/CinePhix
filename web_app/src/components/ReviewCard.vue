@@ -4,9 +4,9 @@
     <div v-if="review.is_spoiler && !showSpoiler" class="spoiler-overlay">
       <div class="spoiler-warning">
         <v-icon size="20">mdi-alert</v-icon>
-        <p>This review contains spoilers</p>
+        <p>{{ $t('reviews.spoilerTitle') }}</p>
         <v-btn size="small" variant="outlined" @click="showSpoiler = true">
-          Show anyway
+          {{ $t('reviews.spoilerShow') }}
         </v-btn>
       </div>
       <div class="spoiler-blur">
@@ -78,7 +78,7 @@
           color="primary"
           @click="$emit('edit', review)"
         >
-          Edit
+          {{ $t('reviews.edit') }}
         </v-btn>
       </div>
     </div>
@@ -87,6 +87,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   review: {
@@ -109,12 +110,14 @@ const props = defineProps({
 
 defineEmits(['vote', 'share', 'edit', 'click-user'])
 
+const { locale } = useI18n()
 const showSpoiler = ref(false)
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
   const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const loc = locale.value === 'es' ? 'es-ES' : 'en-US'
+  return date.toLocaleDateString(loc, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 </script>
 

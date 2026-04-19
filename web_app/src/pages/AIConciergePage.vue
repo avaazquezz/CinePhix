@@ -6,8 +6,8 @@
         <!-- Header -->
         <div class="d-flex align-center mb-4">
           <div>
-            <div class="text-h5 font-weight-bold">AI Concierge</div>
-            <div class="text-caption text-grey">Discover movies with natural language</div>
+            <div class="text-h5 font-weight-bold">{{ $t('ai.conciergeTitle') }}</div>
+            <div class="text-caption text-grey">{{ $t('ai.conciergeTagline') }}</div>
           </div>
         </div>
 
@@ -17,14 +17,14 @@
             <!-- Welcome -->
             <div v-if="messages.length === 0" class="welcome-state pa-8 text-center">
               <v-icon icon="mdi-robot" size="64" color="primary" class="mb-4" />
-              <div class="text-h6 mb-2">Ask me anything about movies</div>
+              <div class="text-h6 mb-2">{{ $t('ai.welcomeTitle') }}</div>
               <div class="text-body-2 text-grey mb-4">
-                I can recommend films, compare titles, suggest similar movies, and more
+                {{ $t('ai.welcomeBody') }}
               </div>
               <div class="d-flex flex-wrap ga-2 justify-center">
                 <v-chip
-                  v-for="suggestion in suggestions"
-                  :key="suggestion"
+                  v-for="(suggestion, idx) in suggestionChips"
+                  :key="idx"
                   variant="outlined"
                   size="small"
                   @click="sendSuggestion(suggestion)"
@@ -60,7 +60,7 @@
                 <div class="message-bubble">
                   <div class="d-flex align-center ga-1">
                     <v-icon icon="mdi-loading" size="small" class="spin" />
-                    <span class="text-caption text-grey">Thinking...</span>
+                    <span class="text-caption text-grey">{{ $t('ai.thinking') }}</span>
                   </div>
                 </div>
               </div>
@@ -73,7 +73,7 @@
             <div class="d-flex ga-2">
               <v-text-field
                 v-model="inputMessage"
-                placeholder="Ask me about movies..."
+                :placeholder="$t('ai.inputPlaceholder')"
                 variant="outlined"
                 density="compact"
                 hide-details
@@ -96,10 +96,12 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMetaTags } from '@/composables/useMetaTags'
 import { useAIService } from '@/api/services/aiService'
 
+const { t, locale } = useI18n()
 const { loading, sendChat } = useAIService()
 const { setPageMeta } = useMetaTags()
 
@@ -107,17 +109,20 @@ const messages = ref([])
 const inputMessage = ref('')
 const messagesContainer = ref(null)
 
-onMounted(() => {
-  setPageMeta({ title: 'AI Concierge', description: 'Your AI-powered movie and TV assistant. Get personalized recommendations, detailed info, and smart collections.' })
-})
+const suggestionChips = computed(() => [
+  `🎬 ${t('ai.chip1')}`,
+  `🌊 ${t('ai.chip2')}`,
+  `😂 ${t('ai.chip3')}`,
+  `⚡ ${t('ai.chip4')}`,
+  `🎭 ${t('ai.chip5')}`,
+])
 
-const suggestions = [
-  '🎬 Movies like Inception',
-  '🌊 Best documentaries of 2024',
-  '😂 Comedies for a rainy night',
-  '⚡ Action movies this decade',
-  '🎭 Films similar to Whiplash',
-]
+onMounted(() => {
+  setPageMeta({
+    title: t('meta.ai.title'),
+    description: t('meta.ai.description'),
+  })
+})
 
 const sendMessage = async () => {
   const text = inputMessage.value.trim()
@@ -129,12 +134,13 @@ const sendMessage = async () => {
   await scrollToBottom()
 
   try {
-    const reply = await sendChat({ message: text, language: 'es' })
+    const lang = locale.value === 'es' ? 'es' : 'en'
+    const reply = await sendChat({ message: text, language: lang })
     messages.value.push({ role: 'assistant', content: reply })
   } catch (e) {
     messages.value.push({
       role: 'assistant',
-      content: 'Sorry, I had trouble connecting. Please try again.',
+      content: t('ai.errorConnect'),
     })
   }
 
