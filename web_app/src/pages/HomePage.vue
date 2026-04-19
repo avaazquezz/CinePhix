@@ -7,7 +7,7 @@
         <div class="section-header">
           <h2 class="section-title">
             <span class="title-accent"></span>
-            {{$t('home.todayTrending')}}
+            {{ $t('home.weeklyTrending') }}
           </h2>
           <div class="title-underline"></div>
         </div>
@@ -35,56 +35,66 @@
 
     <transition name="dialog-fade">
       <div v-if="dialogVisible" class="cp-dialog-overlay" @click.self="closeDialog">
-        <div class="cp-dialog-box">
+        <div class="cp-dialog-box media-detail-dialog">
           <button class="cp-dialog-close" @click="closeDialog" :aria-label="$t('home.dialog.close')">
             <i class="fas fa-times"></i>
           </button>
 
-          <div class="cp-dialog-layout">
-            <div class="cp-dialog-poster-wrap">
-              <img
-                :src="getImageUrl(selectedItem.poster_path)"
-                :alt="selectedItem.title || selectedItem.name"
-                class="cp-dialog-poster"
-              />
+          <div class="media-detail-dialog-inner">
+            <div class="media-detail-hero">
+              <div class="cp-dialog-poster-wrap">
+                <img
+                  :src="getImageUrl(selectedItem.poster_path)"
+                  :alt="selectedItem.title || selectedItem.name"
+                  class="cp-dialog-poster"
+                />
+              </div>
+              <div class="media-detail-hero-main">
+                <h2 class="cp-dialog-title media-detail-title">{{ selectedItem.title || selectedItem.name }}</h2>
+                <div class="cp-dialog-meta media-detail-meta-row">
+                  <span class="cp-meta-chip">
+                    <i class="fas fa-film"></i>
+                    {{ selectedItem.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}
+                  </span>
+                  <span class="cp-meta-chip rating">
+                    <i class="fas fa-star"></i>
+                    {{ selectedItem.vote_average ? selectedItem.vote_average.toFixed(1) : $t('home.dialog.na') }}/10
+                  </span>
+                </div>
+                <div class="media-detail-share-row">
+                  <span class="media-detail-share-label">{{ $t('common.media.share') }}</span>
+                  <ShareButtons
+                    :url="homeItemShareUrl"
+                    :title="`${selectedItem.title || selectedItem.name} — CinePhix`"
+                    description=""
+                  />
+                </div>
+                <div class="cp-dialog-actions media-detail-actions">
+                  <button
+                    type="button"
+                    class="cp-action-btn cp-action-btn--primary"
+                    :class="{ active: isInWatchlist }"
+                    @click="toggleWatchlist"
+                  >
+                    <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                    {{ isInWatchlist ? $t('common.media.inWatchlist') : $t('common.media.watchlist') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="cp-action-btn"
+                    :class="{ active: isFavorite }"
+                    @click="toggleFavorite"
+                  >
+                    <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+                    {{ isFavorite ? $t('common.media.favorited') : $t('common.media.favorite') }}
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <div class="cp-dialog-details">
-              <h2 class="cp-dialog-title">{{ selectedItem.title || selectedItem.name }}</h2>
-
-              <div class="cp-dialog-meta">
-                <span class="cp-meta-chip">
-                  <i class="fas fa-film"></i>
-                  {{ selectedItem.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}
-                </span>
-                <span class="cp-meta-chip rating">
-                  <i class="fas fa-star"></i>
-                  {{ selectedItem.vote_average ? selectedItem.vote_average.toFixed(1) : $t('home.dialog.na') }}/10
-                </span>
-              </div>
-
-              <div>
-                <p class="cp-section-label">{{ $t('home.dialog.overview') || 'Synopsis' }}</p>
-                <p class="cp-overview">{{ selectedItem.overview || $t('home.dialog.noOverview') }}</p>
-              </div>
-
-              <div class="cp-dialog-actions">
-                <button
-                  class="cp-action-btn"
-                  :class="{ active: isInWatchlist }"
-                  @click="toggleWatchlist"
-                >
-                  <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                  {{ isInWatchlist ? 'In Watchlist' : 'Watchlist' }}
-                </button>
-                <button
-                  class="cp-action-btn"
-                  :class="{ active: isFavorite }"
-                  @click="toggleFavorite"
-                >
-                  <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
-                  {{ isFavorite ? 'Favorited' : 'Favorite' }}
-                </button>
+            <div class="media-detail-scroll">
+              <div class="media-detail-block">
+                <p class="cp-section-label">{{ $t('home.dialog.overview') }}</p>
+                <p class="cp-overview media-detail-overview">{{ selectedItem.overview || $t('home.dialog.noOverview') }}</p>
               </div>
             </div>
           </div>
@@ -95,11 +105,13 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMetaTags } from '@/composables/useMetaTags';
-import { getTrendingAllDay } from '@/ApiController/services/inicioService';
+import { getTrendingAllWeek } from '@/ApiController/services/inicioService'
 import SkeletonCard from '@/components/SkeletonCard.vue';
-import MovieCard from '@/components/MovieCard.vue';
+import MovieCard from '@/components/MovieCard.vue'
+import ShareButtons from '@/components/ShareButtons.vue'
 import { useWatchlistStore } from '@/stores/watchlist';
 import { useFavoritesStore } from '@/stores/favorites';
 import { useAuthStore } from '@/stores/auth';
@@ -109,8 +121,10 @@ export default {
   components: {
     SkeletonCard,
     MovieCard,
+    ShareButtons,
   },
   setup() {
+    const { t } = useI18n()
     const trendingContent = ref([]);
     const dialogVisible = ref(false);
     const selectedItem = ref({});
@@ -126,6 +140,16 @@ export default {
 
     const isFavorite = computed(() => {
       return favoritesStore.hasItem(selectedItem.value.id, selectedItem.value.media_type || 'movie')
+    })
+
+    const homeItemShareUrl = computed(() => {
+      const item = selectedItem.value
+      if (!item.id) return window.location.href
+      const origin = window.location.origin
+      if (item.media_type === 'tv') {
+        return `${origin}/CinePhix/series?open=${item.id}`
+      }
+      return `${origin}/CinePhix/movie/${item.id}`
     })
 
     const toggleWatchlist = async () => {
@@ -166,7 +190,7 @@ export default {
     const fetchTrendingContent = async () => {
       try {
         isLoading.value = true;
-        const trending = await getTrendingAllDay();
+        const trending = await getTrendingAllWeek()
         trendingContent.value = trending;
       } catch (error) {
         console.error('Error al cargar contenido en tendencia:', error);
@@ -187,7 +211,7 @@ export default {
 
     onMounted(() => {
       fetchTrendingContent()
-      setPageMeta({ title: 'Home', description: 'CinePhix — AI-powered movie & TV database. Discover trending movies, get personalized recommendations, and track your watchlist.' })
+      setPageMeta({ title: t('meta.home.title'), description: t('meta.home.description') })
     });
 
     return {
@@ -198,6 +222,7 @@ export default {
       getImageUrl,
       openDialog,
       closeDialog,
+      homeItemShareUrl,
       isInWatchlist,
       isFavorite,
       toggleWatchlist,

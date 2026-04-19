@@ -7,9 +7,9 @@
       <div class="page-header">
         <h1 class="page-title">
           <span class="title-accent"></span>
-          Discover
+          {{ $t('discover.title') }}
         </h1>
-        <p class="page-subtitle">Find movies and TV shows with advanced filters</p>
+        <p class="page-subtitle">{{ $t('discover.subtitle') }}</p>
       </div>
 
       <!-- Filter Bar -->
@@ -17,9 +17,9 @@
         <div class="filter-row">
           <!-- Sort -->
           <select v-model="filters.sort_by" class="filter-select" @change="fetchMedia">
-            <option value="popularity.desc">Popularity</option>
-            <option value="vote_average.desc">Top Rated</option>
-            <option value="release_date.desc">Newest</option>
+            <option value="popularity.desc">{{ $t('discover.sortPopularity') }}</option>
+            <option value="vote_average.desc">{{ $t('discover.sortTopRated') }}</option>
+            <option value="release_date.desc">{{ $t('discover.sortNewest') }}</option>
           </select>
 
           <!-- Type toggle -->
@@ -27,11 +27,11 @@
             <button
               :class="['toggle-btn', { active: mediaType === 'movie' }]"
               @click="setMediaType('movie')"
-            >Movies</button>
+            >{{ $t('discover.movies') }}</button>
             <button
               :class="['toggle-btn', { active: mediaType === 'tv' }]"
               @click="setMediaType('tv')"
-            >TV Shows</button>
+            >{{ $t('discover.tvShows') }}</button>
           </div>
         </div>
 
@@ -40,7 +40,7 @@
           <input
             v-model.number="filters.year"
             type="number"
-            placeholder="Year"
+            :placeholder="$t('discover.year')"
             class="filter-input"
             min="1900"
             max="2030"
@@ -49,7 +49,7 @@
 
           <!-- Genre dropdown -->
           <select v-model="filters.genre" class="filter-select" @change="fetchMedia">
-            <option value="">All Genres</option>
+            <option value="">{{ $t('discover.allGenres') }}</option>
             <option v-for="g in currentGenres" :key="g.id" :value="g.id">
               {{ g.name }}
             </option>
@@ -57,11 +57,11 @@
 
           <!-- Rating range -->
           <div class="rating-filter">
-            <span class="rating-label">Rating:</span>
+            <span class="rating-label">{{ $t('discover.rating') }}:</span>
             <input
               v-model.number="filters.vote_min"
               type="number"
-              placeholder="Min"
+              :placeholder="$t('discover.min')"
               class="filter-input rating-input"
               min="0"
               max="10"
@@ -72,7 +72,7 @@
             <input
               v-model.number="filters.vote_max"
               type="number"
-              placeholder="Max"
+              :placeholder="$t('discover.max')"
               class="filter-input rating-input"
               min="0"
               max="10"
@@ -82,8 +82,8 @@
           </div>
 
           <!-- Apply / Reset -->
-          <v-btn color="primary" size="small" @click="fetchMedia">Apply</v-btn>
-          <v-btn variant="text" size="small" @click="resetFilters">Reset</v-btn>
+          <v-btn color="primary" size="small" @click="fetchMedia">{{ $t('discover.apply') }}</v-btn>
+          <v-btn variant="text" size="small" @click="resetFilters">{{ $t('discover.reset') }}</v-btn>
         </div>
 
         <!-- Active filter chips -->
@@ -94,7 +94,7 @@
             closable
             @click:close="filters.year = null; fetchMedia()"
           >
-            Year: {{ filters.year }}
+            {{ $t('discover.chipYear', { year: filters.year }) }}
           </v-chip>
           <v-chip
             v-if="filters.genre"
@@ -110,7 +110,7 @@
             closable
             @click:close="filters.vote_min = null; fetchMedia()"
           >
-            Min {{ filters.vote_min }}+
+            {{ $t('discover.chipMin', { n: filters.vote_min }) }}
           </v-chip>
           <v-chip
             v-if="filters.vote_max"
@@ -118,15 +118,15 @@
             closable
             @click:close="filters.vote_max = null; fetchMedia()"
           >
-            Max {{ filters.vote_max }}
+            {{ $t('discover.chipMax', { n: filters.vote_max }) }}
           </v-chip>
         </div>
       </div>
 
       <!-- Results count -->
       <div class="results-info">
-        <span v-if="!loading">{{ totalResults.toLocaleString() }} results</span>
-        <span v-else>Loading...</span>
+        <span v-if="!loading">{{ $t('discover.resultsCount', { count: totalResults.toLocaleString() }) }}</span>
+        <span v-else>{{ $t('discover.loading') }}</span>
       </div>
 
       <!-- Media Grid -->
@@ -136,7 +136,7 @@
 
       <div v-else-if="results.length === 0" class="empty-state">
         <v-icon size="64" color="#333">mdi-movie-search</v-icon>
-        <p>No results found. Try adjusting your filters.</p>
+        <p>{{ $t('discover.emptyState') }}</p>
       </div>
 
       <div v-else class="media-grid">
@@ -160,7 +160,7 @@
         </v-btn>
 
         <div class="page-info">
-          Page {{ currentPage }} of {{ totalPages }}
+          {{ $t('discover.pageOf', { current: currentPage, total: totalPages }) }}
         </div>
 
         <v-btn
@@ -179,6 +179,7 @@
 
 <script>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import MovieCard from '@/components/MovieCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
@@ -194,6 +195,7 @@ export default {
   components: { MovieCard, SkeletonCard },
 
   setup() {
+    const { t } = useI18n()
     const { setPageMeta } = useMetaTags()
 
     const mediaType = ref('movie')
@@ -325,8 +327,8 @@ export default {
       fetchGenres()
       fetchMedia()
       setPageMeta({
-        title: 'Discover',
-        description: 'Find movies and TV shows with advanced filters on CinePhix.',
+        title: t('meta.discover.title'),
+        description: t('meta.discover.description'),
       })
     })
 

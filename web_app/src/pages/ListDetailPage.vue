@@ -9,7 +9,7 @@
       <!-- Error -->
       <div v-else-if="error" class="error-state">
         <v-alert type="error" variant="tonal">{{ error }}</v-alert>
-        <v-btn @click="$router.push('/CinePhix/lists')" class="mt-4">Back to My Lists</v-btn>
+        <v-btn @click="$router.push('/CinePhix/lists')" class="mt-4">{{ $t('listDetail.backMyLists') }}</v-btn>
       </div>
 
       <!-- List -->
@@ -22,12 +22,12 @@
           <div class="list-info">
             <div class="name-row">
               <h1 class="list-name">{{ list.name }}</h1>
-              <v-chip v-if="list.is_public" color="primary" size="small" class="ml-2">Public</v-chip>
+              <v-chip v-if="list.is_public" color="primary" size="small" class="ml-2">{{ $t('lists.public') }}</v-chip>
             </div>
-            <p class="list-description">{{ list.description || 'No description' }}</p>
+            <p class="list-description">{{ list.description || $t('listDetail.noDescription') }}</p>
             <p class="list-meta">
-              {{ list.items_count }} items
-              <span v-if="list.user"> · by <router-link :to="`/CinePhix/user/${list.user.username}`" class="owner-link">{{ list.user.display_name || list.user.username }}</router-link></span>
+              {{ $t('listDetail.itemsCount', { count: list.items_count }) }}
+              <span v-if="list.user"> · {{ $t('listDetail.by') }} <router-link :to="`/CinePhix/user/${list.user.username}`" class="owner-link">{{ list.user.display_name || list.user.username }}</router-link></span>
             </p>
           </div>
 
@@ -44,20 +44,20 @@
               @click="isEditing = true"
             >
               <v-icon start>mdi-pencil</v-icon>
-              Edit
+              {{ $t('listDetail.edit') }}
             </v-btn>
           </div>
         </div>
 
         <!-- Edit Banner (shown to owner) -->
         <v-alert v-if="isOwner && authStore.isAuthenticated && !isEditing" type="info" variant="tonal" class="mb-4">
-          You're viewing your own list. <v-btn variant="text" @click="isEditing = true">Edit it</v-btn>
+          {{ $t('listDetail.ownListInfo') }} <v-btn variant="text" @click="isEditing = true">{{ $t('listDetail.editIt') }}</v-btn>
         </v-alert>
 
         <!-- Items Grid -->
         <div v-if="items.length === 0" class="empty-state">
           <v-icon size="64" color="#333">mdi-format-list-bulleted</v-icon>
-          <p>No items in this list yet.</p>
+          <p>{{ $t('listDetail.emptyItems') }}</p>
         </div>
 
         <div v-else class="items-grid">
@@ -78,7 +78,7 @@
             </div>
             <div class="item-info">
               <p class="item-title">{{ item.title }}</p>
-              <p class="item-type">{{ item.media_type === 'movie' ? 'Movie' : 'TV Show' }}</p>
+              <p class="item-type">{{ item.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}</p>
             </div>
           </div>
         </div>
@@ -89,6 +89,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { listService } from '@/api/services/listService'
 import { useAuthStore } from '@/stores/auth'
@@ -102,6 +103,7 @@ export default {
   components: { ShareButtons },
 
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const router = useRouter()
     const authStore = useAuthStore()
@@ -177,7 +179,7 @@ export default {
         )
         items.value = detailedItems
       } catch (e) {
-        error.value = e.response?.status === 404 ? 'List not found.' : 'Failed to load list.'
+        error.value = e.response?.status === 404 ? t('listDetail.notFound') : t('listDetail.loadFailed')
       } finally {
         loading.value = false
       }

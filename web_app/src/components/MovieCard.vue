@@ -13,7 +13,7 @@
             class="card-action-btn watchlist-btn"
             :class="{ active: isInWatchlist }"
             @click.stop="toggleWatchlist"
-            :title="isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'"
+            :title="watchlistTitle"
           >
             <v-icon size="16">{{ isInWatchlist ? 'mdi-bookmark-check' : 'mdi-bookmark-plus-outline' }}</v-icon>
           </button>
@@ -21,7 +21,7 @@
             class="card-action-btn favorite-btn"
             :class="{ active: isFavorite }"
             @click.stop="toggleFavorite"
-            :title="isFavorite ? 'Remove from Favorites' : 'Add to Favorites'"
+            :title="favoriteTitle"
           >
             <v-icon size="16">{{ isFavorite ? 'mdi-heart' : 'mdi-heart-plus' }}</v-icon>
           </button>
@@ -34,7 +34,7 @@
     <div class="card-body">
       <h4 class="card-title">{{ title }}</h4>
       <div class="card-meta">
-        <span class="media-badge">{{ mediaType === 'movie' ? 'Film' : 'TV' }}</span>
+        <span class="media-badge">{{ mediaType === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}</span>
         <span v-if="rating" class="rating-badge">
           <v-icon size="11" color="#f5c518">mdi-star</v-icon>
           {{ rating.toFixed(1) }}
@@ -46,6 +46,7 @@
 
 <script>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useWatchlistStore } from '@/stores/watchlist'
 import { useFavoritesStore } from '@/stores/favorites'
 import { useAuthStore } from '@/stores/auth'
@@ -63,12 +64,20 @@ export default {
   },
   emits: ['select'],
   setup(props) {
+    const { t } = useI18n()
     const watchlistStore = useWatchlistStore()
     const favoritesStore = useFavoritesStore()
     const authStore      = useAuthStore()
 
     const isInWatchlist = computed(() => watchlistStore.hasItem(props.id, props.mediaType))
     const isFavorite    = computed(() => favoritesStore.hasItem(props.id, props.mediaType))
+
+    const watchlistTitle = computed(() =>
+      isInWatchlist.value ? t('movieCard.removeWatchlist') : t('movieCard.addWatchlist')
+    )
+    const favoriteTitle = computed(() =>
+      isFavorite.value ? t('movieCard.removeFavorite') : t('movieCard.addFavorite')
+    )
 
     const toggleWatchlist = async () => {
       if (!authStore.isAuthenticated) { window.location.href = '/CinePhix/auth/login'; return }
@@ -84,7 +93,7 @@ export default {
       await favoritesStore.toggleFavorite(props.id, props.mediaType)
     }
 
-    return { isInWatchlist, isFavorite, toggleWatchlist, toggleFavorite }
+    return { isInWatchlist, isFavorite, watchlistTitle, favoriteTitle, toggleWatchlist, toggleFavorite }
   },
 }
 </script>

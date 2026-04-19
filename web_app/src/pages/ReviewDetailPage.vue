@@ -48,14 +48,14 @@
                 :to="`/CinePhix/movies?open=${review.tmdb_id}`"
                 class="media-title-link"
               >
-                {{ review.media?.title || 'Movie' }}
+                {{ review.media?.title || $t('reviewDetail.fallbackMovie') }}
               </router-link>
               <router-link
                 v-else
                 :to="`/CinePhix/series?open=${review.tmdb_id}`"
                 class="media-title-link"
               >
-                {{ review.media?.title || 'TV Show' }}
+                {{ review.media?.title || $t('reviewDetail.fallbackTv') }}
               </router-link>
               <span class="media-year">{{ review.media?.release_date?.slice(0, 4) || '' }}</span>
             </div>
@@ -75,12 +75,12 @@
                 <span class="author-name">{{ review.user?.display_name || review.user?.username }}</span>
               </router-link>
               <span class="review-date">{{ formatDate(review.created_at) }}</span>
-              <v-chip v-if="review.is_spoiler" size="small" class="spoiler-chip">Spoilers</v-chip>
+              <v-chip v-if="review.is_spoiler" size="small" class="spoiler-chip">{{ $t('reviewDetail.spoilersChip') }}</v-chip>
             </div>
 
             <!-- Rating -->
             <div class="rating-row" v-if="review.rating">
-              <span class="rating-label">Rating</span>
+              <span class="rating-label">{{ $t('reviewDetail.rating') }}</span>
               <div class="star-rating">
                 <v-icon
                   v-for="n in 10"
@@ -94,8 +94,8 @@
             <!-- Review text -->
             <div v-if="review.is_spoiler && !showSpoiler" class="spoiler-warning">
               <v-icon color="#ff9800">mdi-alert</v-icon>
-              <p>This review contains spoilers.</p>
-              <v-btn color="warning" size="small" @click="showSpoiler = true">Show anyway</v-btn>
+              <p>{{ $t('reviewDetail.spoilerBody') }}</p>
+              <v-btn color="warning" size="small" @click="showSpoiler = true">{{ $t('reviews.spoilerShow') }}</v-btn>
             </div>
             <div v-else class="review-text">{{ review.content }}</div>
 
@@ -103,7 +103,7 @@
             <div class="review-actions">
               <ShareButtons
                 :url="shareUrl"
-                :title="`Review: ${review.media?.title || 'Movie'} by ${review.user?.username}`"
+                :title="shareTitleText"
                 :description="review.content?.slice(0, 200) || ''"
               />
               <v-btn
@@ -113,7 +113,7 @@
                 @click="$router.push(`/CinePhix/reviews/edit/${review.id}`)"
               >
                 <v-icon start>mdi-pencil</v-icon>
-                Edit
+                {{ $t('reviewDetail.edit') }}
               </v-btn>
             </div>
           </div>
@@ -122,13 +122,13 @@
 
       <!-- Comments section -->
       <div class="comments-section">
-        <h2 class="section-title">Comments</h2>
+        <h2 class="section-title">{{ $t('reviewDetail.comments') }}</h2>
 
         <!-- Add comment -->
         <div v-if="authStore.isAuthenticated" class="add-comment">
           <textarea
             v-model="newComment"
-            placeholder="Write a comment..."
+            :placeholder="$t('reviewDetail.commentPlaceholder')"
             class="comment-input"
             rows="3"
           ></textarea>
@@ -138,11 +138,11 @@
             :disabled="!newComment.trim()"
             @click="submitComment"
           >
-            Post
+            {{ $t('reviewDetail.post') }}
           </v-btn>
         </div>
         <div v-else class="login-prompt">
-          <router-link to="/CinePhix/login">Log in</router-link> to comment.
+          <router-link to="/CinePhix/auth/login">{{ $t('reviewDetail.loginPrompt') }}</router-link> {{ $t('reviewDetail.toComment') }}
         </div>
 
         <!-- Comments list -->
@@ -182,7 +182,7 @@
           </div>
         </div>
         <div v-else class="no-comments">
-          <p>No comments yet. Be the first!</p>
+          <p>{{ $t('reviewDetail.noComments') }}</p>
         </div>
       </div>
     </main>
@@ -195,13 +195,15 @@
     <!-- Error state -->
     <div v-else class="error-state">
       <v-alert type="error" variant="tonal">{{ error }}</v-alert>
-      <v-btn @click="$router.push('/CinePhix')" class="mt-4">Go home</v-btn>
+      <v-btn @click="$router.push('/CinePhix')" class="mt-4">{{ $t('reviewDetail.goHome') }}</v-btn>
     </div>
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getLocale } from '@/i18n'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useMetaTags } from '@/composables/useMetaTags'
@@ -214,6 +216,7 @@ export default {
   components: { ShareButtons },
 
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const authStore = useAuthStore()
     const { setReviewMeta } = useMetaTags()
@@ -236,6 +239,13 @@ export default {
       return review.value?.user_id === authStore.user?.id
     })
 
+    const shareTitleText = computed(() => {
+      if (!review.value) return ''
+      const mt = review.value.media_type === 'movie' ? t('reviewDetail.fallbackMovie') : t('reviewDetail.fallbackTv')
+      const title = review.value.media?.title || mt
+      return t('reviewDetail.shareTitle', { title, user: review.value.user?.username || '' })
+    })
+
     async function fetchReview() {
       loading.value = true
       try {
@@ -243,7 +253,7 @@ export default {
         review.value = res.data
         setReviewMeta(review.value)
       } catch (e) {
-        error.value = 'Review not found'
+        error.value = t('errors.reviewNotFound')
       } finally {
         loading.value = false
       }
@@ -280,7 +290,8 @@ export default {
 
     function formatDate(dateStr) {
       if (!dateStr) return ''
-      return new Date(dateStr).toLocaleDateString('en-US', {
+      const loc = getLocale() === 'es' ? 'es-ES' : 'en-US'
+      return new Date(dateStr).toLocaleDateString(loc, {
         year: 'numeric', month: 'short', day: 'numeric'
       })
     }
@@ -302,6 +313,7 @@ export default {
       currentUserId,
       shareUrl,
       isOwner,
+      shareTitleText,
       submitComment,
       deleteComment,
       formatDate,

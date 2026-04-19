@@ -28,28 +28,28 @@
           <h1 class="person-name">{{ person.name }}</h1>
 
           <div v-if="person.birthday" class="info-row">
-            <span class="info-label">Born:</span>
+            <span class="info-label">{{ $t('personPage.born') }}</span>
             <span class="info-value">{{ formatDate(person.birthday) }}</span>
-            <span v-if="person.deathday" class="info-value"> — Died: {{ formatDate(person.deathday) }}</span>
+            <span v-if="person.deathday" class="info-value"> — {{ $t('personPage.died') }} {{ formatDate(person.deathday) }}</span>
           </div>
 
           <div v-if="person.place_of_birth" class="info-row">
-            <span class="info-label">Place:</span>
+            <span class="info-label">{{ $t('personPage.place') }}</span>
             <span class="info-value">{{ person.place_of_birth }}</span>
           </div>
 
           <div v-if="person.known_for_department" class="info-row">
-            <span class="info-label">Known for:</span>
+            <span class="info-label">{{ $t('personPage.knownFor') }}</span>
             <v-chip size="small" class="dept-chip">{{ person.known_for_department }}</v-chip>
           </div>
 
           <div v-if="person.popularity" class="info-row">
-            <span class="info-label">Popularity:</span>
+            <span class="info-label">{{ $t('personPage.popularity') }}</span>
             <span class="info-value">{{ person.popularity.toFixed(1) }}</span>
           </div>
 
           <div v-if="person.biography" class="bio-section">
-            <h3 class="section-label">Biography</h3>
+            <h3 class="section-label">{{ $t('personPage.biography') }}</h3>
             <p class="bio-text" :class="{ truncated: !showFullBio }">
               {{ person.biography }}
             </p>
@@ -59,7 +59,7 @@
               size="small"
               @click="showFullBio = !showFullBio"
             >
-              {{ showFullBio ? 'Show less' : 'Read more' }}
+              {{ showFullBio ? $t('personPage.showLess') : $t('personPage.readMore') }}
             </v-btn>
           </div>
         </div>
@@ -68,16 +68,16 @@
       <!-- Known For / Filmography -->
       <div v-if="combinedCredits.length > 0" class="filmography-section">
         <div class="section-header">
-          <h2 class="section-title">Filmography</h2>
+          <h2 class="section-title">{{ $t('personPage.filmography') }}</h2>
           <div class="type-tabs">
             <button
               :class="['tab-btn', { active: typeFilter === 'movie' }]"
               @click="typeFilter = 'movie'"
-            >Movies ({{ movieCredits.length }})</button>
+            >{{ $t('personPage.moviesTab', { count: movieCredits.length }) }}</button>
             <button
               :class="['tab-btn', { active: typeFilter === 'tv' }]"
               @click="typeFilter = 'tv'"
-            >TV ({{ tvCredits.length }})</button>
+            >{{ $t('personPage.tvTab', { count: tvCredits.length }) }}</button>
           </div>
         </div>
 
@@ -106,7 +106,7 @@
             <div class="credit-info">
               <p class="credit-title">{{ item.title || item.name }}</p>
               <p class="credit-year">{{ (item.release_date || item.first_air_date || '').slice(0, 4) }}</p>
-              <p v-if="item.character" class="credit-character">as {{ item.character }}</p>
+              <p v-if="item.character" class="credit-character">{{ $t('personPage.asCharacter', { name: item.character }) }}</p>
             </div>
           </div>
         </div>
@@ -120,8 +120,8 @@
 
     <!-- Error -->
     <div v-else class="error-state">
-      <v-alert type="error" variant="tonal">Person not found</v-alert>
-      <v-btn @click="$router.push('/CinePhix')" class="mt-4">Go home</v-btn>
+      <v-alert type="error" variant="tonal">{{ $t('personPage.notFound') }}</v-alert>
+      <v-btn @click="$router.push('/CinePhix')" class="mt-4">{{ $t('personPage.goHome') }}</v-btn>
     </div>
   </div>
 </template>
@@ -130,12 +130,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useMetaTags } from '@/composables/useMetaTags'
-import api from '@/api'
+import { useI18n } from 'vue-i18n'
+import { getLocale } from '@/i18n'
 
 export default {
   name: 'PersonDetailPage',
 
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const { setPageMeta } = useMetaTags()
 
@@ -179,8 +181,8 @@ export default {
           })
 
         setPageMeta({
-          title: `${p.name} — CinePhix`,
-          description: p.biography?.slice(0, 160) || `${p.name} on CinePhix`,
+          title: t('meta.person.title', { name: p.name }),
+          description: p.biography?.slice(0, 160) || t('meta.person.descriptionFallback', { name: p.name }),
         })
       } catch (e) {
         person.value = null
@@ -191,7 +193,8 @@ export default {
 
     function formatDate(dateStr) {
       if (!dateStr) return ''
-      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      const loc = getLocale() === 'es' ? 'es-ES' : 'en-US'
+      return new Date(dateStr).toLocaleDateString(loc, { year: 'numeric', month: 'long', day: 'numeric' })
     }
 
     function openMedia(item) {

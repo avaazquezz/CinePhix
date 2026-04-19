@@ -454,6 +454,199 @@ html, body {
 .cp-action-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.25); color: #fff; }
 .cp-action-btn.active { background: rgba(229,9,20,0.15); border-color: var(--cp-red); color: var(--cp-red); }
 
+.cp-action-btn.cp-action-btn--primary {
+  background: linear-gradient(135deg, #e50914 0%, #b80712 100%);
+  border-color: rgba(229, 9, 20, 0.85);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(229, 9, 20, 0.35);
+}
+.cp-action-btn.cp-action-btn--primary:hover {
+  background: linear-gradient(135deg, #ff1a2a 0%, #e50914 100%);
+  border-color: #ff4c4c;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.45);
+}
+.cp-action-btn.cp-action-btn--primary.active {
+  background: rgba(229, 9, 20, 0.18);
+  border-color: var(--cp-red);
+  color: #ffb4b0;
+  box-shadow: none;
+}
+
+/* ── Media detail modal (movies / series / home preview) ── */
+.media-detail-dialog {
+  max-width: 1080px;
+  width: 100%;
+  max-height: min(92vh, 100dvh - 1.5rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(168deg, #242424 0%, #101010 42%, #0a0a0a 100%);
+}
+
+.media-detail-dialog .cp-dialog-close {
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  font-size: 1.05rem;
+  z-index: 12;
+}
+
+.media-detail-dialog-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.media-detail-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1.25rem;
+  padding: 3.35rem 1.25rem 1.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .media-detail-hero {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.75rem;
+    padding: 3.35rem 1.75rem 1.5rem;
+  }
+}
+@media (min-width: 900px) {
+  .media-detail-hero {
+    gap: 2.25rem;
+    padding: 3.5rem 2.25rem 1.65rem 2.5rem;
+  }
+}
+
+.media-detail-dialog .cp-dialog-poster-wrap {
+  margin: 0 auto;
+  max-width: 200px;
+}
+@media (min-width: 640px) {
+  .media-detail-dialog .cp-dialog-poster-wrap {
+    margin: 0;
+    flex: 0 0 200px;
+    max-width: 200px;
+  }
+}
+@media (min-width: 900px) {
+  .media-detail-dialog .cp-dialog-poster-wrap {
+    flex-basis: 260px;
+    max-width: 260px;
+  }
+}
+
+.media-detail-dialog .cp-dialog-poster {
+  border-radius: 12px;
+  box-shadow:
+    0 22px 56px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.media-detail-hero-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.media-detail-title {
+  margin: 0;
+  padding-right: 2.5rem;
+}
+
+.media-detail-genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.media-detail-genre-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.38rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(229, 9, 20, 0.14);
+  border: 1px solid rgba(229, 9, 20, 0.38);
+  color: #ffc8c4;
+}
+
+.media-detail-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.media-detail-share-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  padding-top: 0.15rem;
+}
+
+.media-detail-share-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--cp-text-muted);
+}
+
+.media-detail-actions {
+  margin-top: 0.25rem;
+  gap: 0.75rem;
+}
+
+.media-detail-actions .cp-action-btn {
+  padding: 0.68rem 1.35rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+}
+
+.media-detail-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.35rem 1.25rem 1.85rem;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 900px) {
+  .media-detail-scroll {
+    padding: 1.5rem 2.25rem 2.25rem 2.5rem;
+  }
+}
+
+.media-detail-block + .media-detail-block {
+  margin-top: 1.5rem;
+}
+
+.media-detail-overview {
+  max-height: none;
+  overflow: visible;
+}
+
+.media-detail-credits {
+  max-height: none;
+}
+
+.media-detail-reviews {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .cp-reviews-header {
   display: flex;
   justify-content: space-between;

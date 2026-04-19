@@ -3,9 +3,9 @@
     <!-- Header -->
     <div class="d-flex align-center justify-space-between mb-4">
       <div>
-        <h1 class="text-h5 font-weight-bold text-high-emphasis">Activity</h1>
+        <h1 class="text-h5 font-weight-bold text-high-emphasis">{{ $t('activity.title') }}</h1>
         <div v-if="unreadCount > 0" class="text-caption text-grey">
-          {{ unreadCount }} unread · tap to mark all read
+          {{ $t('activity.unreadLine', { count: unreadCount }) }}
         </div>
       </div>
       <div class="d-flex gap-2">
@@ -16,7 +16,7 @@
           color="primary"
           @click="markAllRead"
         >
-          <v-icon icon="mdi-check-all" class="mr-1" /> Mark read
+          <v-icon icon="mdi-check-all" class="mr-1" /> {{ $t('activity.markRead') }}
         </v-btn>
         <v-btn
           size="small"
@@ -31,13 +31,13 @@
 
     <!-- Filter tabs -->
     <v-tabs v-model="activeFilter" color="primary" class="mb-4" density="compact">
-      <v-tab value="all">All</v-tab>
-      <v-tab value="follow">Follows</v-tab>
-      <v-tab value="like">Likes</v-tab>
-      <v-tab value="review">Reviews</v-tab>
-      <v-tab value="comment">Comments</v-tab>
-      <v-tab value="list">Lists</v-tab>
-      <v-tab value="watch">Watch</v-tab>
+      <v-tab value="all">{{ $t('activity.tabAll') }}</v-tab>
+      <v-tab value="follow">{{ $t('activity.tabFollow') }}</v-tab>
+      <v-tab value="like">{{ $t('activity.tabLike') }}</v-tab>
+      <v-tab value="review">{{ $t('activity.tabReview') }}</v-tab>
+      <v-tab value="comment">{{ $t('activity.tabComment') }}</v-tab>
+      <v-tab value="list">{{ $t('activity.tabList') }}</v-tab>
+      <v-tab value="watch">{{ $t('activity.tabWatch') }}</v-tab>
     </v-tabs>
 
     <!-- Loading -->
@@ -49,10 +49,10 @@
     <div v-else-if="!loading && items.length === 0" class="text-center py-12">
       <v-icon icon="mdi-bell-sleep-outline" size="64" color="grey-darken-1" class="mb-4" />
       <div class="text-h6 text-grey-darken-1 mb-2">
-        {{ activeFilter === 'all' ? 'No activity yet' : `No ${activeFilter} activity` }}
+        {{ emptyTitle }}
       </div>
       <div class="text-body-2 text-grey">
-        {{ activeFilter === 'all' ? 'Follow users and interact to see activity here' : `When you ${activeFilter}, it'll show up here` }}
+        {{ emptyHint }}
       </div>
     </div>
 
@@ -73,7 +73,7 @@
           color="primary"
           @click="loadMore"
         >
-          Load more
+          {{ $t('activity.loadMore') }}
         </v-btn>
         <v-progress-circular v-else indeterminate color="primary" size="24" />
       </div>
@@ -83,8 +83,12 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useActivityService } from '@/api/services/activityService'
+import { useMetaTags } from '@/composables/useMetaTags'
 
+const { t } = useI18n()
+const { setPageMeta } = useMetaTags()
 const { loading, getFeedV2, markFeedRead } = useActivityService()
 
 const items = ref([])
@@ -92,6 +96,31 @@ const unreadCount = ref(0)
 const currentPage = ref(1)
 const hasMore = ref(false)
 const activeFilter = ref('all')
+
+function filterTabLabel(f) {
+  const key = {
+    all: 'tabAll',
+    follow: 'tabFollow',
+    like: 'tabLike',
+    review: 'tabReview',
+    comment: 'tabComment',
+    list: 'tabList',
+    watch: 'tabWatch',
+  }[f]
+  return key ? t(`activity.${key}`) : f
+}
+
+const emptyTitle = computed(() =>
+  activeFilter.value === 'all'
+    ? t('activity.empty')
+    : t('activity.emptyForFilter', { label: filterTabLabel(activeFilter.value) })
+)
+
+const emptyHint = computed(() =>
+  activeFilter.value === 'all'
+    ? t('activity.hintAll')
+    : t('activity.hintFilter', { label: filterTabLabel(activeFilter.value) })
+)
 
 const filterMap = {
   all: null,
@@ -141,6 +170,10 @@ const markAllRead = async () => {
 watch(activeFilter, () => loadFeed(true))
 
 onMounted(() => {
+  setPageMeta({
+    title: t('meta.activity.title'),
+    description: t('meta.activity.description'),
+  })
   loadFeed(true)
 })
 </script>

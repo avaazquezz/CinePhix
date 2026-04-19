@@ -4,16 +4,16 @@
       <!-- Header -->
       <div class="pricing-header">
         <h1 class="pricing-title">
-          <span class="accent">Unlock</span> CinePhix Pro
+          <span class="accent">{{ $t('pricing.titlePrefix') }}</span> {{ $t('pricing.titleSuffix') }}
         </h1>
         <p class="pricing-subtitle">
-          One-time payments. Lifetime access per plan. No subscriptions, no surprises.
+          {{ $t('pricing.subtitle') }}
         </p>
 
         <!-- Current Pro Status Banner -->
         <v-alert v-if="proStatus.pro" type="success" variant="tonal" class="mt-4 pro-banner">
-          <strong>You're on {{ proStatus.plan | formatPlan }}!</strong>
-          Access active until {{ formatDate(proStatus.expires_at) }}
+          <strong>{{ $t('pricing.onPlan', { plan: planLabel(proStatus.plan) }) }}</strong>
+          {{ $t('pricing.accessUntil', { date: formatDate(proStatus.expires_at) }) }}
         </v-alert>
       </div>
 
@@ -22,23 +22,17 @@
         <!-- Monthly -->
         <div class="plan-card">
           <div class="plan-header">
-            <h3 class="plan-name">Pro Monthly</h3>
+            <h3 class="plan-name">{{ $t('pricing.planMonthly') }}</h3>
             <div class="plan-price">
               <span class="currency">€</span>
               <span class="amount">4</span>
               <span class="period">.99</span>
             </div>
-            <p class="plan-billing">billed monthly</p>
-            <p class="plan-note">€4.99/month</p>
+            <p class="plan-billing">{{ $t('pricing.billingMonthly') }}</p>
+            <p class="plan-note">{{ $t('pricing.noteMonthly') }}</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
+            <li v-for="(line, idx) in $tm('pricing.features')" :key="'m-'+idx"><v-icon size="16" color="#e50914">mdi-check</v-icon> {{ line }}</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -48,31 +42,25 @@
             :loading="loading === 'pro_monthly'"
             @click="checkout('pro_monthly')"
           >
-            {{ isCurrentPlan('pro_monthly') ? 'Current Plan' : 'Get Started' }}
+            {{ isCurrentPlan('pro_monthly') ? $t('pricing.currentPlan') : $t('pricing.getStarted') }}
           </v-btn>
         </div>
 
         <!-- Quarterly -->
         <div class="plan-card plan-card--featured">
-          <div class="featured-badge">BEST VALUE</div>
+          <div class="featured-badge">{{ $t('pricing.bestValue') }}</div>
           <div class="plan-header">
-            <h3 class="plan-name">Pro Trimestre</h3>
+            <h3 class="plan-name">{{ $t('pricing.planQuarterly') }}</h3>
             <div class="plan-price">
               <span class="currency">€</span>
               <span class="amount">12</span>
               <span class="period">.99</span>
             </div>
-            <p class="plan-billing">billed every 3 months</p>
-            <p class="plan-note">€4.33/month — save 13%</p>
+            <p class="plan-billing">{{ $t('pricing.billingQuarterly') }}</p>
+            <p class="plan-note">{{ $t('pricing.noteQuarterly') }}</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
+            <li v-for="(line, idx) in $tm('pricing.features')" :key="'q-'+idx"><v-icon size="16" color="#e50914">mdi-check</v-icon> {{ line }}</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -82,30 +70,24 @@
             :loading="loading === 'pro_quarterly'"
             @click="checkout('pro_quarterly')"
           >
-            {{ isCurrentPlan('pro_quarterly') ? 'Current Plan' : 'Get Started' }}
+            {{ isCurrentPlan('pro_quarterly') ? $t('pricing.currentPlan') : $t('pricing.getStarted') }}
           </v-btn>
         </div>
 
         <!-- 6 Months -->
         <div class="plan-card">
           <div class="plan-header">
-            <h3 class="plan-name">Pro 6 Meses</h3>
+            <h3 class="plan-name">{{ $t('pricing.plan6m') }}</h3>
             <div class="plan-price">
               <span class="currency">€</span>
               <span class="amount">22</span>
               <span class="period">.99</span>
             </div>
-            <p class="plan-billing">billed every 6 months</p>
-            <p class="plan-note">€3.83/month — save 23%</p>
+            <p class="plan-billing">{{ $t('pricing.billing6m') }}</p>
+            <p class="plan-note">{{ $t('pricing.note6m') }}</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
+            <li v-for="(line, idx) in $tm('pricing.features')" :key="'6-'+idx"><v-icon size="16" color="#e50914">mdi-check</v-icon> {{ line }}</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -115,30 +97,24 @@
             :loading="loading === 'pro_6months'"
             @click="checkout('pro_6months')"
           >
-            {{ isCurrentPlan('pro_6months') ? 'Current Plan' : 'Get Started' }}
+            {{ isCurrentPlan('pro_6months') ? $t('pricing.currentPlan') : $t('pricing.getStarted') }}
           </v-btn>
         </div>
 
         <!-- Annual -->
         <div class="plan-card">
           <div class="plan-header">
-            <h3 class="plan-name">Pro Anual</h3>
+            <h3 class="plan-name">{{ $t('pricing.planAnnual') }}</h3>
             <div class="plan-price">
               <span class="currency">€</span>
               <span class="amount">39</span>
               <span class="period">.99</span>
             </div>
-            <p class="plan-billing">billed yearly</p>
-            <p class="plan-note">€3.33/month — save 33%</p>
+            <p class="plan-billing">{{ $t('pricing.billingYearly') }}</p>
+            <p class="plan-note">{{ $t('pricing.noteAnnual') }}</p>
           </div>
           <ul class="plan-features">
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Full AI Concierge access</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Semantic search</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Smart collections</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Review assistant</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Activity feed</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Unlimited lists</li>
-            <li><v-icon size="16" color="#e50914">mdi-check</v-icon> Priority support</li>
+            <li v-for="(line, idx) in $tm('pricing.features')" :key="'a-'+idx"><v-icon size="16" color="#e50914">mdi-check</v-icon> {{ line }}</li>
           </ul>
           <v-btn
             class="plan-btn"
@@ -148,7 +124,7 @@
             :loading="loading === 'pro_annual'"
             @click="checkout('pro_annual')"
           >
-            {{ isCurrentPlan('pro_annual') ? 'Current Plan' : 'Get Started' }}
+            {{ isCurrentPlan('pro_annual') ? $t('pricing.currentPlan') : $t('pricing.getStarted') }}
           </v-btn>
         </div>
       </div>
@@ -160,7 +136,7 @@
 
       <!-- Footer note -->
       <p class="pricing-footer">
-        Secure payment via Stripe. All plans are one-time payments — no subscription, no auto-renewal.
+        {{ $t('pricing.footer') }}
       </p>
     </div>
   </div>
@@ -169,21 +145,11 @@
 <script>
 import { paymentService } from '@/api/services/paymentService'
 import { useAuthStore } from '@/stores/auth'
+import { getLocale } from '@/i18n'
+import { useMetaTags } from '@/composables/useMetaTags'
 
 export default {
   name: 'PricingPage',
-
-  filters: {
-    formatPlan(plan) {
-      const labels = {
-        pro_monthly: 'Pro Monthly',
-        pro_quarterly: 'Pro Trimestre',
-        pro_6months: 'Pro 6 Meses',
-        pro_annual: 'Pro Anual',
-      }
-      return labels[plan] || plan
-    },
-  },
 
   data() {
     return {
@@ -204,11 +170,26 @@ export default {
   },
 
   async mounted() {
+    const { setPageMeta } = useMetaTags()
+    setPageMeta({
+      title: this.$t('meta.pricing.title'),
+      description: this.$t('meta.pricing.description'),
+    })
     await this.fetchProStatus()
     await this.checkQueryParams()
   },
 
   methods: {
+    planLabel(plan) {
+      const map = {
+        pro_monthly: 'planMonthly',
+        pro_quarterly: 'planQuarterly',
+        pro_6months: 'plan6m',
+        pro_annual: 'planAnnual',
+      }
+      const k = map[plan]
+      return k ? this.$t(`pricing.${k}`) : plan
+    },
     async fetchProStatus() {
       try {
         this.proStatus = await paymentService.getProStatus()
@@ -232,7 +213,8 @@ export default {
 
     formatDate(dateStr) {
       if (!dateStr) return ''
-      return new Date(dateStr).toLocaleDateString('es-ES', {
+      const loc = getLocale() === 'es' ? 'es-ES' : 'en-US'
+      return new Date(dateStr).toLocaleDateString(loc, {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -257,8 +239,7 @@ export default {
       // `location` to the Stripe URL, leaving the tab stuck on `about:blank`.
       const checkoutTab = window.open('about:blank', '_blank')
       if (!checkoutTab) {
-        this.error =
-          'No se pudo abrir la ventana de pago. Permite ventanas emergentes para este sitio e inténtalo de nuevo.'
+        this.error = this.$t('pricing.errors.popupBlocked')
         this.loading = null
         return
       }
@@ -268,7 +249,7 @@ export default {
         const checkoutUrl = data.checkout_url || data.checkoutUrl
         if (!checkoutUrl) {
           checkoutTab.close()
-          this.error = 'No se recibió la URL de pago. Inténtalo de nuevo o contacta con soporte.'
+          this.error = this.$t('pricing.errors.noUrl')
           return
         }
         checkoutTab.location.assign(checkoutUrl)
@@ -278,8 +259,8 @@ export default {
         if (status === 403) {
           this.error =
             e.response?.data?.detail === 'Account is disabled'
-              ? 'Tu cuenta está desactivada. Contacta con soporte.'
-              : 'Inicia sesión para continuar con el pago.'
+              ? this.$t('pricing.errors.accountDisabled')
+              : this.$t('pricing.errors.loginRequired')
           if (!this.authStore.getAccessToken()) {
             this.$router.push({
               path: '/CinePhix/auth/login',
@@ -287,7 +268,7 @@ export default {
             })
           }
         } else {
-          this.error = e.response?.data?.detail || 'Failed to start checkout. Please try again.'
+          this.error = e.response?.data?.detail || this.$t('pricing.errors.checkoutFailed')
         }
       } finally {
         this.loading = null

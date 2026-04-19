@@ -8,7 +8,7 @@
       :href="twitterUrl"
       target="_blank"
       rel="noopener"
-      :aria-label="'Share on X'"
+      :aria-label="t('share.ariaX')"
     >
       <v-icon>mdi-twitter</v-icon>
     </v-btn>
@@ -21,7 +21,7 @@
       :href="facebookUrl"
       target="_blank"
       rel="noopener"
-      :aria-label="'Share on Facebook'"
+      :aria-label="t('share.ariaFacebook')"
     >
       <v-icon>mdi-facebook</v-icon>
     </v-btn>
@@ -34,7 +34,7 @@
       :href="redditUrl"
       target="_blank"
       rel="noopener"
-      :aria-label="'Share on Reddit'"
+      :aria-label="t('share.ariaReddit')"
     >
       <v-icon>mdi-reddit</v-icon>
     </v-btn>
@@ -44,7 +44,7 @@
       variant="text"
       size="small"
       :color="color"
-      aria-label="Copy link"
+      :aria-label="t('share.ariaCopy')"
       @click="copyLink"
     >
       <v-icon>{{ copied ? 'mdi-check' : 'mdi-link' }}</v-icon>
@@ -54,6 +54,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 export default {
   name: 'ShareButtons',
@@ -78,6 +79,7 @@ export default {
   },
 
   setup(props) {
+    const { t } = useI18n()
     const copied = ref(false)
 
     const encodedUrl = computed(() => encodeURIComponent(props.url))
@@ -106,6 +108,7 @@ export default {
     }
 
     return {
+      t,
       copied,
       twitterUrl,
       facebookUrl,

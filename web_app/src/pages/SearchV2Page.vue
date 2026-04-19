@@ -7,7 +7,7 @@
       <div class="page-header">
         <h1 class="page-title">
           <span class="title-accent"></span>
-          Search
+          {{ $t('searchV2.title') }}
         </h1>
       </div>
 
@@ -18,7 +18,7 @@
           <input
             v-model="query"
             type="text"
-            placeholder="Search movies, TV shows, people..."
+            :placeholder="$t('searchV2.placeholder')"
             class="search-input"
             @keyup.enter="doSearch"
             autofocus
@@ -33,7 +33,7 @@
           />
         </div>
         <v-btn color="primary" @click="doSearch" :loading="loading">
-          Search
+          {{ $t('searchV2.searchBtn') }}
         </v-btn>
       </div>
 
@@ -43,19 +43,19 @@
           <button
             :class="['toggle-btn', { active: mediaType === 'movie' }]"
             @click="mediaType = 'movie'; doSearch()"
-          >Movies</button>
+          >{{ $t('searchV2.movies') }}</button>
           <button
             :class="['toggle-btn', { active: mediaType === 'tv' }]"
             @click="mediaType = 'tv'; doSearch()"
-          >TV</button>
+          >{{ $t('searchV2.tv') }}</button>
           <button
             :class="['toggle-btn', { active: mediaType === 'multi' }]"
             @click="mediaType = 'multi'; doSearch()"
-          >All</button>
+          >{{ $t('searchV2.all') }}</button>
         </div>
 
         <select v-model="genre" class="filter-select" @change="doSearch">
-          <option value="">All Genres</option>
+          <option value="">{{ $t('searchV2.allGenres') }}</option>
           <option v-for="g in currentGenres" :key="g.id" :value="g.id">
             {{ g.name }}
           </option>
@@ -64,7 +64,7 @@
         <input
           v-model.number="year"
           type="number"
-          placeholder="Year"
+          :placeholder="$t('searchV2.year')"
           class="filter-input"
           min="1900"
           max="2030"
@@ -72,15 +72,15 @@
         />
 
         <div class="rating-filter">
-          <span class="rating-label">Rating:</span>
-          <input v-model.number="voteMin" type="number" placeholder="Min" class="filter-input rating-input"
+          <span class="rating-label">{{ $t('searchV2.rating') }}:</span>
+          <input v-model.number="voteMin" type="number" :placeholder="$t('searchV2.min')" class="filter-input rating-input"
             min="0" max="10" step="0.5" @change="doSearch" />
           <span class="rating-sep">–</span>
-          <input v-model.number="voteMax" type="number" placeholder="Max" class="filter-input rating-input"
+          <input v-model.number="voteMax" type="number" :placeholder="$t('searchV2.max')" class="filter-input rating-input"
             min="0" max="10" step="0.5" @change="doSearch" />
         </div>
 
-        <v-btn variant="text" size="small" @click="resetFilters">Reset</v-btn>
+        <v-btn variant="text" size="small" @click="resetFilters">{{ $t('searchV2.reset') }}</v-btn>
       </div>
 
       <!-- Active filter chips -->
@@ -89,20 +89,20 @@
           {{ getGenreName(genre) }}
         </v-chip>
         <v-chip v-if="year" size="small" closable @click:close="year = null; doSearch()">
-          Year: {{ year }}
+          {{ $t('searchV2.chipYear', { year }) }}
         </v-chip>
         <v-chip v-if="voteMin" size="small" closable @click:close="voteMin = null; doSearch()">
-          Min {{ voteMin }}+
+          {{ $t('searchV2.chipMin', { n: voteMin }) }}
         </v-chip>
         <v-chip v-if="voteMax" size="small" closable @click:close="voteMax = null; doSearch()">
-          Max {{ voteMax }}
+          {{ $t('searchV2.chipMax', { n: voteMax }) }}
         </v-chip>
       </div>
 
       <!-- Results info -->
       <div v-if="!loading && query" class="results-info">
-        <span>{{ totalResults.toLocaleString() }} results for "{{ query }}"</span>
-        <span v-if="searchType" class="type-indicator"> — {{ searchType }}</span>
+        <span>{{ $t('searchV2.resultsFor', { count: totalResults.toLocaleString(), query }) }}</span>
+        <span v-if="searchType" class="type-indicator">{{ $t('searchV2.typeSeparator', { type: searchTypeLabel }) }}</span>
       </div>
 
       <!-- Loading skeletons -->
@@ -113,13 +113,13 @@
       <!-- Empty state -->
       <div v-else-if="query && results.length === 0" class="empty-state">
         <v-icon size="64" color="#333">mdi-movie-search</v-icon>
-        <p>No results for "{{ query }}". Try different keywords.</p>
+        <p>{{ $t('searchV2.noResultsFor', { query }) }}</p>
       </div>
 
       <!-- Initial state (no query yet) -->
       <div v-else-if="!query" class="empty-state">
         <v-icon size="64" color="#333">mdi-magnify</v-icon>
-        <p>Search for movies, TV shows, or actors.</p>
+        <p>{{ $t('searchV2.hint') }}</p>
       </div>
 
       <!-- Results grid -->
@@ -149,7 +149,7 @@
 
             <!-- Type badge for multi search -->
             <div v-if="searchType === 'multi' && item.media_type" class="type-badge">
-              {{ item.media_type === 'movie' ? 'Movie' : item.media_type === 'tv' ? 'TV' : 'Person' }}
+              {{ item.media_type === 'movie' ? $t('home.type.movie') : item.media_type === 'tv' ? $t('home.type.tv') : $t('searchV2.people') }}
             </div>
           </div>
 
@@ -159,7 +159,7 @@
               {{ (item.release_date || item.first_air_date).slice(0, 4) }}
             </p>
             <p v-if="item.known_for" class="item-known">
-              Known for: {{ item.known_for?.slice(0, 2).map(m => m.title || m.name).join(', ') }}
+              {{ $t('searchV2.knownFor', { titles: item.known_for?.slice(0, 2).map(m => m.title || m.name).join(', ') }) }}
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@
         <v-btn variant="outlined" :disabled="page === 1" @click="goToPage(page - 1)">
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>
-        <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+        <span class="page-info">{{ $t('searchV2.pageOf', { current: page, total: totalPages }) }}</span>
         <v-btn variant="outlined" :disabled="page >= totalPages" @click="goToPage(page + 1)">
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
@@ -182,9 +182,9 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
-import api from '@/api'
 
 const GENRE_MAP = { movie: {}, tv: {} }
 
@@ -194,6 +194,7 @@ export default {
   components: { SkeletonCard },
 
   setup() {
+    const { t } = useI18n()
     const route = useRoute()
     const { setPageMeta } = useMetaTags()
 
@@ -213,6 +214,15 @@ export default {
 
     const currentGenres = computed(() => genres.value[mediaType.value === 'multi' ? 'movie' : mediaType.value] || [])
     const hasActiveFilters = computed(() => genre.value || year.value || voteMin.value || voteMax.value)
+
+    const searchTypeLabel = computed(() => {
+      const st = searchType.value
+      if (st === 'movie') return t('searchV2.movies')
+      if (st === 'tv') return t('searchV2.tv')
+      if (st === 'person') return t('searchV2.people')
+      if (st === 'multi') return t('searchV2.all')
+      return typeof st === 'string' ? st : ''
+    })
 
     async function fetchGenres() {
       try {
@@ -254,8 +264,11 @@ export default {
         totalPages.value = data.pages || 1
 
         setPageMeta({
-          title: `Search: ${query.value}`,
-          description: `${totalResults.value} results for "${query.value}" on CinePhix`,
+          title: t('meta.search.titleQuery', { query: query.value }),
+          description: t('meta.search.descriptionResults', {
+            count: totalResults.value,
+            query: query.value,
+          }),
         })
       } catch (e) {
         results.value = []
@@ -305,7 +318,10 @@ export default {
         query.value = route.query.q
         doSearch()
       }
-      setPageMeta({ title: 'Search', description: 'Search movies, TV shows, and actors on CinePhix.' })
+      setPageMeta({
+        title: t('meta.search.title'),
+        description: t('meta.search.description'),
+      })
     })
 
     return {
@@ -323,6 +339,7 @@ export default {
       currentGenres,
       hasActiveFilters,
       searchType,
+      searchTypeLabel,
       doSearch,
       goToPage,
       clearQuery,

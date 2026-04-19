@@ -10,7 +10,7 @@
       <v-card-title class="text-body-2 pa-0">
         <!-- Actor -->
         <router-link :to="`/CinePhix/user/${activity.actor?.username}`" class="user-link">
-          {{ activity.actor?.username || 'Unknown' }}
+          {{ activity.actor?.username || $t('activityCard.unknown') }}
         </router-link>
 
         <!-- Action label -->
@@ -19,7 +19,7 @@
 
       <v-card-subtitle class="text-caption pa-0 mt-1">
         <span v-if="targetTitle" class="mr-2">{{ targetTitle }}</span>
-        <span v-if="activity.is_read === false" class="unread-badge">New</span>
+        <span v-if="activity.is_read === false" class="unread-badge">{{ $t('activityCard.new') }}</span>
         <span class="text-grey">{{ timeAgo }}</span>
       </v-card-subtitle>
     </v-card-item>
@@ -41,6 +41,10 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { getLocale } from '@/i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   activity: { type: Object, required: true }
@@ -72,21 +76,21 @@ const iconColor = computed(() => iconMap[eventType.value]?.color || 'grey')
 
 const label = computed(() => {
   switch (eventType.value) {
-    case 'follow': return 'started following'
-    case 'follow_request': return `sent a follow request`
-    case 'like': return `liked`
-    case 'review': return `reviewed`
-    case 'comment': return `commented on`
-    case 'list': return `created a list`
-    case 'watch': return `watched`
-    case 'added_to_list': return `added to list`
-    case 'removed_from_list': return `removed from list`
-    case 'added_to_watchlist': return `added to watchlist`
-    case 'added_to_favorites': return `favorited`
-    case 'followed_user': return `followed`
-    case 'wrote_review': return `reviewed`
-    case 'created_list': return `created list`
-    default: return eventType.value.replace(/_/g, ' ')
+    case 'follow': return t('activityCard.follow')
+    case 'follow_request': return t('activityCard.followRequest')
+    case 'like': return t('activityCard.like')
+    case 'review': return t('activityCard.review')
+    case 'comment': return t('activityCard.comment')
+    case 'list': return t('activityCard.list')
+    case 'watch': return t('activityCard.watch')
+    case 'added_to_list': return t('activityCard.addedToList')
+    case 'removed_from_list': return t('activityCard.removedFromList')
+    case 'added_to_watchlist': return t('activityCard.addedToWatchlist')
+    case 'added_to_favorites': return t('activityCard.favorited')
+    case 'followed_user': return t('activityCard.followed')
+    case 'wrote_review': return t('activityCard.wroteReview')
+    case 'created_list': return t('activityCard.createdList')
+    default: return t('activityCard.generic', { type: eventType.value.replace(/_/g, ' ') })
   }
 })
 
@@ -113,11 +117,12 @@ const timeAgo = computed(() => {
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
-  if (hours < 24) return `${hours}h ago`
-  if (days < 7) return `${days}d ago`
-  return date.toLocaleDateString()
+  const loc = getLocale() === 'es' ? 'es-ES' : 'en-US'
+  if (minutes < 1) return t('activityCard.justNow')
+  if (minutes < 60) return t('activityCard.minutesAgo', { n: minutes })
+  if (hours < 24) return t('activityCard.hoursAgo', { n: hours })
+  if (days < 7) return t('activityCard.daysAgo', { n: days })
+  return date.toLocaleDateString(loc)
 })
 </script>
 

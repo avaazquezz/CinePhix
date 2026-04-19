@@ -7,9 +7,9 @@
       <div class="page-header">
         <h1 class="page-title">
           <span class="title-accent"></span>
-          For You
+          {{ $t('recommendations.title') }}
         </h1>
-        <p class="page-subtitle">Movies and shows picked based on your watch history and follows</p>
+        <p class="page-subtitle">{{ $t('recommendations.subtitle') }}</p>
       </div>
 
       <!-- Loading -->
@@ -22,16 +22,16 @@
         <v-icon size="64" color="#333">mdi-lightbulb-off</v-icon>
         <p>{{ error }}</p>
         <v-btn color="primary" @click="fetchRecommendations">
-          Try again
+          {{ $t('common.retry') }}
         </v-btn>
       </div>
 
       <!-- Empty -->
       <div v-else-if="items.length === 0" class="empty-state">
         <v-icon size="64" color="#333">mdi-lightbulb</v-icon>
-        <p>Not enough data yet. Watch some movies and follow people to get personalised recommendations!</p>
+        <p>{{ $t('recommendations.emptyTitle') }}. {{ $t('recommendations.emptyHint') }}</p>
         <v-btn color="primary" @click="$router.push('/CinePhix/discover')">
-          Discover movies
+          {{ $t('recommendations.discoverCta') }}
         </v-btn>
       </div>
 
@@ -62,7 +62,7 @@
 
             <!-- Media type badge -->
             <div class="type-badge">
-              {{ item.media_type === 'movie' ? 'Movie' : 'TV' }}
+              {{ item.media_type === 'movie' ? $t('home.type.movie') : $t('home.type.tv') }}
             </div>
           </div>
 
@@ -77,7 +77,7 @@
       <!-- Load more -->
       <div v-if="!loading && items.length > 0 && hasMore" class="load-more">
         <v-btn variant="outlined" @click="loadMore" :loading="loadingMore">
-          Load more
+          {{ $t('common.loadMore') }}
         </v-btn>
       </div>
     </main>
@@ -86,10 +86,10 @@
 
 <script>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import { useMetaTags } from '@/composables/useMetaTags'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/api'
 
 export default {
   name: 'RecommendationsPage',
@@ -97,6 +97,7 @@ export default {
   components: { SkeletonCard },
 
   setup() {
+    const { t } = useI18n()
     const { setPageMeta } = useMetaTags()
     const authStore = useAuthStore()
 
@@ -139,7 +140,7 @@ export default {
         hasMore.value = (data.total_results || 0) > items.value.length
         error.value = null
       } catch (e) {
-        error.value = 'Failed to load recommendations'
+        error.value = t('recommendations.loadFailed')
         if (!loadMore) items.value = []
       } finally {
         loading.value = false
@@ -162,8 +163,8 @@ export default {
     onMounted(() => {
       fetchRecommendations()
       setPageMeta({
-        title: 'For You — Recommendations',
-        description: 'Personalised movie and TV recommendations based on your taste.',
+        title: t('meta.recommendations.title'),
+        description: t('meta.recommendations.description'),
       })
     })
 

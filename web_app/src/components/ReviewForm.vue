@@ -1,14 +1,13 @@
 <template>
   <div class="review-form">
-    <h3 class="form-title">{{ isEditing ? 'Edit Review' : 'Write a Review' }}</h3>
+    <h3 class="form-title">{{ isEditing ? $t('reviews.editReview') : $t('reviews.writeReview') }}</h3>
 
     <v-alert v-if="error" type="error" variant="tonal" class="mb-4" closable @click:close="error = null">
       {{ error }}
     </v-alert>
 
-    <!-- Rating selector -->
     <div class="rating-section">
-      <label class="section-label">Your rating</label>
+      <label class="section-label">{{ $t('reviews.yourRating') }}</label>
       <div class="star-selector">
         <button
           v-for="star in 5"
@@ -24,10 +23,9 @@
       </div>
     </div>
 
-    <!-- Review text -->
     <v-textarea
       v-model="localContent"
-      label="Your review"
+      :label="$t('reviews.yourReview')"
       variant="outlined"
       rows="4"
       counter
@@ -35,21 +33,19 @@
       class="review-textarea"
     />
 
-    <!-- Spoiler toggle -->
     <div class="spoiler-toggle">
       <v-switch
         v-model="localSpoiler"
-        label="Contains spoilers"
+        :label="$t('reviews.containsSpoilers')"
         color="primary"
         hide-details
         density="compact"
       />
     </div>
 
-    <!-- Submit -->
     <div class="form-actions">
       <v-btn variant="outlined" @click="$emit('cancel')" :disabled="isSubmitting">
-        Cancel
+        {{ $t('common.media.cancel') }}
       </v-btn>
       <v-btn
         color="primary"
@@ -57,7 +53,7 @@
         :disabled="!canSubmit"
         @click="handleSubmit"
       >
-        {{ isEditing ? 'Save Changes' : 'Post Review' }}
+        {{ isEditing ? $t('reviews.saveChanges') : $t('reviews.postReview') }}
       </v-btn>
     </div>
   </div>
@@ -65,6 +61,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   initialRating: { type: Number, default: 0 },
@@ -77,17 +74,27 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel', 'update:error'])
 
+const { t } = useI18n()
+
 const localRating = ref(props.initialRating)
 const localContent = ref(props.initialContent)
 const localSpoiler = ref(props.initialSpoiler)
 
-// Sync when props change (e.g., opening edit mode)
 watch(() => props.initialRating, (v) => { localRating.value = v })
 watch(() => props.initialContent, (v) => { localContent.value = v })
 watch(() => props.initialSpoiler, (v) => { localSpoiler.value = v })
 
-const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent']
-const ratingLabel = computed(() => ratingLabels[localRating.value] || 'Select rating')
+const ratingLabel = computed(() => {
+  const labels = [
+    '',
+    t('reviews.ratingPoor'),
+    t('reviews.ratingFair'),
+    t('reviews.ratingGood'),
+    t('reviews.ratingGreat'),
+    t('reviews.ratingExcellent'),
+  ]
+  return labels[localRating.value] || t('reviews.ratingSelect')
+})
 
 const canSubmit = computed(() => localRating.value > 0 && localContent.value.trim().length > 0)
 

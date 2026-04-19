@@ -3,94 +3,6 @@
     <div class="noise-overlay"></div>
 
     <main class="main-content">
-
-      <!-- Popular -->
-      <section class="content-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="title-accent"></span>
-            {{ $t('series.popular') }}
-          </h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="row-container">
-          <button class="nav-btn prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="content-row" ref="popularRow">
-            <template v-if="isLoading">
-              <div v-for="n in 8" :key="`sk-pop-${n}`" class="card-slot">
-                <SkeletonCard />
-              </div>
-            </template>
-            <template v-else>
-              <div
-                v-for="item in popularSeries"
-                :key="item.id"
-                class="card-slot"
-              >
-                <MovieCard
-                  :id="item.id"
-                  :title="item.name"
-                  :image="getImageUrl(item.poster_path)"
-                  media-type="tv"
-                  :rating="item.vote_average ? item.vote_average / 2 : null"
-                  fill-parent
-                  @select="openDialog(item.id)"
-                />
-              </div>
-            </template>
-          </div>
-          <button class="nav-btn next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- Top Rated -->
-      <section class="content-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <span class="title-accent"></span>
-            {{ $t('series.topRated') }}
-          </h2>
-          <div class="title-underline"></div>
-        </div>
-        <div class="row-container">
-          <button class="nav-btn prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <div class="content-row" ref="topRatedRow">
-            <template v-if="isLoading">
-              <div v-for="n in 8" :key="`sk-top-${n}`" class="card-slot">
-                <SkeletonCard />
-              </div>
-            </template>
-            <template v-else>
-              <div
-                v-for="item in topRatedSeries"
-                :key="item.id"
-                class="card-slot"
-              >
-                <MovieCard
-                  :id="item.id"
-                  :title="item.name"
-                  :image="getImageUrl(item.poster_path)"
-                  media-type="tv"
-                  :rating="item.vote_average ? item.vote_average / 2 : null"
-                  fill-parent
-                  @select="openDialog(item.id)"
-                />
-              </div>
-            </template>
-          </div>
-          <button class="nav-btn next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-      </section>
-
-      <!-- Trending -->
       <section class="content-section">
         <div class="section-header">
           <h2 class="section-title">
@@ -133,99 +45,192 @@
         </div>
       </section>
 
+      <section class="content-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{ $t('series.popular') }}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
+        <div class="row-container">
+          <button class="nav-btn prev" @click="scrollCategory('popular', 'prev')" v-if="!isLoading">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="content-row" ref="popularRow">
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`sk-pop-${n}`" class="card-slot">
+                <SkeletonCard />
+              </div>
+            </template>
+            <template v-else>
+              <div
+                v-for="item in popularSeries"
+                :key="item.id"
+                class="card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.name"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="tv"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openDialog(item.id)"
+                />
+              </div>
+            </template>
+          </div>
+          <button class="nav-btn next" @click="scrollCategory('popular', 'next')" v-if="!isLoading">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="title-accent"></span>
+            {{ $t('series.topRated') }}
+          </h2>
+          <div class="title-underline"></div>
+        </div>
+        <div class="row-container">
+          <button class="nav-btn prev" @click="scrollCategory('topRated', 'prev')" v-if="!isLoading">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <div class="content-row" ref="topRatedRow">
+            <template v-if="isLoading">
+              <div v-for="n in 8" :key="`sk-top-${n}`" class="card-slot">
+                <SkeletonCard />
+              </div>
+            </template>
+            <template v-else>
+              <div
+                v-for="item in topRatedSeries"
+                :key="item.id"
+                class="card-slot"
+              >
+                <MovieCard
+                  :id="item.id"
+                  :title="item.name"
+                  :image="getImageUrl(item.poster_path)"
+                  media-type="tv"
+                  :rating="item.vote_average ? item.vote_average / 2 : null"
+                  fill-parent
+                  @select="openDialog(item.id)"
+                />
+              </div>
+            </template>
+          </div>
+          <button class="nav-btn next" @click="scrollCategory('topRated', 'next')" v-if="!isLoading">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
     </main>
 
     <!-- ── Detail Dialog ── -->
     <transition name="dialog-fade">
       <div v-if="isDialogOpen" class="cp-dialog-overlay" @click.self="closeDialog">
-        <div class="cp-dialog-box">
-          <button class="cp-dialog-close" @click="closeDialog" aria-label="Close">
+        <div class="cp-dialog-box media-detail-dialog">
+          <button class="cp-dialog-close" @click="closeDialog" :aria-label="$t('common.close')">
             <i class="fas fa-times"></i>
           </button>
 
-          <div class="cp-dialog-layout">
-            <!-- Poster -->
-            <div class="cp-dialog-poster-wrap">
-              <img
-                :src="getImageUrl(seriesDetail.poster_path, true)"
-                :alt="seriesDetail.name"
-                class="cp-dialog-poster"
-              />
-            </div>
-
-            <!-- Details -->
-            <div class="cp-dialog-details">
-              <h2 class="cp-dialog-title">{{ seriesDetail.name }}</h2>
-
-              <div class="cp-dialog-meta">
-                <span class="cp-meta-chip">
-                  <i class="fas fa-calendar"></i>
-                  {{ seriesDetail.first_air_date || '—' }}
-                </span>
-                <span class="cp-meta-chip rating">
-                  <i class="fas fa-star"></i>
-                  {{ seriesDetail.vote_average?.toFixed(1) || '?' }}/10
-                </span>
-                <span class="cp-meta-chip share-row">
+          <div class="media-detail-dialog-inner">
+            <div class="media-detail-hero">
+              <div class="cp-dialog-poster-wrap">
+                <img
+                  :src="getImageUrl(seriesDetail.poster_path, true)"
+                  :alt="seriesDetail.name"
+                  class="cp-dialog-poster"
+                />
+              </div>
+              <div class="media-detail-hero-main">
+                <h2 class="cp-dialog-title media-detail-title">{{ seriesDetail.name }}</h2>
+                <div v-if="seriesGenres.length" class="media-detail-genres">
+                  <span
+                    v-for="g in seriesGenres"
+                    :key="g.id"
+                    class="media-detail-genre-pill"
+                  >{{ g.name }}</span>
+                </div>
+                <div class="cp-dialog-meta media-detail-meta-row">
+                  <span class="cp-meta-chip">
+                    <i class="fas fa-calendar"></i>
+                    {{ formattedFirstAirDate }}
+                  </span>
+                  <span class="cp-meta-chip rating">
+                    <i class="fas fa-star"></i>
+                    {{ seriesDetail.vote_average?.toFixed(1) || '?' }}/10
+                  </span>
+                  <span v-if="seriesSeasonsLabel" class="cp-meta-chip">
+                    <i class="fas fa-layer-group"></i>
+                    {{ seriesSeasonsLabel }}
+                  </span>
+                  <span v-if="seriesEpisodeRuntimeLabel" class="cp-meta-chip">
+                    <i class="fas fa-clock"></i>
+                    {{ seriesEpisodeRuntimeLabel }}
+                  </span>
+                </div>
+                <div class="media-detail-share-row">
+                  <span class="media-detail-share-label">{{ $t('common.media.share') }}</span>
                   <ShareButtons
                     :url="seriesShareUrl"
-                    :title="`${seriesDetail.name} on CinePhix`"
+                    :title="`${seriesDetail.name} — CinePhix`"
                     description=""
                   />
-                </span>
+                </div>
+                <div class="cp-dialog-actions media-detail-actions">
+                  <button
+                    type="button"
+                    class="cp-action-btn cp-action-btn--primary"
+                    :class="{ active: isInWatchlist }"
+                    @click="toggleWatchlist"
+                  >
+                    <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                    {{ isInWatchlist ? $t('common.media.inWatchlist') : $t('common.media.watchlist') }}
+                  </button>
+                  <button
+                    type="button"
+                    class="cp-action-btn"
+                    :class="{ active: isFavorite }"
+                    @click="toggleFavorite"
+                  >
+                    <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
+                    {{ isFavorite ? $t('common.media.favorited') : $t('common.media.favorite') }}
+                  </button>
+                </div>
               </div>
+            </div>
 
-              <!-- Action Buttons -->
-              <div class="cp-dialog-actions">
-                <button
-                  class="cp-action-btn"
-                  :class="{ active: isInWatchlist }"
-                  @click="toggleWatchlist"
-                >
-                  <i :class="isInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                  {{ isInWatchlist ? 'In Watchlist' : 'Watchlist' }}
-                </button>
-                <button
-                  class="cp-action-btn"
-                  :class="{ active: isFavorite }"
-                  @click="toggleFavorite"
-                >
-                  <i :class="isFavorite ? 'fas fa-heart' : 'far fa-heart'"></i>
-                  {{ isFavorite ? 'Favorited' : 'Favorite' }}
-                </button>
+            <div class="media-detail-scroll">
+              <div class="media-detail-block">
+                <p class="cp-section-label">{{ $t('series.detail.overview') }}</p>
+                <p class="cp-overview media-detail-overview">{{ seriesDetail.overview || '—' }}</p>
               </div>
-
-              <!-- Synopsis -->
-              <div>
-                <p class="cp-section-label">{{ $t('series.detail.overview') || 'Synopsis' }}</p>
-                <p class="cp-overview">{{ seriesDetail.overview || '—' }}</p>
-              </div>
-
-              <!-- Credits -->
-              <div>
-                <p class="cp-section-label">{{ $t('series.detail.credits') || 'Cast' }}</p>
-                <div class="cp-credits-grid">
+              <div class="media-detail-block">
+                <p class="cp-section-label">{{ $t('series.detail.credits') }}</p>
+                <div class="cp-credits-grid media-detail-credits">
                   <div v-for="actor in seriesCredits.slice(0, 8)" :key="actor.id" class="cp-credit-item">
                     <span class="cp-credit-name">{{ actor.name }}</span>
                     <span class="cp-credit-char">{{ actor.character }}</span>
                   </div>
                 </div>
               </div>
-
-              <!-- Reviews -->
-              <div class="reviews-section">
+              <div class="media-detail-reviews">
                 <div class="cp-reviews-header">
-                  <p class="cp-reviews-title">Reviews</p>
+                  <p class="cp-reviews-title">{{ $t('common.media.reviews') }}</p>
                   <v-btn
                     size="small"
                     color="primary"
                     variant="outlined"
                     @click="showReviewForm = !showReviewForm"
                   >
-                    {{ showReviewForm ? 'Cancel' : 'Write a Review' }}
+                    {{ showReviewForm ? $t('common.media.cancel') : $t('common.media.writeReview') }}
                   </v-btn>
                 </div>
-
                 <ReviewForm
                   v-if="showReviewForm"
                   :is-submitting="isSubmittingReview"
@@ -233,7 +238,6 @@
                   @submit="handleCreateReview"
                   @cancel="handleCancelReview"
                 />
-
                 <ReviewList
                   :reviews="seriesReviews"
                   :is-loading="isLoadingReviews"
@@ -244,7 +248,6 @@
                   @edit="handleEditReview"
                 />
               </div>
-
             </div>
           </div>
         </div>
@@ -255,6 +258,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import MovieCard from '@/components/MovieCard.vue'
 import SkeletonCard from '@/components/SkeletonCard.vue'
 import ShareButtons from '@/components/ShareButtons.vue'
@@ -277,6 +281,7 @@ export default {
   name: 'SeriesPage',
   components: { MovieCard, SkeletonCard, ShareButtons, ReviewForm, ReviewList },
   setup() {
+    const { t } = useI18n()
     const popularSeries  = ref([])
     const topRatedSeries = ref([])
     const trendingSeries = ref([])
@@ -309,6 +314,37 @@ export default {
       favoritesStore.hasItem(seriesDetail.value.id, 'tv')
     )
 
+    const seriesGenres = computed(() => seriesDetail.value.genres || [])
+
+    const formattedFirstAirDate = computed(() => {
+      const d = seriesDetail.value.first_air_date
+      if (!d) return '—'
+      try {
+        return new Intl.DateTimeFormat(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }).format(new Date(`${d}T12:00:00`))
+      } catch {
+        return d
+      }
+    })
+
+    const seriesSeasonsLabel = computed(() => {
+      const n = seriesDetail.value.number_of_seasons
+      if (n == null || n < 1) return null
+      return n === 1
+        ? t('common.media.seasonSingular', { count: n })
+        : t('common.media.seasonPlural', { count: n })
+    })
+
+    const seriesEpisodeRuntimeLabel = computed(() => {
+      const arr = seriesDetail.value.episode_run_time
+      if (!Array.isArray(arr) || !arr.length) return null
+      const m = arr[0]
+      return m ? `${m} min` : null
+    })
+
     const seriesShareUrl = computed(() => {
       if (!seriesDetail.value.id) return window.location.href
       return `${window.location.origin}/CinePhix/series?open=${seriesDetail.value.id}`
@@ -326,9 +362,14 @@ export default {
     const fetchSeries = async () => {
       try {
         isLoading.value = true
-        popularSeries.value  = await getPopularSeries()
-        topRatedSeries.value = await getTopRatedSeries()
-        trendingSeries.value = await getTrendingSeries()
+        const [trending, popular, topRated] = await Promise.all([
+          getTrendingSeries(),
+          getPopularSeries(),
+          getTopRatedSeries(),
+        ])
+        trendingSeries.value = trending
+        popularSeries.value = popular
+        topRatedSeries.value = topRated
       } catch (e) {
         console.error('Error loading series:', e)
       } finally {
@@ -373,7 +414,7 @@ export default {
       editingReview.value  = null
       document.body.style.overflow = ''
       window.dispatchEvent(new CustomEvent('dialog-closed'))
-      setPageMeta({ title: 'TV Series', description: 'Browse popular, top-rated and trending TV series on CinePhix.' })
+      setPageMeta({ title: t('meta.series.title'), description: t('meta.series.description') })
     }
 
     const scrollCategory = (category, direction) => {
@@ -428,7 +469,7 @@ export default {
         showReviewForm.value = false
         await fetchSeriesReviews()
       } catch (e) {
-        reviewError.value = e.response?.data?.detail || 'Failed to post review'
+        reviewError.value = e.response?.data?.detail || t('errors.reviewPostFailed')
       } finally {
         isSubmittingReview.value = false
       }
@@ -457,7 +498,7 @@ export default {
 
     onMounted(() => {
       fetchSeries()
-      setPageMeta({ title: 'TV Series', description: 'Browse popular, top-rated and trending TV series on CinePhix.' })
+      setPageMeta({ title: t('meta.series.title'), description: t('meta.series.description') })
     })
 
     return {
@@ -466,6 +507,7 @@ export default {
       seriesReviews, reviewsSort, isLoadingReviews,
       isSubmittingReview, reviewError, showReviewForm, editingReview,
       authStore, isInWatchlist, isFavorite, seriesShareUrl,
+      seriesGenres, formattedFirstAirDate, seriesSeasonsLabel, seriesEpisodeRuntimeLabel,
       popularRow, topRatedRow, trendingRow,
       getImageUrl, scrollCategory, openDialog, closeDialog,
       toggleWatchlist, toggleFavorite,
@@ -505,12 +547,4 @@ export default {
 @media (min-width: 769px)  { .card-slot { width: 210px; } }
 @media (min-width: 1200px) { .card-slot { width: 240px; } }
 
-/* Reviews section inside dialog */
-.reviews-section {
-  border-top: 1px solid rgba(255,255,255,0.07);
-  padding-top: 1.5rem;
-  margin-top: 0.5rem;
-}
-
-.share-row { padding: 0 !important; background: transparent !important; border: none !important; }
 </style>

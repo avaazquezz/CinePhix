@@ -1,12 +1,21 @@
 import api from '@/ApiController/api'
+import { dedupeTmdbResultsById, filterTmdbBrowseResults } from '@/utils/tmdbBrowseFilters'
 
 ////    PELICULAS   //////
+
+async function fetchFilteredMovieList(endpoint) {
+  const [r1, r2] = await Promise.all([
+    api.get(endpoint, { params: { page: 1 } }),
+    api.get(endpoint, { params: { page: 2 } }),
+  ])
+  const merged = dedupeTmdbResultsById([...r1.data.results, ...r2.data.results])
+  return filterTmdbBrowseResults(merged).slice(0, 24)
+}
 
 // Películas Populares
 export const getPopularMovies = async () => {
   try {
-    const response = await api.get('/movie/popular')
-    return response.data.results
+    return await fetchFilteredMovieList('/movie/popular')
   } catch (error) {
     console.error('Error al obtener películas populares', error)
     throw error
@@ -16,8 +25,7 @@ export const getPopularMovies = async () => {
 // Películas Mejor Valoradas (Top Rated)
 export const getTopRatedMovies = async () => {
   try {
-    const response = await api.get('/movie/top_rated')
-    return response.data.results
+    return await fetchFilteredMovieList('/movie/top_rated')
   } catch (error) {
     console.error('Error al obtener películas mejor valoradas', error)
     throw error
@@ -27,8 +35,7 @@ export const getTopRatedMovies = async () => {
 // Tendencias Semanales Pelisculas
 export const getTrendingMovies = async () => {
   try {
-    const response = await api.get('/trending/movie/week')
-    return response.data.results
+    return await fetchFilteredMovieList('/trending/movie/week')
   } catch (error) {
     console.error('Error al obtener películas en tendencia', error)
     throw error
@@ -43,7 +50,7 @@ export const searchMovies = async (query) => {
         query
       }
     })
-    return response.data.results
+    return filterTmdbBrowseResults(response.data.results, { minVoteCount: 28 })
   } catch (error) {
     console.error('Error en la búsqueda de películas', error)
     throw error

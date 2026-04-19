@@ -9,14 +9,14 @@
       <div class="auth-brand">
         <div class="brand-icon"><i class="fas fa-film"></i></div>
         <div class="brand-name"><span class="brand-accent">C</span>INEPHIX</div>
-        <p class="brand-tagline">Your cinematic universe</p>
+        <p class="brand-tagline">{{ $t('auth.login.tagline') }}</p>
       </div>
 
       <!-- Card -->
       <div class="auth-card">
         <div class="auth-header">
-          <h1 class="auth-title">Welcome Back</h1>
-          <p class="auth-subtitle">Sign in to continue your journey</p>
+          <h1 class="auth-title">{{ $t('auth.login.title') }}</h1>
+          <p class="auth-subtitle">{{ $t('auth.login.subtitle') }}</p>
         </div>
 
         <v-alert v-if="error" type="error" variant="tonal" class="mb-4" closable @click:close="clearError">
@@ -26,7 +26,7 @@
         <v-form ref="formRef" @submit.prevent="handleLogin" v-model="isFormValid">
           <v-text-field
             v-model="email"
-            label="Email"
+            :label="$t('auth.login.email')"
             type="email"
             variant="outlined"
             :rules="[rules.required, rules.email]"
@@ -36,7 +36,7 @@
 
           <v-text-field
             v-model="password"
-            label="Password"
+            :label="$t('auth.login.password')"
             :type="showPassword ? 'text' : 'password'"
             variant="outlined"
             :rules="[rules.required, rules.minLength]"
@@ -51,21 +51,21 @@
             class="submit-btn"
             :disabled="!isFormValid || isLoading"
           >
-            <span v-if="!isLoading">Sign In</span>
+            <span v-if="!isLoading">{{ $t('auth.login.signIn') }}</span>
             <v-progress-circular v-else indeterminate size="20" width="2" color="white" />
           </button>
         </v-form>
 
-        <div class="auth-divider"><span>or</span></div>
+        <div class="auth-divider"><span>{{ $t('auth.login.or') }}</span></div>
 
         <button class="google-btn" @click="handleGoogleLogin">
           <v-icon size="18" class="mr-2">mdi-google</v-icon>
-          Continue with Google
+          {{ $t('auth.login.google') }}
         </button>
 
         <div class="auth-footer">
-          <span>Don't have an account?</span>
-          <router-link to="/CinePhix/auth/register" class="auth-link">Sign up</router-link>
+          <span>{{ $t('auth.login.noAccount') }}</span>
+          <router-link to="/CinePhix/auth/register" class="auth-link">{{ $t('auth.login.signUp') }}</router-link>
         </div>
       </div>
     </div>
@@ -75,11 +75,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t } = useI18n()
 
 const formRef = ref(null)
 const email = ref('')
@@ -90,9 +92,9 @@ const isLoading = ref(false)
 const error = ref(null)
 
 const rules = {
-  required: (v) => !!v || 'This field is required',
-  email: (v) => /.+@.+\..+/.test(v) || 'Invalid email',
-  minLength: (v) => (v && v.length >= 8) || 'Minimum 8 characters',
+  required: (v) => !!v || t('auth.validation.required'),
+  email: (v) => /.+@.+\..+/.test(v) || t('auth.validation.email'),
+  minLength: (v) => (v && v.length >= 8) || t('auth.validation.minPassword'),
 }
 
 async function handleLogin() {
@@ -110,7 +112,7 @@ async function handleLogin() {
 }
 
 async function handleGoogleLogin() {
-  error.value = 'Google OAuth not configured. Please use email/password.'
+  error.value = t('auth.googleNotConfigured')
 }
 
 function clearError() {

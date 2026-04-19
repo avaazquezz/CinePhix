@@ -1,501 +1,506 @@
 <template>
-  <footer class="app-footer">
-    <!-- Main Footer Content -->
-    <div class="footer-main">
-      <div class="footer-container">
-        <!-- Brand Section -->
-        <div class="footer-section footer-brand">
-          <div class="brand-logo">
-            <i class="fas fa-film"></i>
-            <span class="brand-name">CinePhix</span>
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-top-line" aria-hidden="true" />
+
+    <div class="footer-body">
+      <div class="footer-grid">
+        <!-- Brand + newsletter -->
+        <section class="footer-col footer-col--brand">
+          <div class="brand-mark" aria-label="CinePhix">
+            <span class="brand-mark__icon" aria-hidden="true">
+              <i class="fas fa-film"></i>
+            </span>
+            <span class="brand-mark__text">CINE<span class="brand-mark__accent">PHIX</span></span>
           </div>
           <p class="brand-tagline">{{ $t('footer.tagline') }}</p>
-          
-          <!-- Social Links in Brand -->
-          <div class="social-links">
+
+          <form class="newsletter" @submit.prevent="onNewsletterSubmit">
+            <p class="newsletter__title">{{ $t('footer.newsletterTitle') }}</p>
+            <p class="newsletter__hint">{{ $t('footer.newsletterHint') }}</p>
+            <div v-if="!newsletterSent" class="newsletter__row">
+              <input
+                v-model.trim="newsletterEmail"
+                type="email"
+                name="email"
+                autocomplete="email"
+                class="newsletter__input"
+                :placeholder="$t('footer.newsletterPlaceholder')"
+                :aria-label="$t('footer.newsletterPlaceholder')"
+              />
+              <button type="submit" class="newsletter__btn" :disabled="!newsletterEmail">
+                {{ $t('footer.newsletterButton') }}
+              </button>
+            </div>
+            <p v-else class="newsletter__thanks" role="status">{{ $t('footer.newsletterThanks') }}</p>
+          </form>
+
+          <div class="social-row">
             <a
-              v-for="icon in socialLinks"
-              :key="icon.name"
-              :href="icon.link"
+              v-for="s in socialLinks"
+              :key="s.name"
+              :href="s.link"
               target="_blank"
               rel="noopener noreferrer"
-              :title="icon.name"
-              class="social-btn"
+              class="social-chip"
+              :aria-label="s.ariaKey ? $t(s.ariaKey) : s.name"
             >
-              <i :class="icon.icon"></i>
+              <i :class="s.icon" aria-hidden="true" />
             </a>
           </div>
-        </div>
+        </section>
 
-        <!-- Navigation Section -->
-        <div class="footer-section footer-navigation">
-          <h3 class="footer-heading">{{ $t('footer.quickLinks') }}</h3>
-          <ul class="links-list">
-            <li><router-link to="/CinePhix/home" class="footer-link">{{ $t('nav.home') }}</router-link></li>
-            <li><router-link to="/CinePhix/movies" class="footer-link">{{ $t('nav.movies') }}</router-link></li>
-            <li><router-link to="/CinePhix/series" class="footer-link">{{ $t('nav.series') }}</router-link></li>
-            <li><router-link to="/CinePhix/actores" class="footer-link">{{ $t('nav.actors') }}</router-link></li>
+        <!-- Explore -->
+        <nav class="footer-col" :aria-label="$t('footer.exploreTitle')">
+          <h3 class="footer-heading">{{ $t('footer.exploreTitle') }}</h3>
+          <ul class="link-list">
+            <li><router-link class="footer-link" to="/CinePhix/home">{{ $t('nav.home') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/movies">{{ $t('nav.movies') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/series">{{ $t('nav.series') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/actores">{{ $t('nav.actors') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/discover">{{ $t('footer.linkDiscover') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/search-v2">{{ $t('footer.linkSearch') }}</router-link></li>
           </ul>
-        </div>
+        </nav>
 
-        <!-- About Section -->
-        <div class="footer-section footer-about">
-          <h3 class="footer-heading">{{ $t('nav.home') === 'Inicio' ? 'Acerca de' : 'About' }}</h3>
-          <p class="about-text" v-html="$t('footer.projectDesc')"></p>
-        </div>
+        <!-- Product -->
+        <nav class="footer-col" :aria-label="$t('footer.productTitle')">
+          <h3 class="footer-heading">{{ $t('footer.productTitle') }}</h3>
+          <ul class="link-list">
+            <li><router-link class="footer-link" to="/CinePhix/recommendations">{{ $t('footer.linkRecommendations') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/watched">{{ $t('footer.linkWatched') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/lists">{{ $t('footer.linkLists') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/activity">{{ $t('footer.linkActivity') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/ai">{{ $t('footer.linkAi') }}</router-link></li>
+            <li><router-link class="footer-link" to="/CinePhix/pricing">{{ $t('footer.linkPricing') }}</router-link></li>
+          </ul>
+        </nav>
+
+        <!-- Trust -->
+        <section class="footer-col footer-col--trust">
+          <h3 class="footer-heading">{{ $t('footer.trustTitle') }}</h3>
+          <p class="trust-lead">{{ $t('footer.trustLead') }}</p>
+          <p class="trust-body">{{ $t('footer.trustBody') }}</p>
+          <p class="tmdb-line">{{ $t('footer.tmdbAttribution') }}</p>
+          <a
+            class="tmdb-link"
+            href="https://www.themoviedb.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >{{ $t('footer.tmdbLink') }}</a>
+          <div class="trust-links">
+            <a
+              class="trust-inline-link"
+              href="https://github.com/avaazquezz"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ $t('footer.linkGithub') }}</a>
+            <span class="trust-dot" aria-hidden="true">·</span>
+            <a
+              class="trust-inline-link"
+              href="https://www.linkedin.com/in/adrivaz/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >{{ $t('footer.linkLinkedin') }}</a>
+          </div>
+        </section>
       </div>
     </div>
 
-    <!-- Bottom Bar -->
-    <div class="footer-bottom">
-      <div class="footer-bottom-content">
-        <div class="copyright">
-          © {{ new Date().getFullYear() }} CinePhix.
-        </div>
-        <div class="developer-info" v-html="$t('footer.by')"></div>
+    <div class="footer-bar">
+      <div class="footer-bar-inner">
+        <p class="footer-bar__left">
+          {{ $t('footer.copyright', { year: currentYear }) }}
+          <span class="footer-bar__sep">·</span>
+          <span class="footer-bar__muted">{{ $t('footer.rightsReserved') }}</span>
+        </p>
+        <p class="footer-bar__right" v-html="$t('footer.creditsHtml')" />
       </div>
     </div>
   </footer>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
+
+const currentYear = computed(() => new Date().getFullYear())
+
+const newsletterEmail = ref('')
+const newsletterSent = ref(false)
+
+function onNewsletterSubmit() {
+  if (!newsletterEmail.value) return
+  newsletterSent.value = true
+}
+
 const socialLinks = [
-  { name: 'GitHub', icon: 'fab fa-github', link: 'https://github.com/avaazquezz' },
-  { name: 'LinkedIn', icon: 'fab fa-linkedin', link: 'https://www.linkedin.com/in/adrivaz/' },
-];
+  { name: 'GitHub', icon: 'fab fa-github', link: 'https://github.com/avaazquezz', ariaKey: 'footer.socialGithubAria' },
+  { name: 'LinkedIn', icon: 'fab fa-linkedin', link: 'https://www.linkedin.com/in/adrivaz/', ariaKey: 'footer.socialLinkedinAria' },
+]
 </script>
 
 <style scoped>
-/* Mobile-first Footer */
 .app-footer {
-  background: linear-gradient(180deg, #1a0000 0%, #2a0000 50%, #3b0101 100%);
-  color: white;
-  /* TIPOGRAFÍA INTER: Modernidad y legibilidad */
-  font-family: 'Inter', 'Roboto', sans-serif;
   position: relative;
+  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+  color: rgba(255, 255, 255, 0.88);
+  background: linear-gradient(180deg, #080808 0%, #050505 40%, #030303 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.app-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #e50914 20%, #ff4c4c 50%, #e50914 80%, transparent);
-  box-shadow: 0 0 30px rgba(229, 9, 20, 0.8), 0 0 60px rgba(229, 9, 20, 0.4);
+.footer-top-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(229, 9, 20, 0.35) 20%, rgba(229, 9, 20, 0.85) 50%, rgba(229, 9, 20, 0.35) 80%, transparent 100%);
+  opacity: 0.9;
 }
 
-/* Main Footer Content */
-.footer-main {
-  padding: 3rem 0 2rem;
-}
-
-.footer-container {
-  max-width: 1400px;
+.footer-body {
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 3rem 1.25rem 2.5rem;
+}
+
+.footer-grid {
   display: grid;
+  gap: 2.5rem;
   grid-template-columns: 1fr;
-  gap: 2rem;
 }
 
-/* OPTIMIZACIÓN MÓVIL: Footer más compacto y profesional */
-@media (max-width: 768px) {
-  .footer-main {
-    padding: 1.5rem 0 1rem;
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 2.5rem;
   }
-  
-  .footer-container {
-    padding: 0 1rem;
-    gap: 1.25rem;
-  }
-  
-  /* En móvil: solo mostrar brand y copyright, ocultar secciones largas */
-  .footer-navigation,
-  .footer-about {
-    display: none;
-  }
-}
 
-@media (min-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    padding: 0 2.5rem;
-  }
-  
-  .footer-main {
-    padding: 4rem 0 2.5rem;
+  .footer-col--brand {
+    grid-column: span 2;
   }
 }
 
 @media (min-width: 1024px) {
-  .footer-container {
-    grid-template-columns: 1.5fr 1fr 1.5fr;
-    gap: 4rem;
-    padding: 0 3.5rem;
+  .footer-body {
+    padding: 3.5rem 2rem 3rem;
   }
-  
-  .footer-main {
-    padding: 5rem 0 3rem;
+
+  .footer-grid {
+    grid-template-columns: minmax(220px, 1.15fr) repeat(2, minmax(0, 1fr)) minmax(220px, 1.1fr);
+    gap: 2.5rem 2rem;
+    align-items: start;
   }
-}
 
-/* Footer Sections */
-.footer-section {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Brand Section */
-.footer-brand {
-  gap: 1rem;
-}
-
-.brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 0.5rem;
-}
-
-/* OPTIMIZACIÓN MÓVIL: Logo más pequeño */
-@media (max-width: 768px) {
-  .footer-brand {
-    gap: 0.75rem;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .brand-logo {
-    font-size: 1.3rem;
-    gap: 0.6rem;
-    letter-spacing: 1.5px;
-    justify-content: center;
-  }
-  
-  .brand-logo i {
-    font-size: 1.5rem;
+  .footer-col--brand {
+    grid-column: auto;
   }
 }
 
-@media (min-width: 769px) {
-  .brand-logo {
-    font-size: 2rem;
-    gap: 0.85rem;
-    letter-spacing: 2.5px;
-  }
+.footer-col {
+  min-width: 0;
 }
 
-.brand-logo i {
-  color: #e50914;
-  font-size: 2.2rem;
-  filter: drop-shadow(0 0 15px rgba(229, 9, 20, 0.7));
-  animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { filter: drop-shadow(0 0 15px rgba(229, 9, 20, 0.7)); }
-  50% { filter: drop-shadow(0 0 25px rgba(229, 9, 20, 0.9)); }
-}
-
-.brand-name {
-  background: linear-gradient(135deg, #ff4c4c 0%, #e50914 50%, #c50914 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-family: 'Bebas Neue', sans-serif;
-}
-
-.brand-tagline {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  margin: 0 0 1rem 0;
-  font-weight: 400;
-}
-
-/* OPTIMIZACIÓN MÓVIL: Tagline más compacto */
-@media (max-width: 768px) {
-  .brand-tagline {
-    font-size: 0.8rem;
-    line-height: 1.4;
-    margin: 0 0 0.75rem 0;
-    display: none; /* Ocultar en móvil para ahorrar espacio */
-  }
-}
-
-@media (min-width: 1024px) {
-  .brand-tagline {
-    font-size: 1rem;
-    max-width: 280px;
-  }
-}
-
-/* Footer Headings */
 .footer-heading {
-  font-size: 1.2rem;
+  margin: 0 0 1rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: white;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  margin-bottom: 1.5rem;
-  font-family: 'Bebas Neue', sans-serif;
-  position: relative;
-  padding-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
 }
 
-.footer-heading::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(90deg, #e50914, #ff4c4c);
-  border-radius: 2px;
-}
-
-/* Navigation Section */
-.footer-navigation {
-  gap: 0;
-}
-
-.links-list {
+.link-list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.55rem;
 }
 
 .footer-link {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s ease, transform 0.2s ease;
   display: inline-flex;
   align-items: center;
-  position: relative;
-  padding-left: 0;
-  font-weight: 500;
-}
-
-.footer-link::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: #e50914;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
+  width: fit-content;
 }
 
 .footer-link:hover {
+  color: #ff4c6d;
+}
+
+.footer-link.router-link-active {
   color: #e50914;
-  padding-left: 18px;
-  transform: translateX(2px);
 }
 
-.footer-link:hover::before {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* About Section */
-.footer-about {
-  gap: 0;
-}
-
-.about-text {
-  font-size: 0.9rem;
-  line-height: 1.8;
-  color: rgba(255, 255, 255, 0.75);
-  margin: 0;
-  font-weight: 400;
-}
-
-@media (min-width: 1024px) {
-  .about-text {
-    font-size: 0.95rem;
-  }
-}
-
-/* Social Links */
-.social-links {
+/* Brand */
+.brand-mark {
   display: flex;
-  gap: 0.75rem;
   align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
 }
 
-/* OPTIMIZACIÓN MÓVIL: Social buttons más pequeños y centrados */
-@media (max-width: 768px) {
-  .social-links {
-    justify-content: center;
-    gap: 0.65rem;
-  }
-}
-
-.social-btn {
-  width: 42px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px solid rgba(229, 9, 20, 0.4);
-  border-radius: 50%;
+.brand-mark__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.85);
-  text-decoration: none;
-  font-size: 1.1rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-/* OPTIMIZACIÓN MÓVIL: Botones sociales más pequeños */
-@media (max-width: 768px) {
-  .social-btn {
-    width: 38px;
-    height: 38px;
-    font-size: 1rem;
-    border-width: 1.5px;
-  }
-}
-
-@media (min-width: 769px) {
-  .social-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 1.3rem;
-  }
-}
-
-.social-btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(229, 9, 20, 0.3) 0%, transparent 70%);
-  border-radius: 50%;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.social-btn:hover {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 10px;
+  background: rgba(229, 9, 20, 0.12);
+  border: 1px solid rgba(229, 9, 20, 0.35);
   color: #e50914;
-  border-color: #e50914;
-  background: rgba(229, 9, 20, 0.08);
-  box-shadow: 0 0 25px rgba(229, 9, 20, 0.5), 0 0 50px rgba(229, 9, 20, 0.3);
-  transform: translateY(-4px) scale(1.05);
+  font-size: 1.15rem;
 }
 
-.social-btn:hover::before {
-  transform: translate(-50%, -50%) scale(1);
+.brand-mark__text {
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-size: 1.65rem;
+  letter-spacing: 0.12em;
+  font-weight: 400;
+  color: #fff;
 }
 
-/* Bottom Bar */
-.footer-bottom {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 1.25rem 1rem;
-  border-top: 1px solid rgba(229, 9, 20, 0.3);
-  backdrop-filter: blur(10px);
+.brand-mark__accent {
+  color: #e50914;
+  text-shadow: 0 0 24px rgba(229, 9, 20, 0.35);
 }
 
-/* OPTIMIZACIÓN MÓVIL: Bottom bar mucho más compacto */
-@media (max-width: 768px) {
-  .footer-bottom {
-    padding: 1rem 1rem;
-    /* Agregar padding inferior para compensar el bottom navigation bar */
-    padding-bottom: calc(1rem + 65px); /* 65px = altura del bottom nav */
-  }
+.brand-tagline {
+  margin: 0 0 1.25rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 22rem;
 }
 
-@media (min-width: 768px) {
-  .footer-bottom {
-    padding: 2rem 2.5rem;
-  }
+/* Newsletter */
+.newsletter {
+  margin-bottom: 1.25rem;
 }
 
-@media (min-width: 1024px) {
-  .footer-bottom {
-    padding: 2rem 3.5rem;
-  }
+.newsletter__title {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.footer-bottom-content {
-  max-width: 1400px;
+.newsletter__hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.newsletter__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.newsletter__input {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.newsletter__input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.newsletter__input:focus {
+  border-color: rgba(229, 9, 20, 0.55);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.12);
+}
+
+.newsletter__btn {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  color: #0a0a0a;
+  background: linear-gradient(135deg, #ff5a5a 0%, #e50914 100%);
+  transition: filter 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.newsletter__btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.newsletter__btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.newsletter__thanks {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7dffb2;
+  font-weight: 500;
+}
+
+.social-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.social-chip {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.social-chip:hover {
+  color: #fff;
+  border-color: rgba(229, 9, 20, 0.5);
+  background: rgba(229, 9, 20, 0.1);
+}
+
+/* Trust */
+.trust-lead {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.45;
+}
+
+.trust-body {
+  margin: 0 0 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.tmdb-line {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.tmdb-link {
+  display: inline-block;
+  margin-bottom: 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ff6b6b;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tmdb-link:hover {
+  color: #ff9a9a;
+  border-bottom-color: rgba(255, 154, 154, 0.5);
+}
+
+.trust-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+}
+
+.trust-dot {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.trust-inline-link {
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.trust-inline-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Bottom bar */
+.footer-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+}
+
+.footer-bar-inner {
+  max-width: 1280px;
   margin: 0 auto;
+  padding: 1rem 1.25rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
-  text-align: center;
-}
-
-/* OPTIMIZACIÓN MÓVIL: Contenido más compacto */
-@media (max-width: 768px) {
-  .footer-bottom-content {
-    gap: 0.4rem;
-  }
 }
 
 @media (min-width: 768px) {
-  .footer-bottom-content {
+  .footer-bar-inner {
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
-    text-align: left;
+    padding: 1rem 2rem 1.15rem;
   }
 }
 
-.copyright {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 400;
-  letter-spacing: 0.3px;
-}
-
-/* OPTIMIZACIÓN MÓVIL: Texto más pequeño */
-@media (max-width: 768px) {
-  .copyright {
-    font-size: 0.7rem;
+@media (max-width: 767px) {
+  .footer-bar-inner {
+    padding-bottom: calc(1rem + 56px);
   }
 }
 
-.developer-info {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.3px;
+.footer-bar__left {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
 }
 
-/* OPTIMIZACIÓN MÓVIL: Texto más pequeño */
-@media (max-width: 768px) {
-  .developer-info {
-    font-size: 0.7rem;
-  }
+.footer-bar__sep {
+  margin: 0 0.35rem;
+  opacity: 0.5;
 }
 
-/* Link Styles in HTML content */
-:deep(.tmdb-link) {
-  color: #ff4c4c;
+.footer-bar__muted {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.footer-bar__right {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+:deep(.footer-bar__right a) {
+  color: #c4b5fd;
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s ease;
-  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease;
 }
 
-:deep(.tmdb-link:hover) {
-  color: #e50914;
-  border-bottom-color: #e50914;
+:deep(.footer-bar__right a:hover) {
+  color: #e9d5ff;
 }
 </style>

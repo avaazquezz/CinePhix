@@ -35,6 +35,7 @@
   },
   "home": {
     "todayTrending": "Movies and Series Trending TODAY",
+    "weeklyTrending": "Movies and Series Trending This Week",
     "type": {
       "movie": "Movie",
       "tv": "TV Show"
@@ -43,6 +44,7 @@
       "close": "Close",
       "type": "Type",
       "rating": "Rating",
+      "overview": "Overview",
       "noOverview": "No overview available.",
       "na": "N/A"
     }
@@ -78,7 +80,7 @@
     "noResultsTitle": "We couldn't find results for \"{query}\"",
     "noResultsHint": "Try another name or check the spelling",
     "newSearch": "New search",
-    "discoverTitle": "Discover the talent behind cinema",
+    "discoverTitle": "10 icons of world cinema",
     "discoverSubtitle": "Use the search to explore information about your favorite actors",
     "filmography": "Filmography",
     "titles": "{count} titles",
@@ -106,14 +108,49 @@
     }
   },
   "common": {
-    "close": "Close"
+    "close": "Close",
+    "media": {
+      "share": "Share",
+      "watchlist": "Watchlist",
+      "inWatchlist": "In your watchlist",
+      "favorite": "Favorite",
+      "favorited": "In favorites",
+      "reviews": "Reviews",
+      "writeReview": "Write a review",
+      "cancel": "Cancel",
+      "seasonSingular": "{count} season",
+      "seasonPlural": "{count} seasons"
+    }
   },
   "footer": {
-    "tagline": "Your cinematic discovery platform",
-    "quickLinks": "Quick Links",
-    "connect": "Connect",
-    "projectDesc": "This project was developed by a <strong>Fullstack Developer</strong> to showcase skills in <strong>Web Development</strong> and <strong>APIs</strong> with <strong>JavaScript</strong>. Data is powered by <a href=\"https://www.themoviedb.org/\" target=\"_blank\" class=\"tmdb-link\"><strong>TMDB</strong></a>.",
-    "by": "Developed by <a href=\"https://www.vazquezdev.pro\" target=\"_blank\"><strong>Adrián Vázquez</strong></a>"
+    "tagline": "Discover, organise, and share films and series — smart lists, social activity, and AI tools in one cinematic workspace.",
+    "exploreTitle": "Explore",
+    "productTitle": "Product",
+    "trustTitle": "Trust & data",
+    "trustLead": "Built for people who take cinema seriously.",
+    "trustBody": "Browse, watchlists, reviews, recommendations, and lists in one flow. Your account lives on CinePhix; catalogue metadata is delivered through industry-standard film APIs.",
+    "tmdbAttribution": "This product uses the TMDB API but is not endorsed or certified by TMDB.",
+    "tmdbLink": "The Movie Database (TMDB)",
+    "newsletterTitle": "Product updates",
+    "newsletterHint": "Release notes and curated picks — no spam. Full subscription controls when we go live.",
+    "newsletterPlaceholder": "Work email",
+    "newsletterButton": "Notify me",
+    "newsletterThanks": "Thanks — you’ll hear from us when the newsletter ships.",
+    "socialGithubAria": "CinePhix on GitHub",
+    "socialLinkedinAria": "Adrián Vázquez on LinkedIn",
+    "linkDiscover": "Discover",
+    "linkSearch": "Search",
+    "linkRecommendations": "For you",
+    "linkWatched": "Watched",
+    "linkLists": "Lists",
+    "linkActivity": "Activity",
+    "linkAi": "AI Concierge",
+    "linkPricing": "Pricing",
+    "linkGithub": "GitHub",
+    "linkLinkedin": "LinkedIn",
+    "copyright": "© {year} CinePhix",
+    "rightsReserved": "All rights reserved.",
+    "creditsHtml": "Engineering by <a href=\"https://www.vazquezdev.pro\" target=\"_blank\" rel=\"noopener noreferrer\">Adrián Vázquez</a>"
   },
   "lang": {
     "label": "Language",

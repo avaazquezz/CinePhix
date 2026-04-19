@@ -110,7 +110,7 @@
               class="lang-btn"
               :class="{ active: currentLang === 'es' }"
               @click="setLanguage('es')"
-              aria-label="Español"
+              :aria-label="$t('lang.es')"
             >
               ES
             </button>
@@ -118,7 +118,7 @@
               class="lang-btn"
               :class="{ active: currentLang === 'en' }"
               @click="setLanguage('en')"
-              aria-label="English"
+              :aria-label="$t('lang.en')"
             >
               EN
             </button>

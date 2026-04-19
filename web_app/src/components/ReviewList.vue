@@ -1,6 +1,5 @@
 <template>
   <div class="review-list">
-    <!-- Filter tabs -->
     <div class="filter-tabs">
       <button
         v-for="tab in sortOptions"
@@ -13,18 +12,15 @@
       </button>
     </div>
 
-    <!-- Loading -->
     <div v-if="isLoading" class="loading-state">
       <v-progress-circular indeterminate color="primary" />
     </div>
 
-    <!-- Empty -->
     <div v-else-if="reviews.length === 0" class="empty-state">
       <v-icon size="48" color="grey-darken-1">mdi-message-text-outline</v-icon>
-      <p>No reviews yet. Be the first to write one!</p>
+      <p>{{ $t('reviews.empty') }}</p>
     </div>
 
-    <!-- Reviews -->
     <div v-else class="reviews-container">
       <ReviewCard
         v-for="review in reviews"
@@ -38,17 +34,17 @@
       />
     </div>
 
-    <!-- Load more -->
     <div v-if="!isLoading && hasMore" class="load-more">
       <v-btn variant="outlined" @click="loadMore" :loading="isLoadingMore">
-        Load more reviews
+        {{ $t('reviews.loadMore') }}
       </v-btn>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import ReviewCard from './ReviewCard.vue'
 
 const props = defineProps({
@@ -61,11 +57,13 @@ const props = defineProps({
 
 const emit = defineEmits(['update:sort', 'vote', 'edit', 'click-user', 'load-more', 'share'])
 
-const sortOptions = [
-  { label: 'Most Recent', value: 'recent' },
-  { label: 'Top Rated', value: 'top_rated' },
-  { label: 'Most Useful', value: 'most_useful' },
-]
+const { t } = useI18n()
+
+const sortOptions = computed(() => [
+  { label: t('reviews.sortRecent'), value: 'recent' },
+  { label: t('reviews.sortTopRated'), value: 'top_rated' },
+  { label: t('reviews.sortUseful'), value: 'most_useful' },
+])
 
 const isLoadingMore = ref(false)
 
@@ -98,30 +96,28 @@ function handleShare(reviewId) {
   gap: 4px;
   margin-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 8px;
 }
 
 .filter-tab {
-  padding: 6px 16px;
-  border: none;
   background: transparent;
+  border: none;
   color: rgba(255, 255, 255, 0.5);
-  border-radius: 20px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s;
 }
 
 .filter-tab:hover {
   color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .filter-tab.active {
-  color: #fff;
-  background: rgba(229, 9, 20, 0.3);
-  border: 1px solid rgba(229, 9, 20, 0.5);
+  color: #e50914;
+  border-bottom-color: #e50914;
 }
 
 .loading-state,
@@ -130,15 +126,9 @@ function handleShare(reviewId) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 48px 0;
+  padding: 32px;
   gap: 12px;
-  color: rgba(255, 255, 255, 0.4);
-  text-align: center;
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .reviews-container {
